@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Alert from '@mui/material/Alert';
+import TextField from '@mui/material/TextField';
+import { formatDate } from '../lib/bookings';
+import { useAdmin } from '../lib/admin';
 import Snackbar from '@mui/material/Snackbar';
 import { downloadCsv } from '../lib/actions';
 import Box from '@mui/material/Box';
@@ -120,6 +124,8 @@ const currentBookings = [
 
 export default function Admin() {
   const navigate = useNavigate();
+  const admin = useAdmin();
+  const [tokenInput, setTokenInput] = useState('');
   const [propertyType, setPropertyType] = useState('residential');
   const [selectedFloor, setSelectedFloor] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState('all');
@@ -163,6 +169,19 @@ export default function Admin() {
 
 
   // Filter bookings based on filters
+  // Real bookings from the database, shaped for the existing table markup.
+  const currentBookings = (admin.data?.bookings ?? []).map(b => ({
+    id: b.reference,
+    reference: b.reference,
+    guest: { name: b.guestName, email: b.guestEmail, avatar: '' },
+    unit: b.unitName,
+    floor: b.unitFloor,
+    checkIn: formatDate(b.checkIn),
+    checkOut: formatDate(b.checkOut),
+    status: ({ paid: 'Paid', reserved: 'Reserved', cancelled: 'Cancelled', checked_out: 'Checked Out' } as any)[b.status] ?? b.status,
+    amount: b.total,
+  }));
+
   const filteredBookings = currentBookings.filter((booking) => {
     let matches = true;
     
@@ -208,6 +227,33 @@ export default function Admin() {
         return { bgcolor: 'white', border: `1px solid ${c.gray200}` };
     }
   };
+
+  if (admin.needsToken) {
+    return (
+      <Layout>
+        <Box sx={{ maxWidth: 460, mx: 'auto', py: { xs: 6, md: 10 } }}>
+          <Typography variant="h1" gutterBottom>Admin access</Typography>
+          <Typography variant="body2" sx={{ color: c.stone600, mb: 3 }}>
+            This dashboard shows every guest's contact details, so it is behind a token.
+            Set ADMIN_TOKEN in the Netlify environment and paste it here.
+          </Typography>
+          {admin.error && <Alert severity="error" sx={{ mb: 2 }}>{admin.error}</Alert>}
+          <TextField
+            fullWidth
+            type="password"
+            label="Admin token"
+            value={tokenInput}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTokenInput(e.target.value)}
+            onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') void admin.unlock(tokenInput); }}
+            sx={{ mb: 2 }}
+          />
+          <Button variant="contained" fullWidth onClick={() => void admin.unlock(tokenInput)}>
+            Unlock dashboard
+          </Button>
+        </Box>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
