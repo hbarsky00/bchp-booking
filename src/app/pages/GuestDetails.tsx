@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
@@ -256,12 +256,10 @@ export default function GuestDetails() {
 
                 <Card elevation={0} sx={{ bgcolor: 'grey.50', mb: 3 }}>
                   <Box sx={{ position: 'relative' }}>
-                    <CardMedia
-                      component="img"
-                      height="120"
-                      image={bookingData.unit.image}
+                    <Photo
+                      src={bookingData.unit.image}
                       alt={bookingData.unit.name}
-                      sx={{ borderRadius: 1 }}
+                      sx={{ height: 120 }}
                     />
                   </Box>
                   <CardContent sx={{ p: 2 }}>

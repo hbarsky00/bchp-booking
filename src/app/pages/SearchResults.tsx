@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import { c, r } from '../tokens';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -9,7 +10,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
@@ -341,31 +341,26 @@ export default function SearchResults() {
                   },
                 }}
               >
-                <Box
-                  className="listing-photo"
-                  sx={{
-                    position: 'relative', borderRadius: `${r.md}px`, overflow: 'hidden',
-                    aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5,
-                  }}
-                >
-                  <Box
-                    component="img"
+                <Box className="listing-photo" sx={{ position: 'relative', mb: 1.5 }}>
+                  <Photo
                     src={unit.image}
                     alt={unit.name}
-                    loading="lazy"
-                    sx={{
-                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                      transition: 'transform .45s cubic-bezier(.22,1,.36,1)',
-                      filter: unit.available ? 'none' : 'grayscale(1) brightness(.94)',
-                    }}
+                    ratio="20 / 19"
+                    imgSx={{ filter: unit.available ? 'none' : 'grayscale(1) brightness(.94)' }}
                   />
 
                   {!unit.available && (
                     <Box sx={{
                       position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
-                      bgcolor: 'rgba(28,25,23,0.45)',
+                      bgcolor: 'rgba(28,25,23,0.35)',
                     }}>
-                      <Typography sx={{ color: c.white, fontWeight: 700, letterSpacing: '0.06em', fontSize: 13 }}>
+                      {/* Solid pill rather than text on a scrim: over a bright photo the
+                          translucent version measured 2.9:1. */}
+                      <Typography sx={{
+                        bgcolor: c.stone900, color: c.white, fontWeight: 700,
+                        letterSpacing: '0.06em', fontSize: 12,
+                        px: 1.75, py: 0.75, borderRadius: `${r.pill}px`,
+                      }}>
                         BOOKED
                       </Typography>
                     </Box>

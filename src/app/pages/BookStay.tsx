@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import SearchIcon from '@mui/icons-material/Search';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import BoltIcon from '@mui/icons-material/Bolt';
@@ -66,12 +67,12 @@ export default function BookStay() {
             px: { xs: 3, md: 7 }, py: { xs: 4, md: 7 }, mb: { xs: 5, md: 8 },
           }}
         >
-          <Box
-            component="img"
+          <Photo
             src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600"
             alt=""
-            aria-hidden="true"
-            sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            radius={0}
+            eager
+            sx={{ position: 'absolute', inset: 0 }}
           />
           <Box sx={{
             position: 'absolute', inset: 0,
@@ -226,11 +227,7 @@ export default function BookStay() {
                   '@media (prefers-reduced-motion: reduce)': { '&:hover img': { transform: 'none' } },
                 }}
               >
-                <Box sx={{ position: 'relative', borderRadius: `${r.md}px`, overflow: 'hidden', aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5 }}>
-                  <Box component="img" src={u.image} alt={u.name} loading="lazy"
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                          transition: 'transform .45s cubic-bezier(.22,1,.36,1)' }} />
-                </Box>
+                <Photo src={u.image} alt={u.name} ratio="20 / 19" sx={{ mb: 1.5 }} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'baseline' }}>
                   <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }}>{u.name}</Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: .375 }}>

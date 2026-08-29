@@ -138,6 +138,25 @@ rating on one line, meta line, then `$price night`. Interactive wrapper needs
 **Chips** — pill, `minHeight: 28`, 4px vertical padding. Zero vertical inset was a
 94-instance finding.
 
+**Images — always `<Photo>`** (`src/app/components/Photo.tsx`). Never render a bare
+`<img>` or `CardMedia`. `Photo` reserves the final box, shows a wave `Skeleton` in it
+while loading, fades the photo in, and falls back to a broken-image glyph on error, so
+nothing reflows and a dead URL degrades quietly.
+
+```tsx
+<Photo src={unit.image} alt={unit.name} ratio="20 / 19" />          {/* fluid  */}
+<Photo src={item.image} alt={item.name} radius={r.sm} sx={{ width: 64, height: 64 }} />
+```
+
+`ratio` for fluid images, `sx` width/height for fixed ones, `eager` for anything above
+the fold. It settles its own state from the element on mount — a cached image is already
+`complete` before React attaches `onLoad`, so that event never fires and the photo would
+otherwise sit at `opacity: 0` behind a skeleton forever.
+
+**Loading states — skeletons, never spinners.** A skeleton occupies the same box as the
+content it replaces. `LoadingFallback` is the route-level fallback and mimics the shell
+(header, title block, card grid) rather than centring a spinner on an empty page.
+
 **Never** signal state with `opacity` on a container — it drags all contained text below
 AA. Grayscale the image instead and keep the label at full contrast.
 

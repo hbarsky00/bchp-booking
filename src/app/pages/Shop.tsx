@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -95,7 +95,7 @@ const products = [
     id: 7,
     name: 'Energy Drink',
     description: 'Sugar-free, 250ml',
-    image: 'https://images.unsplash.com/photo-1622543925917-763c34f1f97a?w=400',
+    image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400',
     price: 3.75,
     stock: 28,
     status: 'In Stock',
@@ -301,14 +301,11 @@ export default function Shop() {
                       }}
                     />
                   )}
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      height: 200,
-                      objectFit: 'cover',
-                    }}
-                    image={product.image}
+                  <Photo
+                    src={product.image}
                     alt={product.name}
+                    radius={0}
+                    sx={{ height: 200 }}
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h6" component="h2" gutterBottom>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -9,7 +10,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
@@ -136,16 +136,16 @@ export default function PropertyDetails() {
           }}
         >
           {gallery.map((src, i) => (
-            <Box
+            <Photo
               key={`${i}-${src}`}
-              component="img"
               src={src}
               alt={i === 0 ? unit.name : `${unit.name}, view ${i + 1}`}
-              loading={i === 0 ? 'eager' : 'lazy'}
+              eager={i === 0}
+              radius={0}
               sx={{
-                width: '100%', height: '100%', objectFit: 'cover', display: { xs: i === 0 ? 'block' : 'none', md: 'block' },
+                display: { xs: i === 0 ? 'block' : 'none', md: 'block' },
                 gridRow: { md: i === 0 ? 'span 2' : 'auto' },
-                bgcolor: c.stone100,
+                height: '100%',
               }}
             />
           ))}

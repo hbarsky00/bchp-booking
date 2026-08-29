@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -301,12 +301,10 @@ export default function PaymentMethod() {
                 <Chip label="Reserved" color="primary" size="small" sx={{ mb: 2 }} />
 
                 <Box sx={{ position: 'relative', mb: 2 }}>
-                  <CardMedia
-                    component="img"
-                    height="120"
-                    image="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"
+                  <Photo
+                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"
                     alt="Sunset Studio Suite"
-                    sx={{ borderRadius: 1 }}
+                    sx={{ height: 120 }}
                   />
                   <Chip
                     label="2nd Floor"

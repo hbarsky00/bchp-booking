@@ -126,7 +126,13 @@ export const theme = createTheme({
       styleOverrides: {
         // Prices and dates should line up in columns.
         '.tnum': { fontVariantNumeric: 'tabular-nums' },
-        'p, h1, h2, h3, h4, h5, h6, span': { overflowWrap: 'anywhere' },
+        '@keyframes photoIn': { from: { opacity: 0 }, to: { opacity: 1 } },
+        // break-word only breaks a word that cannot fit on a line of its own.
+        // 'anywhere' also lets flex children shrink to a single character, which turned
+        // headings into vertical letter columns next to a chip.
+        'p, h1, h2, h3, h4, h5, h6, span': { overflowWrap: 'break-word' },
+        // Opt-in for genuinely unbreakable strings: wallet addresses, tx hashes, IDs.
+        '.break-all': { overflowWrap: 'anywhere', wordBreak: 'break-all' },
         ':focus-visible': { outline: `2px solid ${c.coral600}`, outlineOffset: 2 },
       },
     },

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -176,16 +177,13 @@ export default function ShoppingCart() {
                             {/* Product Image and Info - Mobile stacked, desktop side-by-side */}
                             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1 }}>
                               {/* Product Image */}
-                              <Box
-                                component="img"
+                              <Photo
                                 src={item.image}
                                 alt={item.name}
+                                radius={r.sm}
                                 sx={{
                                   width: { xs: 60, sm: 64 },
                                   height: { xs: 60, sm: 64 },
-                                  borderRadius: `${r.sm}px`,
-                                  objectFit: 'cover',
-                                  bgcolor: 'white',
                                   flexShrink: 0,
                                 }}
                               />

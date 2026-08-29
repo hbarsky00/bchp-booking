@@ -1,9 +1,9 @@
 import Layout from '../components/Layout';
+import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
@@ -34,18 +34,18 @@ export default function CommercialRental() {
           <Grid size={{ xs: 12, lg: 8 }}>
             <Card elevation={2}>
               {/* Space Image */}
-              <CardMedia
-                component="img"
-                height="400"
-                image="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200"
+              <Photo
+                src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200"
                 alt="Bitcoin Snack Bar"
-                sx={{ objectFit: 'cover' }}
+                radius={0}
+                eager
+                sx={{ height: { xs: 240, md: 400 } }}
               />
               
               <CardContent sx={{ p: 4 }}>
                 {/* Header with Badge */}
                 <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2, mb: 2 }}>
                     <StorefrontIcon sx={{ color: 'primary.main', fontSize: 32 }} />
                     <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
                       Bitcoin Snack Bar

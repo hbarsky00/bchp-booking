@@ -21,6 +21,9 @@ The traps that have already cost real time:
 - `AnimatePresence` with an exit animation on the router deadlocks: two pages stay
   mounted and the browser shows the stale one. The transition is enter-only on purpose.
 - Never signal state with `opacity` on a container; it drags contained text below AA.
+- Images go through `<Photo>`, never a bare `<img>` or `CardMedia` — it owns the
+  skeleton, the fade-in and the error fallback. A cached image never fires `onLoad`,
+  so `Photo` settles from the element on mount; don't remove that.
 
 ## Commands
 
