@@ -69,7 +69,19 @@ against the pool `getDatabase()` returns under `netlify dev`. Use the connection
 `sql` tagged template via `netlify/lib/db.mts` — it parameterises interpolated values,
 and it works on both the local `server` driver and the deployed `serverless` one.
 
-API: `/api/products`, `/api/cart` (GET, POST with `{productId, delta}`, DELETE).
+API:
+- `/api/products`, `/api/cart` — shop catalogue and the persistent cart
+- `/api/units` — stays; with `?checkIn&checkOut` each carries real `available`
+- `/api/bookings` — GET by `?reference` or `?guestKey`, POST to create, PATCH to cancel
+- `/api/admin` — every booking incl. guest PII. **Gated on `ADMIN_TOKEN` and fails
+  closed**: unset variable means the endpoint refuses, never defaults to public.
+
+**Double-booking is prevented by a row lock, not a constraint.** The booking transaction
+does `select … from units where id = $1 for update` before checking overlap, so every
+booking for a unit serialises. A GiST exclusion constraint would be better, but the local
+dev database is PGlite (Postgres in WASM) with no contrib extensions, so `btree_gist`
+would only exist in production. Stays are half-open `[check_in, check_out)`, so one guest
+may arrive the day another leaves.
 
 ## State of the app
 
@@ -77,9 +89,14 @@ The shop cart is real: it persists in Postgres and is shared between Shop and th
 page. Carts are keyed by an id the browser mints into `localStorage` — there is no auth
 yet, so a cart is per-browser.
 
-**Still hardcoded:** stays, bookings, admin data, and payments. The payment and
-confirmation screens remain simulations. Bookings are the next thing to move into the
-database.
+Stays, availability, bookings and the admin dashboard are all real too. Search reflects
+what is genuinely free, paying writes a booking, cancelling frees the dates.
+
+**Still simulated:** payment itself. No money moves — choosing BSV or a card just records
+`payment_method` and marks the booking paid. Guest identity is a browser-minted key in
+`localStorage`, so bookings and carts are per-browser; there is no login, no email is
+ever sent, and clearing site data orphans a booking (it survives in the database and is
+still reachable by its reference).
 
 ## Git
 
