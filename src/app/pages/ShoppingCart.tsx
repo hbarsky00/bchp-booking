@@ -20,6 +20,9 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import LockIcon from '@mui/icons-material/Lock';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { c, r } from '../tokens';
+import { useCart } from '../lib/cart';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 interface CartItem {
   id: number;
@@ -32,52 +35,23 @@ interface CartItem {
 
 export default function ShoppingCart() {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: 'Bottled Water',
-      description: '500ml spring water',
-      price: 2.50,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400',
-    },
-    {
-      id: 2,
-      name: 'Premium Coffee',
-      description: 'Organic blend, 250g',
-      price: 12.99,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400',
-    },
-    {
-      id: 5,
-      name: 'Chocolate Bar',
-      description: 'Dark chocolate 70%',
-      price: 4.99,
-      quantity: 3,
-      image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400',
-    },
-  ]);
+  // The cart now lives in the database, shared with the Shop page. Items previously
+  // hardcoded here never reflected anything the user actually added.
+  const { cart, loading, error, changeQty, remove, clear } = useCart();
+  const cartItems = cart.items.map(i => ({
+    id: i.productId,
+    name: i.name,
+    description: i.description,
+    price: i.price,
+    quantity: i.quantity,
+    image: i.image,
+  }));
 
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
-    );
-  };
+  const updateQuantity = (id: number, change: number) => { void changeQty(id, change); };
+  const removeItem = (id: number) => { void remove(id); };
+  const clearCart = () => { void clear(); };
 
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const clearCart = () => {
-    setCartItems([]);
-  };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.subtotal;
   const tax = subtotal * 0.085;
   const deliveryFee = 0;
   const total = subtotal + tax + deliveryFee;
@@ -146,7 +120,17 @@ export default function ShoppingCart() {
                 </Box>
 
                 {/* Cart Items List */}
-                {cartItems.length === 0 ? (
+                {error && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error} — could not load your cart.
+                  </Alert>
+                )}
+
+                {loading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+                    <CircularProgress aria-label="Loading your cart" />
+                  </Box>
+                ) : cartItems.length === 0 ? (
                   <Box sx={{ textAlign: 'center', py: 8 }}>
                     <ShoppingBagIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                     <Typography variant="h6" component="h2" color="text.secondary" gutterBottom>

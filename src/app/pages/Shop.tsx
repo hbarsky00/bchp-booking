@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import { useCart } from '../lib/cart';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
@@ -161,7 +162,7 @@ export default function Shop() {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Track quantities for each product
-  const [productQuantities, setProductQuantities] = useState<Record<number, number>>({});
+  const { cart, error: cartError, changeQty, quantityOf } = useCart();
   
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -171,7 +172,7 @@ export default function Shop() {
   const isBookingFlow = location.state?.fromBookingFlow || false;
 
   // Calculate total cart items
-  const totalCartItems = Object.values(productQuantities).reduce((sum, qty) => sum + qty, 0);
+  const totalCartItems = cart.itemCount;
 
   // Filter products based on category
   const filteredProducts = products.filter((product) => {
@@ -180,33 +181,14 @@ export default function Shop() {
     return matchesCategory && matchesSearch;
   });
 
-  const handleAddToCart = (product: any) => {
-    const currentQty = productQuantities[product.id] || 0;
-    setProductQuantities({
-      ...productQuantities,
-      [product.id]: currentQty + 1,
-    });
+  const handleAddToCart = async (product: any) => {
+    await changeQty(product.id, 1);
     setSnackbarMessage(`${product.name} added to cart`);
     setSnackbarOpen(true);
   };
 
-  const handleIncreaseQuantity = (productId: number) => {
-    const currentQty = productQuantities[productId] || 0;
-    setProductQuantities({
-      ...productQuantities,
-      [productId]: currentQty + 1,
-    });
-  };
-
-  const handleDecreaseQuantity = (productId: number) => {
-    const currentQty = productQuantities[productId] || 0;
-    if (currentQty > 0) {
-      setProductQuantities({
-        ...productQuantities,
-        [productId]: currentQty - 1,
-      });
-    }
-  };
+  const handleIncreaseQuantity = (productId: number) => { void changeQty(productId, 1); };
+  const handleDecreaseQuantity = (productId: number) => { void changeQty(productId, -1); };
 
   const handleContinueToPayment = () => {
     navigate('/payment-method');
@@ -281,6 +263,12 @@ export default function Shop() {
         </Box>
 
         {/* Products Grid */}
+        {cartError && (
+          <Alert severity="error" sx={{ mb: 3 }} onClose={undefined}>
+            {cartError} — your cart could not be updated.
+          </Alert>
+        )}
+
         {filteredProducts.length === 0 && (
           <Box sx={{ textAlign: 'center', py: 8, px: 2 }}>
             <SearchOffIcon sx={{ fontSize: 40, color: c.stone300, mb: 1.5 }} />
@@ -301,7 +289,7 @@ export default function Shop() {
 
         <Grid container spacing={3} sx={{ mb: 4 }}>
           {filteredProducts.map((product) => {
-            const quantity = productQuantities[product.id] || 0;
+            const quantity = quantityOf(product.id);
             return (
               <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4 }}>
                 <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>

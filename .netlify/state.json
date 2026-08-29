@@ -1,3 +1,22 @@
 {
-  "siteId": "7cd6c5c1-4b4c-4357-86a7-d338b3d54d19"
+	"siteId": "7cd6c5c1-4b4c-4357-86a7-d338b3d54d19",
+	"dbConnectionString": "postgres://localhost:59072/postgres",
+	"geolocation": {
+		"data": {
+			"city": "Paterson",
+			"country": {
+				"code": "US",
+				"name": "United States"
+			},
+			"subdivision": {
+				"code": "NJ",
+				"name": "New Jersey"
+			},
+			"timezone": "America/New_York",
+			"latitude": 40.9033,
+			"longitude": -74.1579,
+			"postalCode": "07503"
+		},
+		"timestamp": 1788034601462
+	}
 }

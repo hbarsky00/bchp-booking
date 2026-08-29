@@ -14,6 +14,8 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "@netlify/database": "^2.0.0",
+    "drizzle-orm": "^1.0.0-beta.22",
     "motion": "^12.23.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -24,6 +26,7 @@
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",
+    "drizzle-kit": "^1.0.0-beta.22",
     "typescript": "^5.9.2",
     "vite": "^7.1.4"
   }
