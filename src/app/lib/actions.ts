@@ -35,9 +35,9 @@ export function downloadIcs(opts: {
   const stamp = (d: string) => d.replace(/-/g, '');
   const fold = (line: string) => line.match(/.{1,74}/g)?.join('\r\n ') ?? line;
   const lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BCHP//Booking//EN', 'CALSCALE:GREGORIAN',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BitStay//Booking//EN', 'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
-    `UID:${stamp(opts.start)}-${Math.abs(hash(opts.title))}@bchp`,
+    `UID:${stamp(opts.start)}-${Math.abs(hash(opts.title))}@bitstay`,
     `DTSTART;VALUE=DATE:${stamp(opts.start)}`,
     `DTEND;VALUE=DATE:${stamp(opts.end)}`,
     fold(`SUMMARY:${escapeIcs(opts.title)}`),

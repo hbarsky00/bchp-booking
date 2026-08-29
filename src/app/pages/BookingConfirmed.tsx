@@ -34,10 +34,10 @@ export default function BookingConfirmed() {
   const navigate = useNavigate();
 
   const handleDownloadReceipt = () => {
-    downloadText('bchp-receipt.txt', [
-      'BCHP BOOKING RECEIPT',
+    downloadText('bitstay-receipt.txt', [
+      'BITSTAY BOOKING RECEIPT',
       '====================',
-      'Confirmation: BCHP-2026-00847',
+      'Confirmation: BST-2026-00847',
       'Check-in:     March 19, 2026',
       'Check-out:    March 20, 2026',
       'Status:       Paid, settled on-chain',
@@ -46,7 +46,7 @@ export default function BookingConfirmed() {
   const [selectedDate, setSelectedDate] = useState(14);
 
   const bookingData = {
-    confirmationId: 'BCHP-2026-00847',
+    confirmationId: 'BST-2026-00847',
     status: 'Paid',
     checkIn: {
       date: 'March 19, 2026',
@@ -596,7 +596,7 @@ export default function BookingConfirmed() {
             </Typography>
           </Box>
           <Typography variant="caption" color="text.secondary">
-            © 2026 BCHP Booking. All rights reserved
+            © 2026 BitStay. All rights reserved
           </Typography>
         </Box>
       </Box>

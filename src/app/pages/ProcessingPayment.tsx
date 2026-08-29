@@ -296,7 +296,7 @@ export default function ProcessingPayment() {
             </Typography>
           </Box>
           <Typography variant="caption" color="text.secondary">
-            © 2026 BCHP Booking. All rights reserved
+            © 2026 BitStay. All rights reserved
           </Typography>
         </Box>
       </Box>

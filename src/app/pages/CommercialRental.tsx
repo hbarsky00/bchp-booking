@@ -188,7 +188,7 @@ export default function CommercialRental() {
                     size="large"
                     fullWidth
                     startIcon={<EmailIcon />}
-                    href="mailto:rental@bchp.com"
+                    href="mailto:rental@bitstay.com"
                     sx={{ 
                       textTransform: 'none',
                       fontWeight: 600,

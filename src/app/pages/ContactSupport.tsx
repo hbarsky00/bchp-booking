@@ -291,9 +291,9 @@ export default function ContactSupport() {
                             '&:hover': { opacity: 0.8 }
                           }}
                           component="a"
-                          href="mailto:support@bchpbooking.com"
+                          href="mailto:support@bitstaybooking.com"
                         >
-                          support@bchpbooking.com
+                          support@bitstaybooking.com
                         </Typography>
                         <Typography variant="caption" color="text.secondary" display="block">
                           Response within 24 hours
@@ -363,7 +363,7 @@ export default function ContactSupport() {
                           Office Location
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          BCHP Booking Headquarters
+                          BitStay Headquarters
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           Jl. Sudirman No. 123

@@ -44,7 +44,7 @@ export default function BookingDetails() {
   const location = useLocation();
 
   const bookingData = {
-    id: 'BCHP-2026-00847',
+    id: 'BST-2026-00847',
     status: 'Paid',
     currentStage: 'Paid',
     unit: {
@@ -123,7 +123,7 @@ export default function BookingDetails() {
   const ISO = { start: '2026-03-15', end: '2026-03-20' };
 
   const receiptText = () => [
-    'BCHP BOOKING CONFIRMATION',
+    'BITSTAY BOOKING CONFIRMATION',
     '=========================',
     `Booking ID:  ${bookingData.id}`,
     `Status:      ${bookingData.status}`,
@@ -154,14 +154,14 @@ export default function BookingDetails() {
       start: ISO.start,
       end: ISO.end,
       location: '123 Main Street, Downtown District',
-      description: `BCHP booking ${bookingData.id}`,
+      description: `BitStay booking ${bookingData.id}`,
     });
     setToast('Calendar file downloaded');
   };
 
   const handleShare = async () => {
     const result = await shareOrCopy({
-      title: `BCHP booking ${bookingData.id}`,
+      title: `BitStay booking ${bookingData.id}`,
       text: `${bookingData.unit.name}, ${bookingData.checkIn.date} to ${bookingData.checkOut.date}`,
     });
     setToast(result === 'copied' ? 'Link copied to clipboard'

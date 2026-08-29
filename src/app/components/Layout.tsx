@@ -27,6 +27,7 @@ import Divider from '@mui/material/Divider';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { c, r } from '../tokens';
+import BitStayMark from './BitStayMark';
 
 interface LayoutProps {
   children: ReactNode;
@@ -92,19 +93,18 @@ export default function Layout({ children }: LayoutProps) {
             <Box
               component="button"
               onClick={() => navigate('/book-stay', { state: null })}
-              aria-label="BCHP home"
+              aria-label="BitStay home"
               sx={{
-                display: 'flex', alignItems: 'center', gap: 1, border: 0, background: 'none',
-                p: 0, cursor: 'pointer', color: 'primary.main', flexShrink: 0,
+                display: 'flex', alignItems: 'center', gap: 1.1, border: 0, background: 'none',
+                p: 0, cursor: 'pointer', flexShrink: 0,
               }}
             >
-              <Box sx={{ width: 30, height: 30, borderRadius: '50%', display: 'grid', placeItems: 'center',
-                bgcolor: c.coral600,
-                backgroundImage: `linear-gradient(145deg, ${c.coral500}, ${c.coral700})` }}>
-                <Typography component="span" sx={{ color: c.white, fontWeight: 800, fontSize: 15, lineHeight: 1 }}>B</Typography>
-              </Box>
-              <Typography component="span" sx={{ fontWeight: 800, fontSize: 19, letterSpacing: '-0.03em', color: c.stone900 }}>
-                bchp
+              <BitStayMark size={32} />
+              <Typography
+                component="span"
+                sx={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.035em', color: c.stone900 }}
+              >
+                BitStay
               </Typography>
             </Box>
 
@@ -217,7 +217,7 @@ export default function Layout({ children }: LayoutProps) {
           <VerifiedIcon sx={{ fontSize: 16, color: c.green700 }} />
           Every stay settled and verified on-chain
         </Typography>
-        <Typography variant="caption" sx={{ color: c.stone600 }}>© 2026 BCHP</Typography>
+        <Typography variant="caption" sx={{ color: c.stone600 }}>© 2026 BitStay</Typography>
       </Box>
 
       {/* Thumb-reachable navigation on phones, where a six-item scroller was unusable. */}

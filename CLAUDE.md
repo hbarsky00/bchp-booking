@@ -1,4 +1,4 @@
-# BCHP Booking — working notes
+# BitStay — working notes
 
 Vite + React 19 + TypeScript, MUI 7. Booking and rentals front end: stays, commercial
 space, a shop, and an admin dashboard. Settlement is crypto-flavoured (BSV, stablecoin,

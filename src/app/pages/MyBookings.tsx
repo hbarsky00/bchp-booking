@@ -32,7 +32,7 @@ import EmailIcon from '@mui/icons-material/Email';
 const bookings = [
   {
     id: 1,
-    bookingId: 'BCHP-2026-00847',
+    bookingId: 'BST-2026-00847',
     unitName: '2nd Floor Unit',
     dates: 'Mar 15 - Mar 20, 2026',
     checkIn: 'Mar 15, 2026 3:00 PM',
@@ -44,7 +44,7 @@ const bookings = [
   },
   {
     id: 2,
-    bookingId: 'BCHP-2026-00762',
+    bookingId: 'BST-2026-00762',
     unitName: '3rd Floor Unit',
     dates: 'Feb 10 - Feb 14, 2026',
     checkIn: 'Feb 10, 2026 2:00 PM',
@@ -56,7 +56,7 @@ const bookings = [
   },
   {
     id: 3,
-    bookingId: 'BCHP-2026-00601',
+    bookingId: 'BST-2026-00601',
     unitName: 'Commercial Space',
     dates: 'Jan 22 - Jan 24, 2026',
     checkIn: 'Jan 22, 2026 9:00 AM',
@@ -81,7 +81,7 @@ const tokens = [
     id: 2,
     name: 'Proof of Stay',
     date: 'Feb 14, 2026',
-    bookingId: 'BCHP-2026-00762',
+    bookingId: 'BST-2026-00762',
     status: 'verified',
     color: 'success',
   },
@@ -89,7 +89,7 @@ const tokens = [
     id: 3,
     name: 'Thank You Token',
     date: 'Jan 24, 2026',
-    bookingId: 'BCHP-2026-00601',
+    bookingId: 'BST-2026-00601',
     status: 'received',
     color: 'primary',
   },
@@ -97,7 +97,7 @@ const tokens = [
     id: 4,
     name: 'Proof of Stay',
     date: 'Nov 21, 2025',
-    bookingId: 'BCHP-2025-90098',
+    bookingId: 'BST-2025-90098',
     status: 'archived',
     color: 'warning',
   },
@@ -444,7 +444,7 @@ export default function MyBookings() {
         <MenuItem onClick={() => {
           if (menu) {
             downloadText(`${menu.ref}-confirmation.txt`,
-              `BCHP BOOKING\n============\nReference: ${menu.ref}\n`);
+              `BITSTAY BOOKING\n============\nReference: ${menu.ref}\n`);
             setToast('Confirmation downloaded');
           }
           closeMenu();

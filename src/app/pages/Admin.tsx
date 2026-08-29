@@ -154,7 +154,7 @@ export default function Admin() {
   };
 
   const handleExport = () => {
-    downloadCsv('bchp-bookings.csv', [
+    downloadCsv('bitstay-bookings.csv', [
       ['Booking ID', 'Guest', 'Email', 'Unit', 'Check-in', 'Check-out', 'Status', 'Amount'],
       ...filteredBookings.map(b => [b.id, b.guest.name, b.guest.email, `${b.unit} (${b.floor})`, b.checkIn, b.checkOut, b.status, b.amount]),
     ]);

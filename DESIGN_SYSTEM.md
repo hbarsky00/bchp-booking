@@ -1,4 +1,4 @@
-# BCHP Design System
+# BitStay Design System
 
 The authoritative reference for this app's visual language. **Read this before changing
 any UI.** If a change conflicts with this document, either the change is wrong or this
@@ -29,6 +29,19 @@ Two files enforce everything here:
    outage where two pages stayed mounted at once.
 
 ---
+
+## Brand
+
+**BitStay.** The mark is a roofline over two uprights — shelter, and the two stems of ₿.
+It lives in `src/app/components/BitStayMark.tsx` as inline SVG; use that, never a raster
+copy, so it stays crisp and can invert on dark surfaces.
+
+Generated assets in `public/` (regenerate with the Pillow script in the commit history
+if the mark ever changes): `favicon.ico` (16–256), `apple-touch-icon.png`, `icon-192`,
+`icon-512`, `og-image.png` (1200×630), `site.webmanifest`.
+
+The wordmark is Figtree 800 at `-0.035em` tracking. Never letterspace it loosely and
+never render "Bitstay" or "BITSTAY" — the internal capital S is part of the name.
 
 ## Colour
 
