@@ -110,6 +110,27 @@ silently corrupts the heading outline. `theme.ts` remaps them to `<p>`. Conseque
 
 ---
 
+## Navigation and structure
+
+Primary nav is **places you browse**: Stays, Commercial, Shop, Trips. Account-level
+destinations (Help centre, Contact support, Admin) live in the avatar menu — they are
+not peers of Stays, and putting them in the bar pushed the mobile bottom nav to six
+cramped items.
+
+Every page ships a skip link, a `<main id="main">` landmark and `<nav>` regions. Without
+them a keyboard user tabs the whole header on every route (WCAG 2.4.1).
+
+## Accessibility floor
+
+Non-negotiable, all verified per route in the browser:
+
+- **Every icon-only control has an `aria-label`**, and it names its object: `Remove
+  Bottled Water from cart`, not `Remove`.
+- **Every input has an accessible name.** A `<Typography>` sitting above a field is not
+  a label, and neither is a placeholder — it disappears on input and is announced
+  inconsistently. Use MUI's `label` prop or `inputProps={{ 'aria-label': … }}`.
+- One `<h1>` per page; section titles are `h2`.
+
 ## Spacing and layout
 
 8px base (`spacing: 8`). Page gutters `py: {xs: 3, md: 5}`; mobile adds `pb: 12` to clear
