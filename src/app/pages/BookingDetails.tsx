@@ -1,5 +1,13 @@
+import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import { downloadText, downloadIcs, shareOrCopy } from '../lib/actions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -106,6 +114,59 @@ export default function BookingDetails() {
     { name: 'Checked In', label: 'Pending', status: 'pending' },
     { name: 'Checked Out', label: 'Pending', status: 'pending' },
   ];
+
+  const [toast, setToast] = useState('');
+  const [arrivalConfirmed, setArrivalConfirmed] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+
+  // ISO dates for the calendar file; the display strings above are not machine-readable.
+  const ISO = { start: '2026-03-15', end: '2026-03-20' };
+
+  const receiptText = () => [
+    'BCHP BOOKING CONFIRMATION',
+    '=========================',
+    `Booking ID:  ${bookingData.id}`,
+    `Status:      ${bookingData.status}`,
+    '',
+    `Unit:        ${bookingData.unit.name} (${bookingData.unit.floor})`,
+    `Check-in:    ${bookingData.checkIn.date} at ${bookingData.checkIn.time}`,
+    `Check-out:   ${bookingData.checkOut.date} at ${bookingData.checkOut.time}`,
+    `Nights:      ${bookingData.nights}`,
+    `Guests:      ${bookingData.adults}`,
+    '',
+    'Settled on-chain. Keep this file as your receipt.',
+  ].join('\n');
+
+  const handleDownloadConfirmation = () => {
+    downloadText(`${bookingData.id}-confirmation.txt`, receiptText());
+    setToast('Confirmation downloaded');
+  };
+
+  const handleDownloadReceipt = () => {
+    downloadText(`${bookingData.id}-receipt.txt`, receiptText());
+    setToast('Receipt downloaded');
+  };
+
+  const handleAddToCalendar = () => {
+    downloadIcs({
+      filename: `${bookingData.id}.ics`,
+      title: `Stay at ${bookingData.unit.name}`,
+      start: ISO.start,
+      end: ISO.end,
+      location: '123 Main Street, Downtown District',
+      description: `BCHP booking ${bookingData.id}`,
+    });
+    setToast('Calendar file downloaded');
+  };
+
+  const handleShare = async () => {
+    const result = await shareOrCopy({
+      title: `BCHP booking ${bookingData.id}`,
+      text: `${bookingData.unit.name}, ${bookingData.checkIn.date} to ${bookingData.checkOut.date}`,
+    });
+    setToast(result === 'copied' ? 'Link copied to clipboard'
+      : result === 'failed' ? 'Could not share on this device' : '');
+  };
 
   return (
     <Layout>
@@ -220,7 +281,7 @@ export default function BookingDetails() {
                 <Typography variant="body2" color="text.secondary">
                   Need to make changes?
                 </Typography>
-                <Button color="error" startIcon={<CancelIcon />}>
+                <Button color="error" startIcon={<CancelIcon />} onClick={() => setCancelOpen(true)}>
                   Cancel booking
                 </Button>
               </CardContent>
@@ -554,19 +615,19 @@ export default function BookingDetails() {
                 </Typography>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Button variant="outlined" fullWidth startIcon={<PhoneIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="outlined" fullWidth startIcon={<PhoneIcon />} component="a" href="tel:+19876544321" sx={{ justifyContent: 'flex-start' }}>
                     Call Property
                     <Typography variant="caption" sx={{ ml: 'auto', color: 'text.secondary' }}>
                       +1 987-654-4321
                     </Typography>
                   </Button>
-                  <Button variant="outlined" fullWidth startIcon={<ChatIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="outlined" fullWidth startIcon={<ChatIcon />} onClick={() => navigate('/contact-support')} sx={{ justifyContent: 'flex-start' }}>
                     Live Chat
                     <Typography variant="caption" sx={{ ml: 'auto', color: 'text.secondary' }}>
                       Available 24/7
                     </Typography>
                   </Button>
-                  <Button variant="outlined" fullWidth startIcon={<EmailIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="outlined" fullWidth startIcon={<EmailIcon />} onClick={() => navigate('/contact-support')} sx={{ justifyContent: 'flex-start' }}>
                     Email Support
                     <Typography variant="caption" sx={{ ml: 'auto', color: 'text.secondary' }}>
                       Response in 2-4h
@@ -583,16 +644,16 @@ export default function BookingDetails() {
                   Quick Actions
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Button variant="text" fullWidth startIcon={<DownloadIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="text" fullWidth startIcon={<DownloadIcon />} onClick={handleDownloadConfirmation} sx={{ justifyContent: 'flex-start' }}>
                     Download confirmation
                   </Button>
-                  <Button variant="text" fullWidth startIcon={<ShareIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="text" fullWidth startIcon={<ShareIcon />} onClick={handleShare} sx={{ justifyContent: 'flex-start' }}>
                     Share booking
                   </Button>
-                  <Button variant="text" fullWidth startIcon={<EventIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="text" fullWidth startIcon={<EventIcon />} onClick={handleAddToCalendar} sx={{ justifyContent: 'flex-start' }}>
                     Add to calendar
                   </Button>
-                  <Button variant="text" fullWidth startIcon={<ReceiptIcon />} sx={{ justifyContent: 'flex-start' }}>
+                  <Button variant="text" fullWidth startIcon={<ReceiptIcon />} onClick={handleDownloadReceipt} sx={{ justifyContent: 'flex-start' }}>
                     View receipt
                   </Button>
                 </Box>
@@ -601,6 +662,33 @@ export default function BookingDetails() {
           </Grid>
         </Grid>
       </Box>
+      <Dialog open={cancelOpen} onClose={() => setCancelOpen(false)} aria-labelledby="cancel-booking-title">
+        <DialogTitle id="cancel-booking-title">Cancel this booking?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Booking {bookingData.id} for {bookingData.unit.name} will be released and the
+            on-chain reservation voided. Refunds follow the cancellation policy.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCancelOpen(false)}>Keep booking</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => { setCancelOpen(false); setToast('Cancellation requested'); }}
+          >
+            Cancel booking
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={Boolean(toast)}
+        autoHideDuration={3000}
+        onClose={() => setToast('')}
+        message={toast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Layout>
   );
 }

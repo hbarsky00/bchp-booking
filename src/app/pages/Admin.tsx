@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Snackbar from '@mui/material/Snackbar';
+import { downloadCsv } from '../lib/actions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -124,6 +126,41 @@ export default function Admin() {
   const [selectedDates, setSelectedDates] = useState<number[]>([5]);
   const [bookedDates, setBookedDates] = useState<number[]>([11, 12]);
   const [blockedDates, setBlockedDates] = useState<number[]>([]);
+  const [approvals, setApprovals] = useState(pendingApprovals);
+  const [monthOffset, setMonthOffset] = useState(0);
+  const [toast, setToast] = useState('');
+
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthLabel = `${MONTHS[(((0 + monthOffset) % 12) + 12) % 12]} ${2024 + Math.floor(monthOffset / 12)}`;
+
+  // Selected days move into the blocked set; blocking clears any booking on that day.
+  const handleBlockDates = () => {
+    if (!selectedDates.length) { setToast('Select one or more dates first'); return; }
+    setBlockedDates(prev => [...new Set([...prev, ...selectedDates])]);
+    setBookedDates(prev => prev.filter(d => !selectedDates.includes(d)));
+    setToast(`${selectedDates.length} date${selectedDates.length > 1 ? 's' : ''} blocked`);
+  };
+
+  const handleOpenDates = () => {
+    if (!selectedDates.length) { setToast('Select one or more dates first'); return; }
+    setBlockedDates(prev => prev.filter(d => !selectedDates.includes(d)));
+    setToast(`${selectedDates.length} date${selectedDates.length > 1 ? 's' : ''} opened`);
+  };
+
+  const handleApproval = (id: number, name: string, approved: boolean) => {
+    setApprovals(prev => prev.filter(a => a.id !== id));
+    setToast(`${name}'s request ${approved ? 'approved' : 'rejected'}`);
+  };
+
+  const handleExport = () => {
+    downloadCsv('bchp-bookings.csv', [
+      ['Booking ID', 'Guest', 'Email', 'Unit', 'Check-in', 'Check-out', 'Status', 'Amount'],
+      ...filteredBookings.map(b => [b.id, b.guest.name, b.guest.email, `${b.unit} (${b.floor})`, b.checkIn, b.checkOut, b.status, b.amount]),
+    ]);
+    setToast(`Exported ${filteredBookings.length} bookings`);
+  };
+
 
   // Filter bookings based on filters
   const filteredBookings = currentBookings.filter((booking) => {
@@ -459,13 +496,13 @@ export default function Admin() {
 
                     {/* Month Navigation */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                      <IconButton size="small">
+                      <IconButton size="small" aria-label="Previous month" onClick={() => setMonthOffset(m => m - 1)}>
                         <ChevronLeftIcon />
                       </IconButton>
                       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        January 2024
+                        {monthLabel}
                       </Typography>
-                      <IconButton size="small">
+                      <IconButton size="small" aria-label="Next month" onClick={() => setMonthOffset(m => m + 1)}>
                         <ChevronRightIcon />
                       </IconButton>
                     </Box>
@@ -536,6 +573,7 @@ export default function Admin() {
                           variant="contained"
                           fullWidth
                           startIcon={<BlockIcon />}
+                          onClick={handleBlockDates}
                           sx={{
                             bgcolor: c.red300,
                             color: c.red900,
@@ -553,6 +591,7 @@ export default function Admin() {
                           variant="contained"
                           fullWidth
                           startIcon={<EventAvailableIcon />}
+                          onClick={handleOpenDates}
                           sx={{
                             bgcolor: c.green300,
                             color: c.green900,
@@ -593,7 +632,7 @@ export default function Admin() {
                     </Box>
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      {pendingApprovals.map((approval) => (
+                      {approvals.map((approval) => (
                         <Card key={approval.id} elevation={0} sx={{ bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider' }}>
                           <CardContent sx={{ p: 2 }}>
                             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
@@ -630,6 +669,7 @@ export default function Admin() {
                                   fullWidth
                                   size="small"
                                   startIcon={<CheckCircleIcon />}
+                                  onClick={() => handleApproval(approval.id, approval.name, true)}
                                   sx={{
                                     bgcolor: c.green700,
                                     textTransform: 'none',
@@ -647,6 +687,7 @@ export default function Admin() {
                                   fullWidth
                                   size="small"
                                   startIcon={<CloseIcon />}
+                                  onClick={() => handleApproval(approval.id, approval.name, false)}
                                   sx={{
                                     bgcolor: c.red600,
                                     textTransform: 'none',
@@ -684,6 +725,7 @@ export default function Admin() {
                 variant="contained"
                 size="small"
                 startIcon={<FileDownloadIcon />}
+                onClick={handleExport}
                 sx={{ textTransform: 'none' }}
               >
                 Export
@@ -759,6 +801,7 @@ export default function Admin() {
                         <Button
                           size="small"
                           startIcon={<VisibilityIcon />}
+                          onClick={() => navigate(`/booking-details/${booking.id}`)}
                           sx={{ textTransform: 'none', color: 'primary.main' }}
                         >
                           View
@@ -772,6 +815,13 @@ export default function Admin() {
           </CardContent>
         </Card>
       </Box>
+      <Snackbar
+        open={Boolean(toast)}
+        autoHideDuration={3000}
+        onClose={() => setToast('')}
+        message={toast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Layout>
   );
 }

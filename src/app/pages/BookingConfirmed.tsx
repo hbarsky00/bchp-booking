@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import { downloadText } from '../lib/actions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -31,6 +32,17 @@ import { c } from '../tokens';
 
 export default function BookingConfirmed() {
   const navigate = useNavigate();
+
+  const handleDownloadReceipt = () => {
+    downloadText('bchp-receipt.txt', [
+      'BCHP BOOKING RECEIPT',
+      '====================',
+      'Confirmation: BCHP-2026-00847',
+      'Check-in:     March 19, 2026',
+      'Check-out:    March 20, 2026',
+      'Status:       Paid, settled on-chain',
+    ].join('\n'));
+  };
   const [selectedDate, setSelectedDate] = useState(14);
 
   const bookingData = {
@@ -507,6 +519,7 @@ export default function BookingConfirmed() {
                     variant="contained"
                     fullWidth
                     startIcon={<InfoIcon />}
+                    onClick={() => navigate('/my-bookings')}
                     sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
                   >
                     View booking
@@ -515,6 +528,7 @@ export default function BookingConfirmed() {
                     variant="outlined"
                     fullWidth
                     startIcon={<DownloadIcon />}
+                    onClick={handleDownloadReceipt}
                     sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
                   >
                     Download receipt
@@ -551,6 +565,7 @@ export default function BookingConfirmed() {
                     size="small"
                     startIcon={<ChatIcon />}
                     endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate('/contact-support')}
                     sx={{ justifyContent: 'space-between', textTransform: 'none' }}
                   >
                     Live Chat
@@ -561,6 +576,7 @@ export default function BookingConfirmed() {
                     size="small"
                     startIcon={<EmailIcon />}
                     endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate('/contact-support')}
                     sx={{ justifyContent: 'space-between', textTransform: 'none' }}
                   >
                     Email Support

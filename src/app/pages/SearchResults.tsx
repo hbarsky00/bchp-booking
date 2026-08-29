@@ -286,6 +286,12 @@ export default function SearchResults() {
                     variant="contained"
                     fullWidth
                     sx={{ textTransform: 'none' }}
+                    onClick={() =>
+                      navigate('/search-results', {
+                        replace: true,
+                        state: { searchParams: { checkIn, checkOut, guests } },
+                      })
+                    }
                   >
                     Update Search
                   </Button>

@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
@@ -125,9 +124,13 @@ export default function Layout({ children }: LayoutProps) {
               ))}
             </Box>
 
-            <Tooltip title="Notifications">
-              <IconButton aria-label="Notifications" sx={{ color: c.stone600 }}>
-                <Badge color="primary" variant="dot"><NotificationsIcon /></Badge>
+            <Tooltip title="Your trips">
+              <IconButton
+                aria-label="Your trips"
+                onClick={() => navigate('/my-bookings')}
+                sx={{ color: c.stone600 }}
+              >
+                <NotificationsIcon />
               </IconButton>
             </Tooltip>
             <Avatar sx={{ width: 34, height: 34, bgcolor: c.stone900, fontSize: 14, fontWeight: 700 }}>G</Avatar>

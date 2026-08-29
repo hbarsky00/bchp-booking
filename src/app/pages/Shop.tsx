@@ -348,6 +348,7 @@ export default function Shop() {
                         <Button
                           variant="contained"
                           fullWidth
+                          onClick={() => navigate('/shopping-cart')}
                           sx={{ fontWeight: 600 }}
                         >
                           {quantity} in Cart

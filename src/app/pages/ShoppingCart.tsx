@@ -403,6 +403,7 @@ export default function ShoppingCart() {
                   fullWidth
                   size="large"
                   disabled={cartItems.length === 0}
+                  onClick={() => navigate('/payment-method')}
                   startIcon={<LockIcon />}
                   sx={{
                     mb: 1.5,

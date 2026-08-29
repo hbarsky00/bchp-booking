@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Snackbar from '@mui/material/Snackbar';
+import { downloadText } from '../lib/actions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -99,6 +103,9 @@ const tokens = [
 
 export default function MyBookings() {
   const navigate = useNavigate();
+  const [menu, setMenu] = useState<{ anchor: HTMLElement; id: number; ref: string } | null>(null);
+  const [toast, setToast] = useState('');
+  const closeMenu = () => setMenu(null);
   const [currentTab, setCurrentTab] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -170,7 +177,11 @@ export default function MyBookings() {
                                 </Typography>
                               </Box>
                             </Box>
-                            <IconButton size="small">
+                            <IconButton
+                              size="small"
+                              aria-label={`Actions for ${booking.bookingId}`}
+                              onClick={(e) => setMenu({ anchor: e.currentTarget, id: booking.id, ref: booking.bookingId })}
+                            >
                               <MoreVertIcon fontSize="small" />
                             </IconButton>
                           </Box>
@@ -307,9 +318,6 @@ export default function MyBookings() {
                   </Card>
                 ))}
 
-                <Button variant="outlined" fullWidth sx={{ mt: 2 }} startIcon={<TokenIcon />}>
-                  View all tokens
-                </Button>
               </CardContent>
             </Card>
 
@@ -378,6 +386,7 @@ export default function MyBookings() {
                     variant="outlined"
                     size="small"
                     startIcon={<ChatIcon />}
+                    onClick={() => navigate('/contact-support')}
                     sx={{ justifyContent: 'flex-start' }}
                   >
                     Live Chat
@@ -389,6 +398,7 @@ export default function MyBookings() {
                     variant="outlined"
                     size="small"
                     startIcon={<EmailIcon />}
+                    onClick={() => navigate('/contact-support')}
                     sx={{ justifyContent: 'flex-start' }}
                   >
                     Email Support
@@ -402,6 +412,32 @@ export default function MyBookings() {
           </Grid>
         </Grid>
       </Box>
+      <Menu anchorEl={menu?.anchor ?? null} open={Boolean(menu)} onClose={closeMenu}>
+        <MenuItem onClick={() => { if (menu) navigate(`/booking-details/${menu.id}`); closeMenu(); }}>
+          View details
+        </MenuItem>
+        <MenuItem onClick={() => {
+          if (menu) {
+            downloadText(`${menu.ref}-confirmation.txt`,
+              `BCHP BOOKING\n============\nReference: ${menu.ref}\n`);
+            setToast('Confirmation downloaded');
+          }
+          closeMenu();
+        }}>
+          Download confirmation
+        </MenuItem>
+        <MenuItem onClick={() => { navigate('/contact-support'); closeMenu(); }}>
+          Contact support
+        </MenuItem>
+      </Menu>
+
+      <Snackbar
+        open={Boolean(toast)}
+        autoHideDuration={3000}
+        onClose={() => setToast('')}
+        message={toast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Layout>
   );
 }
