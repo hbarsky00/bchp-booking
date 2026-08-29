@@ -81,7 +81,8 @@ export default function BookStay() {
           <Box sx={{ position: 'relative', maxWidth: 660 }}>
             <Box sx={{
               display: 'inline-flex', alignItems: 'center', gap: 0.75, mb: 2,
-              bgcolor: 'rgba(255,255,255,.16)', border: '1px solid rgba(255,255,255,.28)',
+              bgcolor: 'rgba(28,25,23,.62)', border: '1px solid rgba(255,255,255,.22)',
+              backdropFilter: 'blur(2px)',
               borderRadius: 999, px: 1.5, py: 0.5,
             }}>
               <VerifiedIcon sx={{ fontSize: 15, color: '#fff' }} />
@@ -105,7 +106,7 @@ export default function BookStay() {
           sx={{
             mt: { xs: -9, md: -12 }, mx: { xs: 0, md: 2 }, mb: { xs: 5, md: 8 },
             position: 'relative', bgcolor: '#fff', borderRadius: { xs: 4, md: 999 },
-            border: `1px solid ${c.stone200}`, boxShadow: '0 8px 34px rgba(28,25,23,.14)',
+            boxShadow: '0 6px 16px rgba(28,25,23,.10), 0 1px 3px rgba(28,25,23,.08)',
             p: { xs: 2.5, md: 1.25 },
             display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' },
           }}

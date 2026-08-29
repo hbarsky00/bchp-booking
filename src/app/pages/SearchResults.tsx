@@ -296,12 +296,12 @@ export default function SearchResults() {
         </Box>
 
         {/* Sort Bar */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="body2" color="text.secondary">
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
             {availableUnits.filter(u => u.available).length} properties available
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
               Sort by:
             </Typography>
             <FormControl size="small" sx={{ minWidth: 150 }}>

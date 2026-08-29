@@ -244,7 +244,7 @@ export default function FAQs() {
                         </Typography>
                       </AccordionSummary>
                       <AccordionDetails>
-                        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '68ch' }}>
+                        <Typography variant="body2" color="text.secondary" >
                           {faq.answer}
                         </Typography>
                       </AccordionDetails>

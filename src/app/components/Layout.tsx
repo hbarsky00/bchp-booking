@@ -73,6 +73,7 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               <Box sx={{ width: 30, height: 30, borderRadius: '50%', display: 'grid', placeItems: 'center',
+                bgcolor: c.coral600,
                 backgroundImage: `linear-gradient(145deg, ${c.coral500}, ${c.coral700})` }}>
                 <Typography component="span" sx={{ color: '#fff', fontWeight: 800, fontSize: 15, lineHeight: 1 }}>B</Typography>
               </Box>
@@ -174,7 +175,7 @@ export default function Layout({ children }: LayoutProps) {
           }}
         >
           {sections.map(s => (
-            <BottomNavigationAction key={s.value} label={s.label} value={s.value} icon={s.icon} sx={{ minWidth: 0, color: c.stone500 }} />
+            <BottomNavigationAction key={s.value} label={s.label} value={s.value} icon={s.icon} sx={{ minWidth: 0, color: c.stone600 }} />
           ))}
         </BottomNavigation>
       </Paper>

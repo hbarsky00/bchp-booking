@@ -26,7 +26,7 @@ export const theme = createTheme({
       contrastText: '#ffffff',
     },
     error: { main: c.red600, light: c.red400, dark: c.red800, contrastText: '#ffffff' },
-    warning: { main: c.amber500, light: c.amber200, dark: c.amber800, contrastText: '#ffffff' },
+    warning: { main: c.amber500, light: c.amber200, dark: c.amber800, contrastText: c.stone900 },
     info: { main: c.blue500, light: c.blue200, dark: c.blue800, contrastText: '#ffffff' },
     success: { main: c.green700, light: c.green400, dark: c.green900, contrastText: '#ffffff' },
     background: { default: '#FFFFFF', paper: '#FFFFFF' },
@@ -62,8 +62,8 @@ export const theme = createTheme({
         variantMapping: { subtitle1: 'p', subtitle2: 'p', body1: 'p', body2: 'p' },
       },
       styleOverrides: {
-        body1: { maxWidth: '64ch' },
-        body2: { maxWidth: '64ch' },
+        body1: { maxWidth: '56ch' },
+        body2: { maxWidth: '56ch' },
       },
     },
     MuiButton: {
@@ -80,9 +80,9 @@ export const theme = createTheme({
           minHeight: 44, // thumb-sized
         },
         containedPrimary: {
-          // A warm two-stop wash reads richer than flat fill at this size.
-          backgroundImage: `linear-gradient(180deg, ${c.coral500} 0%, ${c.coral600} 100%)`,
-          '&:hover': { backgroundImage: `linear-gradient(180deg, ${c.coral600} 0%, ${c.coral700} 100%)` },
+          color: '#ffffff',
+          backgroundColor: c.coral600,
+          '&:hover': { backgroundColor: c.coral700 },
         },
         outlined: { borderColor: c.stone300, color: c.stone900, '&:hover': { borderColor: c.stone900, backgroundColor: c.stone50 } },
       },
@@ -126,6 +126,7 @@ export const theme = createTheme({
       styleOverrides: {
         // Prices and dates should line up in columns.
         '.tnum': { fontVariantNumeric: 'tabular-nums' },
+        'p, h1, h2, h3, h4, h5, h6, span': { overflowWrap: 'anywhere' },
         ':focus-visible': { outline: `2px solid ${c.coral600}`, outlineOffset: 2 },
       },
     },
