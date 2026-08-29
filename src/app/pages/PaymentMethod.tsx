@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import { clearDraft, createBooking, loadDraft } from '../lib/bookings';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -30,8 +33,40 @@ export default function PaymentMethod() {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState('bsv');
 
-  const handleContinue = () => {
-    navigate('/booking-confirmed');
+  const draft = loadDraft();
+  const [submitting, setSubmitting] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+
+  // Nothing to pay for without a draft — that means the flow was entered sideways.
+  useEffect(() => {
+    if (!draft) navigate('/book-stay', { replace: true });
+  }, [draft, navigate]);
+
+  const handleContinue = async () => {
+    if (!draft || submitting) return;
+    setSubmitting(true);
+    setPayError(null);
+    try {
+      // The booking is written here, inside a transaction that re-checks availability.
+      // Someone else may have taken these dates while this guest was in the Shop.
+      const booking = await createBooking({
+        unitId: draft.unitId,
+        checkIn: draft.checkIn,
+        checkOut: draft.checkOut,
+        guests: draft.guests,
+        guestName: draft.guestName,
+        guestEmail: draft.guestEmail,
+        guestPhone: draft.guestPhone,
+        notes: draft.notes,
+        paymentMethod,
+        status: 'paid',
+      });
+      clearDraft();
+      navigate('/processing-payment', { state: { reference: booking.reference } });
+    } catch (e) {
+      setPayError((e as Error).message);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -225,6 +260,12 @@ export default function PaymentMethod() {
                   </Card>
                 </RadioGroup>
 
+                {payError && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {payError}
+                  </Alert>
+                )}
+
                 <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
                   <Button
                     variant="outlined"
@@ -238,6 +279,8 @@ export default function PaymentMethod() {
                     endIcon={<ArrowForwardIcon />}
                     fullWidth
                     onClick={handleContinue}
+                  disabled={submitting}
+                  startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : undefined}
                   >
                     Continue
                   </Button>

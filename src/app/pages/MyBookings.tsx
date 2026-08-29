@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import Skeleton from '@mui/material/Skeleton';
+import Alert from '@mui/material/Alert';
+import { formatDate, useMyBookings } from '../lib/bookings';
 import { c } from '../tokens';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Menu from '@mui/material/Menu';
@@ -29,44 +32,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import ChatIcon from '@mui/icons-material/Chat';
 import EmailIcon from '@mui/icons-material/Email';
 
-const bookings = [
-  {
-    id: 1,
-    bookingId: 'BST-2026-00847',
-    unitName: '2nd Floor Unit',
-    dates: 'Mar 15 - Mar 20, 2026',
-    checkIn: 'Mar 15, 2026 3:00 PM',
-    checkOut: 'Mar 20, 2026 11:00 AM',
-    nights: 5,
-    refund: '$850.00 Deposit',
-    status: 'Paid',
-    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-  },
-  {
-    id: 2,
-    bookingId: 'BST-2026-00762',
-    unitName: '3rd Floor Unit',
-    dates: 'Feb 10 - Feb 14, 2026',
-    checkIn: 'Feb 10, 2026 2:00 PM',
-    checkOut: 'Feb 14, 2026 10:00 AM',
-    nights: 4,
-    refund: '$720.00 Refunded',
-    status: 'Cancelled',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
-  },
-  {
-    id: 3,
-    bookingId: 'BST-2026-00601',
-    unitName: 'Commercial Space',
-    dates: 'Jan 22 - Jan 24, 2026',
-    checkIn: 'Jan 22, 2026 9:00 AM',
-    checkOut: 'Jan 24, 2026 6:00 PM',
-    nights: 2,
-    refund: '$450.00 Processed',
-    status: 'Checked Out',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400',
-  },
-];
+
 
 const tokens = [
   {
@@ -109,6 +75,25 @@ export default function MyBookings() {
   const [toast, setToast] = useState('');
   const closeMenu = () => setMenu(null);
   const [currentTab, setCurrentTab] = useState(0);
+  const { bookings: raw, loading: bookingsLoading, error: bookingsError, cancel } = useMyBookings();
+
+  // Shape the API rows into what this page renders.
+  const bookings = raw.map(b => ({
+    id: b.id,
+    reference: b.reference,
+    bookingId: b.reference,
+    unitName: b.unitName,
+    dates: `${formatDate(b.checkIn, { year: undefined })} – ${formatDate(b.checkOut)}`,
+    checkInDate: formatDate(b.checkIn),
+    checkInTime: '3:00 PM',
+    checkOutDate: formatDate(b.checkOut),
+    checkOutTime: '11:00 AM',
+    nights: b.nights,
+    amount: `$${b.total.toFixed(2)}`,
+    amountLabel: b.status === 'cancelled' ? 'Refunded' : 'Total paid',
+    status: ({ paid: 'Paid', reserved: 'Reserved', cancelled: 'Cancelled', checked_out: 'Checked Out' } as const)[b.status] ?? b.status,
+    image: b.unitImage,
+  }));
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
@@ -116,7 +101,7 @@ export default function MyBookings() {
 
   const TAB_FILTERS: ((s: string) => boolean)[] = [
     () => true,                                   // All bookings
-    (st) => st === 'Paid',                        // Active
+    (st) => st === 'Paid' || st === 'Reserved',   // Active
     (st) => st === 'Checked Out',                 // Past
     (st) => st === 'Cancelled',                   // Cancelled
   ];
@@ -156,7 +141,21 @@ export default function MyBookings() {
               <Divider />
 
               <Box sx={{ p: 3 }}>
-                {visibleBookings.length === 0 && (
+                {bookingsError && (
+                  <Alert severity="error" sx={{ mb: 2 }}>{bookingsError} — could not load your trips.</Alert>
+                )}
+
+                {bookingsLoading && (
+                  <Grid container spacing={2}>
+                    {[0, 1].map(i => (
+                      <Grid key={i} size={{ xs: 12, sm: 6 }}>
+                        <Skeleton variant="rounded" height={190} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+
+                {!bookingsLoading && visibleBookings.length === 0 && (
                   <Box sx={{ textAlign: 'center', py: 6, px: 2 }}>
                     <BookmarkIcon sx={{ fontSize: 40, color: c.stone300, mb: 1.5 }} />
                     <Typography variant="h5" component="h2" gutterBottom>
@@ -217,7 +216,7 @@ export default function MyBookings() {
                             color={
                               booking.status === 'Paid'
                                 ? 'success'
-                                : booking.status === 'Checked out'
+                                : booking.status === 'Checked Out'
                                 ? 'info'
                                 : 'error'
                             }
@@ -245,10 +244,10 @@ export default function MyBookings() {
                                 Check-in
                               </Typography>
                               <Typography variant="body2" fontWeight={500}>
-                                {booking.checkIn.split(' ')[0]}
+                                {booking.checkInDate}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                {booking.checkIn.split(' ').slice(2).join(' ')}
+                                {booking.checkInTime}
                               </Typography>
                             </Grid>
 
@@ -257,22 +256,22 @@ export default function MyBookings() {
                                 Check-out
                               </Typography>
                               <Typography variant="body2" fontWeight={500}>
-                                {booking.checkOut.split(' ')[0]}
+                                {booking.checkOutDate}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                {booking.checkOut.split(' ').slice(2).join(' ')}
+                                {booking.checkOutTime}
                               </Typography>
                             </Grid>
 
                             <Grid size={{ xs: 12 }}>
                               <Typography variant="caption" color="text.secondary" display="block">
-                                Refund
+                                {booking.amountLabel}
                               </Typography>
                               <Typography variant="body2" fontWeight={500}>
-                                {booking.refund.split(' ')[0]}
+                                {booking.amount}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                {booking.refund.split(' ')[1]}
+                                {''}
                               </Typography>
                             </Grid>
                           </Grid>
@@ -282,7 +281,7 @@ export default function MyBookings() {
                             fullWidth
                             size="small"
                             startIcon={<DownloadIcon />}
-                            onClick={() => navigate(`/booking-details/${booking.id}`)}
+                            onClick={() => navigate(`/booking-details/${booking.reference}`)}
                             sx={{ mt: 'auto' }}
                           >
                             View details
@@ -438,7 +437,7 @@ export default function MyBookings() {
         </Grid>
       </Box>
       <Menu anchorEl={menu?.anchor ?? null} open={Boolean(menu)} onClose={closeMenu}>
-        <MenuItem onClick={() => { if (menu) navigate(`/booking-details/${menu.id}`); closeMenu(); }}>
+        <MenuItem onClick={() => { if (menu) navigate(`/booking-details/${menu.ref}`); closeMenu(); }}>
           View details
         </MenuItem>
         <MenuItem onClick={() => {
@@ -453,6 +452,18 @@ export default function MyBookings() {
         </MenuItem>
         <MenuItem onClick={() => { navigate('/contact-support'); closeMenu(); }}>
           Contact support
+        </MenuItem>
+        <MenuItem
+          onClick={async () => {
+            if (menu) {
+              try { await cancel(menu.ref); setToast('Booking cancelled'); }
+              catch (e) { setToast((e as Error).message); }
+            }
+            closeMenu();
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          Cancel booking
         </MenuItem>
       </Menu>
 

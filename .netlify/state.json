@@ -17,5 +17,6 @@
 			"postalCode": "07503"
 		},
 		"timestamp": 1788034601462
-	}
+	},
+	"dbConnectionString": "postgres://localhost:63372/postgres"
 }

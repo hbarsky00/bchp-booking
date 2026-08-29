@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router';
 import Layout from '../components/Layout';
 import Snackbar from '@mui/material/Snackbar';
+import { formatDate, guestKey, useBooking } from '../lib/bookings';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -43,68 +44,60 @@ export default function BookingDetails() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // :id in the route is the human reference (BST-YYYY-XXXXX), which is what guests see.
+  const { id: reference } = useParams();
+  const { booking, loading: bookingLoading, error: bookingError, refresh } = useBooking(reference);
+
   const bookingData = {
-    id: 'BST-2026-00847',
-    status: 'Paid',
-    currentStage: 'Paid',
+    id: booking?.reference ?? reference ?? '—',
+    status: booking ? ({ paid: 'Paid', reserved: 'Reserved', cancelled: 'Cancelled', checked_out: 'Checked Out' } as any)[booking.status] : '—',
+    currentStage: booking?.status === 'cancelled' ? 'Cancelled' : 'Paid',
     unit: {
-      name: '2nd Floor Unit',
-      description: 'Spacious residential unit with modern amenities, full kitchen, and comfortable living space perfect for extended stays.',
-      bedrooms: 2,
+      name: booking?.unitName ?? '—',
+      description: booking?.notes || 'Comfortable stay with the amenities listed below.',
+      bedrooms: 1,
       bathrooms: 1,
-      features: ['WiFi', 'Kitchen'],
-      floor: '2nd Floor',
+      features: booking?.amenities ?? [],
+      floor: booking?.unitFloor ?? '',
     },
-    checkIn: {
-      date: 'March 15, 2026',
-      time: '3:00 PM',
-    },
-    checkOut: {
-      date: 'March 20, 2026',
-      time: '11:00 AM',
-    },
-    nights: 5,
-    adults: 2,
+    checkIn: { date: booking ? formatDate(booking.checkIn) : '—', time: '3:00 PM' },
+    checkOut: { date: booking ? formatDate(booking.checkOut) : '—', time: '11:00 AM' },
+    nights: booking?.nights ?? 0,
+    adults: booking?.guests ?? 0,
     guest: {
-      name: 'Alex Morgan',
-      email: 'alex.morgan@email.com',
-      phone: '+1 (305) 123-3457',
-      country: 'United States',
+      name: booking?.guestName ?? '—',
+      email: booking?.guestEmail ?? '—',
+      phone: booking?.guestPhone ?? '—',
+      country: '—',
     },
-    payment: {
-      method: 'BSV Payment',
-      status: 'Verified',
-      transactionId: '0x7fd5cc2b...ed8e8a487a5cf1e4...ba86c6...BefEab0fba',
-      date: 'March 10, 2026',
-      time: '2:34 PM UTC',
-      amount: '$850.00',
-      breakdown: {
-        nights: '$695.00',
-        serviceFee: '$2.80',
-        taxes: '$152.20',
-      },
-    },
+    tokens: booking?.status === 'checked_out'
+      ? [{ name: 'Proof of Stay', status: 'verified', id: booking.reference,
+           description: 'Minted when your stay completed.' }]
+      : [],
     property: {
       name: '123 Main Street',
-      address: 'Downtown District, City 12345',
+      address: 'Downtown District, Yogyakarta',
     },
-    tokens: [
-      {
-        name: 'Tokens',
-        description: 'Blockchain verified',
-        status: 'verified',
+    payment: {
+      method: (booking?.paymentMethod ?? 'bsv').toUpperCase(),
+      status: booking?.status === 'paid' ? 'Paid' : booking?.status ?? '—',
+      nightlyRate: booking?.nightlyRate ?? 0,
+      roomTotal: booking?.total ?? 0,
+      serviceFee: 0,
+      taxes: 0,
+      total: booking?.total ?? 0,
+      reference: booking?.reference ?? '—',
+      breakdown: {
+        nights: `$${(booking?.total ?? 0).toFixed(2)}`,
+        serviceFee: '$0.00',
+        taxes: '$0.00',
       },
-      {
-        name: 'Proof of Stay',
-        description: 'Issued after check-in',
-        status: 'pending',
-      },
-      {
-        name: 'Thank You Token',
-        description: 'Pending check-out',
-        status: 'pending',
-      },
-    ],
+      rate: `$${(booking?.nightlyRate ?? 0).toFixed(2)}`,
+      amount: `$${(booking?.total ?? 0).toFixed(2)}`,
+      transactionId: booking?.reference ?? '—',
+      date: booking?.createdAt ? formatDate(booking.createdAt.slice(0, 10)) : '—',
+      time: booking?.createdAt ? new Date(booking.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : '—',
+    },
   };
 
   const stages = [
@@ -476,7 +469,7 @@ export default function BookingDetails() {
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    {bookingData.nights} nights x $139.00
+                    {bookingData.nights} nights × {bookingData.payment.rate}
                   </Typography>
                   <Typography variant="body2">{bookingData.payment.breakdown.nights}</Typography>
                 </Box>
@@ -675,7 +668,20 @@ export default function BookingDetails() {
           <Button
             color="error"
             variant="contained"
-            onClick={() => { setCancelOpen(false); setToast('Cancellation requested'); }}
+            onClick={async () => {
+              setCancelOpen(false);
+              try {
+                await fetch('/api/bookings', {
+                  method: 'PATCH',
+                  headers: { 'content-type': 'application/json' },
+                  body: JSON.stringify({ reference: bookingData.id, guestKey: guestKey(), status: 'cancelled' }),
+                }).then(async r => { if (!r.ok) throw new Error((await r.json()).error ?? 'Could not cancel'); });
+                await refresh();
+                setToast('Booking cancelled — those dates are free again');
+              } catch (e) {
+                setToast((e as Error).message);
+              }
+            }}
           >
             Cancel booking
           </Button>

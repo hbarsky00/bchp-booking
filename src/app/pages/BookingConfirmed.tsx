@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import { formatDate, useBooking } from '../lib/bookings';
 import { downloadText } from '../lib/actions';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -32,56 +33,63 @@ import { c } from '../tokens';
 
 export default function BookingConfirmed() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const reference = (location.state as any)?.reference as string | undefined;
+  const { booking, loading: bookingLoading } = useBooking(reference);
 
   const handleDownloadReceipt = () => {
     downloadText('bitstay-receipt.txt', [
       'BITSTAY BOOKING RECEIPT',
       '====================',
-      'Confirmation: BST-2026-00847',
-      'Check-in:     March 19, 2026',
-      'Check-out:    March 20, 2026',
+      `Confirmation: ${booking?.reference ?? '—'}`,
+      `Unit:         ${booking?.unitName ?? '—'}`,
+      `Check-in:     ${booking ? formatDate(booking.checkIn) : '—'}`,
+      `Check-out:    ${booking ? formatDate(booking.checkOut) : '—'}`,
+      `Guests:       ${booking?.guests ?? '—'}`,
+      `Total:        $${(booking?.total ?? 0).toFixed(2)}`,
       'Status:       Paid, settled on-chain',
     ].join('\n'));
   };
   const [selectedDate, setSelectedDate] = useState(14);
 
+  // Everything below reflects the booking that was actually written, not a sample.
   const bookingData = {
-    confirmationId: 'BST-2026-00847',
-    status: 'Paid',
+    confirmationId: booking?.reference ?? '—',
+    status: booking?.status === 'paid' ? 'Paid' : booking?.status ?? '—',
     checkIn: {
-      date: 'March 19, 2026',
-      day: 'Tuesday',
+      date: booking ? formatDate(booking.checkIn, { weekday: undefined }) : '—',
+      day: booking ? formatDate(booking.checkIn, { weekday: 'long', month: undefined, day: undefined, year: undefined }) : '',
       time: '3:00 PM',
       location: '123 Main Street, Downtown District',
     },
     checkOut: {
-      date: 'March 20, 2026',
-      day: 'Wednesday',
+      date: booking ? formatDate(booking.checkOut) : '—',
+      day: booking ? formatDate(booking.checkOut, { weekday: 'long', month: undefined, day: undefined, year: undefined }) : '',
       time: '11:00 AM',
     },
-    nights: 1,
+    nights: booking?.nights ?? 0,
     accommodation: {
-      name: '2nd Floor Unit',
-      type: 'Full-floor accommodation',
-      guests: 2,
-      bedrooms: 2,
+      name: booking?.unitName ?? '—',
+      type: booking?.unitFloor ?? '',
+      guests: booking?.guests ?? 0,
+      bedrooms: 1,
       bathrooms: 1,
-      price: 150.0,
+      price: booking?.nightlyRate ?? 0,
     },
     guest: {
-      name: 'Alex Morgan',
-      email: 'alex.morgan@email.com',
-      phone: '+1 (555) 123-4567',
-      requests: 'Early check-in if possible. Traveling with family.',
+      name: booking?.guestName ?? '—',
+      email: booking?.guestEmail ?? '—',
+      phone: booking?.guestPhone ?? '—',
+      requests: booking?.notes || 'None',
     },
     payment: {
-      method: 'BSV (Bitcoin SV)',
-      type: 'Blockchain verified payment',
-      accommodation: 150.0,
-      serviceFee: 46.0,
-      taxes: 50.0,
-      total: 850.0,
-      txReference: '0x7fda5cc2b7c4f6d2c5d3e2b6d19fac8d02f0a5cf3...',
+      method: (booking?.paymentMethod ?? 'bsv').toUpperCase(),
+      type: 'Settled on-chain',
+      accommodation: booking?.total ?? 0,
+      serviceFee: 0,
+      taxes: 0,
+      total: booking?.total ?? 0,
+      txReference: booking?.reference ?? '—',
     },
   };
 

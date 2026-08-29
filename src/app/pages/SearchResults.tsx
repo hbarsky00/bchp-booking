@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
 import Photo from '../components/Photo';
 import { c, r } from '../tokens';
+import Skeleton from '@mui/material/Skeleton';
+import Alert from '@mui/material/Alert';
+import { useUnits } from '../lib/bookings';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -35,115 +38,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import DeckIcon from '@mui/icons-material/Deck';
 import HotelIcon from '@mui/icons-material/Hotel';
 
-const availableUnits = [
-  {
-    id: 1,
-    name: 'Satoshi Room',
-    description: 'Named after the Bitcoin creator. Modern room with premium amenities.',
-    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-    floor: '2nd Floor',
-    beds: 2,
-    maxGuests: 4,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'ac', label: 'AC' },
-      { icon: 'kitchen', label: 'Kitchen' },
-    ],
-    rating: 4.9,
-    price: 45,
-    available: true,
-    verified: true,
-  },
-  {
-    id: 2,
-    name: 'Nakamoto Room',
-    description: 'Elegant space inspired by blockchain innovation.',
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-    floor: '2nd Floor',
-    beds: 1,
-    maxGuests: 2,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'work', label: 'Work' },
-      { icon: 'lounge', label: 'Lounge' },
-    ],
-    rating: 4.8,
-    price: 52,
-    available: true,
-    verified: true,
-  },
-  {
-    id: 3,
-    name: 'Tominaga Room',
-    description: 'Spacious room with modern design and comfort.',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
-    floor: '3rd Floor',
-    beds: 2,
-    maxGuests: 4,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'bar', label: 'Bar' },
-      { icon: 'bath', label: 'Bath' },
-    ],
-    rating: 5.0,
-    price: 65,
-    available: true,
-    verified: true,
-  },
-  {
-    id: 4,
-    name: 'DRCSW Room',
-    description: 'Comfortable accommodation with full amenities.',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-    floor: '2nd Floor',
-    beds: 2,
-    maxGuests: 4,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'beds', label: '2 Beds' },
-      { icon: 'kitchen', label: 'Kitchen' },
-    ],
-    rating: 4.7,
-    price: 58,
-    available: true,
-    verified: true,
-  },
-  {
-    id: 5,
-    name: 'TimeCoin Room',
-    description: 'Cozy room perfect for solo travelers or couples.',
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800',
-    floor: '3rd Floor',
-    beds: 1,
-    maxGuests: 2,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'desk', label: 'Desk' },
-      { icon: 'coffee', label: 'Coffee' },
-    ],
-    rating: 4.6,
-    price: 42,
-    available: true,
-    verified: true,
-  },
-  {
-    id: 6,
-    name: 'Peer to Peer Room',
-    description: 'Premium room with exceptional comfort and style.',
-    image: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800',
-    floor: '2nd Floor',
-    beds: 2,
-    maxGuests: 4,
-    amenities: [
-      { icon: 'wifi', label: 'Wifi' },
-      { icon: 'office', label: 'Office' },
-    ],
-    rating: 4.9,
-    price: 68,
-    available: false,
-    verified: true,
-  },
-];
+
 
 export default function SearchResults() {
   const navigate = useNavigate();
@@ -166,6 +61,12 @@ export default function SearchResults() {
   const [checkOut, setCheckOut] = useState(searchParams.checkOut || '');
   const [guests, setGuests] = useState(searchParams.guests || '');
   const [beds, setBeds] = useState(searchParams.beds || '');
+
+  // Availability comes from the database for the requested range, so a unit already
+  // booked over those nights shows as taken instead of being bookable twice.
+  const { units: availableUnits, loading: unitsLoading, error: unitsError } =
+    useUnits(searchParams.checkIn, searchParams.checkOut, searchParams.guests);
+
 
   // Update state when location.state changes
   useEffect(() => {
@@ -304,7 +205,8 @@ export default function SearchResults() {
         {/* Sort Bar */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-            {availableUnits.filter(u => u.available).length} properties available
+            {unitsLoading ? 'Checking availability…'
+              : `${availableUnits.filter(u => u.available).length} of ${availableUnits.length} available`}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
@@ -323,6 +225,36 @@ export default function SearchResults() {
             </FormControl>
           </Box>
         </Box>
+
+        {unitsError && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {unitsError} — could not load availability.
+          </Alert>
+        )}
+
+        {unitsLoading && (
+          <Grid container spacing={{ xs: 3, md: 4 }} rowSpacing={{ xs: 4, md: 5 }}>
+            {Array.from({ length: 8 }, (_, i) => (
+              <Grid key={i} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                <Skeleton variant="rectangular" sx={{ aspectRatio: '20 / 19', borderRadius: `${r.md}px`, mb: 1.5 }} />
+                <Skeleton variant="text" width="70%" />
+                <Skeleton variant="text" width="45%" />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+
+        {!unitsLoading && availableUnits.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h5" component="h2" gutterBottom>No rooms match those dates</Typography>
+            <Typography variant="body2" sx={{ color: c.stone600, mx: 'auto', mb: 3 }}>
+              Try different dates, or fewer guests.
+            </Typography>
+            <Button variant="outlined" onClick={() => navigate('/book-stay', { state: null })}>
+              Change search
+            </Button>
+          </Box>
+        )}
 
         {/* Listing grid — image-led, chromeless, the card is the photo */}
         <Grid container spacing={{ xs: 3, md: 4 }} rowSpacing={{ xs: 4, md: 5 }}>
@@ -372,7 +304,7 @@ export default function SearchResults() {
                     </Box>
                   )}
 
-                  {unit.verified && unit.available && (
+                  {unit.available && (
                     <Box sx={{
                       position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 0.5,
                       bgcolor: c.white, borderRadius: 999, px: 1.25, py: 0.5,
@@ -412,7 +344,7 @@ export default function SearchResults() {
                 </Box>
 
                 <Typography variant="body2" sx={{ color: c.stone600, mb: 0.25 }}>
-                  {unit.floor} · {unit.amenities.map(a => a.label).join(' · ')}
+                  {unit.floor} · {unit.amenities.join(' · ')}
                 </Typography>
 
                 <Typography className="tnum" sx={{ mt: 0.75, fontSize: 15, color: c.stone900 }}>

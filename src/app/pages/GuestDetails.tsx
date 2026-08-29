@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import { formatDate, nightsBetween, saveDraft } from '../lib/bookings';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -66,25 +67,59 @@ export default function GuestDetails() {
   };
 
   const continueToShop = () => {
+    // Persist the draft before the Shop detour — router state does not survive it.
+    const unit = bookingData?.unit;
+    if (unit) {
+      saveDraft({
+        unitId: unit.id,
+        unitName: unit.name,
+        unitImage: unit.image,
+        unitFloor: unit.floor,
+        price: Number(unit.price),
+        checkIn: bookingData.searchParams?.checkIn ?? '',
+        checkOut: bookingData.searchParams?.checkOut ?? '',
+        guests: Number(bookingData.searchParams?.guests) || 1,
+        guestName: fullName.trim(),
+        guestEmail: email.trim(),
+        guestPhone: phone.trim(),
+        notes: specialRequests.trim(),
+      });
+    }
     navigate('/shop');
   };
 
   // Mock booking data - in real app, this would come from route state or API
+  const { unit, searchParams } = (location.state as any) || {};
+
+  // Without a chosen unit there is nothing to book; send the guest back to search.
+  useEffect(() => {
+    if (!unit) navigate('/search-results', { replace: true });
+  }, [unit, navigate]);
+  if (!unit) return null;
+
+  const checkIn = searchParams?.checkIn ?? '';
+  const checkOut = searchParams?.checkOut ?? '';
+  const nights = nightsBetween(checkIn, checkOut) || 1;
+  const roomRate = Number(unit.price) * nights;
+
   const bookingData = {
     unit: {
-      name: 'Sunset Studio Suite',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
-      floor: '2nd Floor',
-      rating: 4.9,
+      id: unit.id,
+      name: unit.name,
+      image: unit.image,
+      floor: unit.floor,
+      rating: unit.rating,
+      price: Number(unit.price),
     },
-    checkIn: 'Feb 20, 2026',
-    checkOut: 'Feb 23, 2026',
-    nights: 3,
+    searchParams,
+    checkIn: checkIn ? formatDate(checkIn) : 'Dates not set',
+    checkOut: checkOut ? formatDate(checkOut) : 'Dates not set',
+    nights,
     pricing: {
-      roomRate: 114.0,
-      serviceFee: 12.0,
-      cleaningFee: 8.0,
-      total: 134.0,
+      roomRate,
+      serviceFee: 0,
+      cleaningFee: 0,
+      total: roomRate,
     },
   };
 

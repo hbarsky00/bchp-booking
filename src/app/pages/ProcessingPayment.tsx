@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -16,6 +16,8 @@ import { c } from '../tokens';
 
 export default function ProcessingPayment() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const reference = (location.state as any)?.reference as string | undefined;
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function ProcessingPayment() {
   }, []);
 
   const handleViewConfirmation = () => {
-    navigate('/booking-confirmed');
+    navigate('/booking-confirmed', { state: { reference } });
   };
 
   return (
