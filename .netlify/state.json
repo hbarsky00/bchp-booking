@@ -1,6 +1,5 @@
 {
 	"siteId": "7cd6c5c1-4b4c-4357-86a7-d338b3d54d19",
-	"dbConnectionString": "postgres://localhost:59072/postgres",
 	"geolocation": {
 		"data": {
 			"city": "Paterson",

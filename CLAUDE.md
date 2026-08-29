@@ -48,14 +48,38 @@ node ~/Documents/impeccable/cli/bin/cli.js detect http://localhost:4174/<route> 
 If the preview server is down, every scan returns `[]`, which reads as a perfect score.
 Always confirm the server responds before trusting a clean result.
 
+## Database
+
+Netlify managed Postgres. `NETLIFY_DATABASE_URL` is injected by Netlify in builds,
+deploys and `netlify dev` — there is no secret in the repo and nothing to configure.
+
+```bash
+npx netlify database status                  # applied + pending migrations
+npx netlify database migrations new -d "..." # creates an EMPTY sql file, write it yourself
+npx netlify database migrations apply        # local
+npx netlify dev                              # local Postgres + functions on one port
+```
+
+Migrations live in `netlify/database/migrations/` and **apply automatically on deploy**.
+`migrations new` does not diff `db/schema.ts` — it scaffolds an empty file, so the SQL is
+hand-written. `db/schema.ts` documents the shape; it is not the source of migrations.
+
+**Do not use Drizzle for queries here.** Its node-postgres adapter fails every query
+against the pool `getDatabase()` returns under `netlify dev`. Use the connection's own
+`sql` tagged template via `netlify/lib/db.mts` — it parameterises interpolated values,
+and it works on both the local `server` driver and the deployed `serverless` one.
+
+API: `/api/products`, `/api/cart` (GET, POST with `{productId, delta}`, DELETE).
+
 ## State of the app
 
-UI is complete and navigable. **All data is hardcoded** — there is no backend, auth, or
-real payment processing; the payment and confirmation screens are simulations.
+The shop cart is real: it persists in Postgres and is shared between Shop and the Cart
+page. Carts are keyed by an id the browser mints into `localStorage` — there is no auth
+yet, so a cart is per-browser.
 
-Known bug, unfixed: Shop's cart (`productQuantities`) and the ShoppingCart page
-(`cartItems`) are separate state with no connection, so adding to cart does nothing.
-Fixing it needs shared cart state.
+**Still hardcoded:** stays, bookings, admin data, and payments. The payment and
+confirmation screens remain simulations. Bookings are the next thing to move into the
+database.
 
 ## Git
 
