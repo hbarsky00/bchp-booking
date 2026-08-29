@@ -139,9 +139,9 @@ rating on one line, meta line, then `$price night`. Interactive wrapper needs
 94-instance finding.
 
 **Images — always `<Photo>`** (`src/app/components/Photo.tsx`). Never render a bare
-`<img>` or `CardMedia`. `Photo` reserves the final box, shows a wave `Skeleton` in it
-while loading, fades the photo in, and falls back to a broken-image glyph on error, so
-nothing reflows and a dead URL degrades quietly.
+`<img>` or `CardMedia`. `Photo` reserves the final box, shows a wave `Skeleton` behind it
+while loading, and falls back to a broken-image glyph on error, so nothing reflows and a
+dead URL degrades quietly.
 
 ```tsx
 <Photo src={unit.image} alt={unit.name} ratio="20 / 19" />          {/* fluid  */}
@@ -149,9 +149,16 @@ nothing reflows and a dead URL degrades quietly.
 ```
 
 `ratio` for fluid images, `sx` width/height for fixed ones, `eager` for anything above
-the fold. It settles its own state from the element on mount — a cached image is already
-`complete` before React attaches `onLoad`, so that event never fires and the photo would
-otherwise sit at `opacity: 0` behind a skeleton forever.
+the fold. Two rules inside it are load-bearing, both learned the hard way:
+
+- It settles its own state from the element on mount. A cached image is already
+  `complete` before React attaches `onLoad`, so that event never fires and the photo
+  would otherwise sit invisible behind a skeleton forever.
+- **The image is never transparent at rest and its opacity is never animated.** The
+  skeleton sits *behind* it, so an unloaded image is simply unpainted. Any fade that
+  starts from `opacity: 0` pins the photo invisible whenever animations are throttled —
+  a background tab is enough — and a loaded image must never depend on an animation
+  running in order to be seen.
 
 **Loading states — skeletons, never spinners.** A skeleton occupies the same box as the
 content it replaces. `LoadingFallback` is the route-level fallback and mimics the shell

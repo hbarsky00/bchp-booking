@@ -126,7 +126,6 @@ export const theme = createTheme({
       styleOverrides: {
         // Prices and dates should line up in columns.
         '.tnum': { fontVariantNumeric: 'tabular-nums' },
-        '@keyframes photoIn': { from: { opacity: 0 }, to: { opacity: 1 } },
         // break-word only breaks a word that cannot fit on a line of its own.
         // 'anywhere' also lets flex children shrink to a single character, which turned
         // headings into vertical letter columns next to a chip.

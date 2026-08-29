@@ -81,10 +81,10 @@ export default function Photo({
             // instead of being stranded invisible.
             position: 'relative',
             width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-            // No 'both' fill: the element's resting opacity is 1, and the keyframe only
-            // interpolates while it runs. With fill-mode the paused/throttled animation
-            // pins the image at the 'from' state and it never becomes visible.
-            animation: state === 'loaded' ? 'photoIn .3s ease' : 'none',
+            // No opacity animation on the image, deliberately. Any keyframe that starts
+            // transparent pins the photo invisible while animations are throttled (a
+            // background tab), and a loaded image must never depend on an animation
+            // running to be seen. The skeleton behind it already covers the wait.
             transition: 'transform .45s cubic-bezier(.22,1,.36,1)',
             '@media (prefers-reduced-motion: reduce)': { animation: 'none', transition: 'none' },
             ...imgSx,
