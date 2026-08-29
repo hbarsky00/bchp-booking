@@ -26,6 +26,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { c } from '../tokens';
 
 const categories = ['All Items', 'Snacks & Drinks', 'Amenities', 'Toiletries', 'Electronics', 'Souvenirs'];
 
@@ -217,7 +218,7 @@ export default function Shop() {
   return (
     <Layout>
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 4 }}>
           <Box>
             <Typography variant="h1" gutterBottom>
               Shop
@@ -264,13 +265,13 @@ export default function Shop() {
               label={category}
               onClick={() => setSelectedCategory(category)}
               sx={{
-                bgcolor: selectedCategory === category ? '#0EA5E9' : 'white',
-                color: selectedCategory === category ? 'white' : '#64748B',
-                borderColor: '#E5E7EB',
+                bgcolor: selectedCategory === category ? c.sky500 : 'white',
+                color: selectedCategory === category ? 'white' : c.slate500,
+                borderColor: c.gray200,
                 border: selectedCategory === category ? 'none' : '1px solid',
                 fontWeight: selectedCategory === category ? 600 : 400,
                 '&:hover': {
-                  bgcolor: selectedCategory === category ? '#0284C7' : '#F8FAFC',
+                  bgcolor: selectedCategory === category ? c.sky600 : c.slate50,
                 },
               }}
             />
@@ -293,7 +294,7 @@ export default function Shop() {
                         position: 'absolute',
                         top: 12,
                         right: 12,
-                        bgcolor: '#0EA5E9',
+                        bgcolor: c.sky500,
                         color: 'white',
                         fontWeight: 700,
                         zIndex: 1,
@@ -324,8 +325,8 @@ export default function Shop() {
                         label={product.status}
                         size="small"
                         sx={{
-                          bgcolor: product.status === 'In Stock' ? '#DCFCE7' : product.status === 'Low Stock' ? '#FEF3C7' : '#FEE2E2',
-                          color: product.status === 'In Stock' ? '#15803D' : product.status === 'Low Stock' ? '#92400E' : '#991B1B',
+                          bgcolor: product.status === 'In Stock' ? c.green100 : product.status === 'Low Stock' ? c.amber100 : c.red100,
+                          color: product.status === 'In Stock' ? c.green700 : product.status === 'Low Stock' ? c.amber800 : c.red800,
                           fontWeight: 600,
                         }}
                       />
@@ -341,8 +342,8 @@ export default function Shop() {
                           size="small"
                           onClick={() => handleDecreaseQuantity(product.id)}
                           sx={{
-                            bgcolor: '#F1F5F9',
-                            '&:hover': { bgcolor: '#E2E8F0' },
+                            bgcolor: c.slate100,
+                            '&:hover': { bgcolor: c.slate200 },
                           }}
                         >
                           <RemoveIcon fontSize="small" />
@@ -359,8 +360,8 @@ export default function Shop() {
                           onClick={() => handleIncreaseQuantity(product.id)}
                           disabled={product.status === 'Out of Stock'}
                           sx={{
-                            bgcolor: '#DBEAFE',
-                            '&:hover': { bgcolor: '#BFDBFE' },
+                            bgcolor: c.blue100,
+                            '&:hover': { bgcolor: c.blue200 },
                           }}
                         >
                           <AddIcon fontSize="small" />
@@ -385,37 +386,37 @@ export default function Shop() {
         </Grid>
 
         {/* Shopping Information */}
-        <Card elevation={1} sx={{ bgcolor: '#EFF6FF', mb: 3 }}>
+        <Card elevation={1} sx={{ bgcolor: c.blue50, mb: 3 }}>
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-              <InfoIcon sx={{ color: '#0EA5E9' }} />
-              <Typography variant="h6" sx={{ color: '#0F172A' }}>Shopping Information</Typography>
+              <InfoIcon sx={{ color: c.sky500 }} />
+              <Typography variant="h6" sx={{ color: c.slate900 }}>Shopping Information</Typography>
             </Box>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <LocalShippingIcon fontSize="small" sx={{ color: '#0EA5E9' }} />
-                  <Typography variant="subtitle2" sx={{ color: '#0F172A' }}>Instant Delivery</Typography>
+                  <LocalShippingIcon fontSize="small" sx={{ color: c.sky500 }} />
+                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Instant Delivery</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
+                <Typography variant="body2" sx={{ color: c.slate600 }}>
                   Items delivered to your room within 30 minutes of order confirmation. Our staff will notify you upon arrival.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                   <Box sx={{ fontSize: 20 }}>💳</Box>
-                  <Typography variant="subtitle2" sx={{ color: '#0F172A' }}>Multiple Payment Options</Typography>
+                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Multiple Payment Options</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
+                <Typography variant="body2" sx={{ color: c.slate600 }}>
                   Pay with BSV, stablecoins, or card
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <VerifiedIcon fontSize="small" sx={{ color: '#0EA5E9' }} />
-                  <Typography variant="subtitle2" sx={{ color: '#0F172A' }}>Secure Checkout</Typography>
+                  <VerifiedIcon fontSize="small" sx={{ color: c.sky500 }} />
+                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Secure Checkout</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
+                <Typography variant="body2" sx={{ color: c.slate600 }}>
                   Blockchain-verified transactions
                 </Typography>
               </Grid>
@@ -478,9 +479,9 @@ export default function Shop() {
             width: '100%',
             fontSize: '1rem',
             fontWeight: 600,
-            bgcolor: '#DCFCE7',
-            color: '#15803D',
-            border: '1px solid #BBF7D0',
+            bgcolor: c.green100,
+            color: c.green700,
+            border: `1px solid ${c.green200}`,
           }}
         >
           {snackbarMessage}

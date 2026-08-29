@@ -27,6 +27,7 @@ import TokenIcon from '@mui/icons-material/Token';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ShieldIcon from '@mui/icons-material/Shield';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { c } from '../tokens';
 
 export default function BookingConfirmed() {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export default function BookingConfirmed() {
               width: 80,
               height: 80,
               borderRadius: '50%',
-              bgcolor: '#D1FAE5',
+              bgcolor: c.emerald100,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -173,7 +174,7 @@ export default function BookingConfirmed() {
                       Accommodation
                     </Typography>
                   </Box>
-                  <Card elevation={0} sx={{ bgcolor: '#F8FAFC', border: 1, borderColor: '#E2E8F0' }}>
+                  <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
                     <CardContent sx={{ p: 2 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                         <Box>
@@ -254,9 +255,9 @@ export default function BookingConfirmed() {
                   <Card
                     elevation={0}
                     sx={{
-                      bgcolor: '#F0FDF4',
+                      bgcolor: c.green50,
                       border: 1,
-                      borderColor: '#BBF7D0',
+                      borderColor: c.green200,
                       mb: 2,
                     }}
                   >
@@ -344,7 +345,7 @@ export default function BookingConfirmed() {
 
             {/* Timeline Cards */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Card elevation={0} sx={{ bgcolor: '#F8FAFC', border: 1, borderColor: '#E2E8F0' }}>
+              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <EmailIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -358,7 +359,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: '#F8FAFC', border: 1, borderColor: '#E2E8F0' }}>
+              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <NotificationsIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -372,7 +373,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: '#F8FAFC', border: 1, borderColor: '#E2E8F0' }}>
+              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <VpnKeyIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -386,7 +387,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: '#F8FAFC', border: 1, borderColor: '#E2E8F0' }}>
+              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <TokenIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -454,7 +455,7 @@ export default function BookingConfirmed() {
                     <Typography variant="caption">Your booking</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Box sx={{ width: 12, height: 12, bgcolor: '#E2E8F0', borderRadius: 0.5 }} />
+                    <Box sx={{ width: 12, height: 12, bgcolor: c.slate200, borderRadius: 0.5 }} />
                     <Typography variant="caption">Today</Typography>
                   </Box>
                 </Box>
@@ -466,14 +467,14 @@ export default function BookingConfirmed() {
               elevation={0}
               sx={{
                 mb: 3,
-                bgcolor: '#FEF3C7',
+                bgcolor: c.amber100,
                 border: 1,
-                borderColor: '#FDE68A',
+                borderColor: c.amber200,
               }}
             >
               <CardContent sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <WarningIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                  <WarningIcon fontSize="small" sx={{ color: c.amber500 }} />
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                     Important Information
                   </Typography>

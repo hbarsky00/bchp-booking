@@ -26,6 +26,7 @@ import DeckIcon from '@mui/icons-material/Deck';
 import HotelIcon from '@mui/icons-material/Hotel';
 import PeopleIcon from '@mui/icons-material/People';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { c } from '../tokens';
 
 export default function PropertyDetails() {
   const navigate = useNavigate();
@@ -310,9 +311,9 @@ export default function PropertyDetails() {
                   elevation={0}
                   sx={{
                     mt: 3,
-                    bgcolor: '#F0FDF4',
+                    bgcolor: c.green50,
                     border: 1,
-                    borderColor: '#BBF7D0',
+                    borderColor: c.green200,
                   }}
                 >
                   <CardContent sx={{ p: 2 }}>

@@ -29,6 +29,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import ChatIcon from '@mui/icons-material/Chat';
 import EmailIcon from '@mui/icons-material/Email';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { c } from '../tokens';
 
 export default function BookingDetails() {
   const navigate = useNavigate();
@@ -234,7 +235,7 @@ export default function BookingDetails() {
                       width: 96,
                       height: 96,
                       borderRadius: 2,
-                      background: 'linear-gradient(135deg, #F0F9FF 0%, #EFF6FF 70.711%)',
+                      background: `linear-gradient(135deg, ${c.sky50} 0%, ${c.blue50} 70.711%)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

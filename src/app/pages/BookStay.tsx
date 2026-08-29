@@ -21,6 +21,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InputAdornment from '@mui/material/InputAdornment';
 import PeopleIcon from '@mui/icons-material/People';
 import HotelIcon from '@mui/icons-material/Hotel';
+import { c } from '../tokens';
 
 export default function BookStay() {
   const navigate = useNavigate();
@@ -165,15 +166,15 @@ export default function BookStay() {
             <Card
               elevation={0}
               sx={{
-                bgcolor: '#EDE9FE',
+                bgcolor: c.violet100,
                 border: 1,
-                borderColor: '#DDD6FE',
+                borderColor: c.violet200,
                 mb: 3,
               }}
             >
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <LightbulbOutlinedIcon sx={{ color: '#7C3AED' }} />
+                  <LightbulbOutlinedIcon sx={{ color: c.violet600 }} />
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>
                     Booking Tips
                   </Typography>
@@ -183,19 +184,19 @@ export default function BookStay() {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <CheckCircleIcon fontSize="small" sx={{ color: '#7C3AED', mt: 0.25 }} />
+                    <CheckCircleIcon fontSize="small" sx={{ color: c.violet600, mt: 0.25 }} />
                     <Typography variant="body2">
                       Book early for better rates and availability
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <CheckCircleIcon fontSize="small" sx={{ color: '#7C3AED', mt: 0.25 }} />
+                    <CheckCircleIcon fontSize="small" sx={{ color: c.violet600, mt: 0.25 }} />
                     <Typography variant="body2">
                       Flexible dates? Check nearby dates for deals
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <CheckCircleIcon fontSize="small" sx={{ color: '#7C3AED', mt: 0.25 }} />
+                    <CheckCircleIcon fontSize="small" sx={{ color: c.violet600, mt: 0.25 }} />
                     <Typography variant="body2">
                       Weekend stays may have different pricing
                     </Typography>
@@ -208,9 +209,9 @@ export default function BookStay() {
             <Card
               elevation={0}
               sx={{
-                bgcolor: '#F0FDF4',
+                bgcolor: c.green50,
                 border: 1,
-                borderColor: '#BBF7D0',
+                borderColor: c.green200,
               }}
             >
               <CardContent sx={{ p: 3 }}>

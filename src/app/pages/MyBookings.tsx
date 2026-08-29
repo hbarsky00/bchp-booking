@@ -108,7 +108,7 @@ export default function MyBookings() {
   return (
     <Layout>
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 4 }}>
           <Box>
             <Typography variant="h1" gutterBottom>
               My Bookings

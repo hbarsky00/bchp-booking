@@ -12,6 +12,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ShieldIcon from '@mui/icons-material/Shield';
+import { c } from '../tokens';
 
 export default function ProcessingPayment() {
   const navigate = useNavigate();
@@ -48,39 +49,39 @@ export default function ProcessingPayment() {
           elevation={0}
           sx={{
             mb: 4,
-            bgcolor: '#FEF3C7',
+            bgcolor: c.amber100,
             border: 1,
-            borderColor: '#FDE68A',
+            borderColor: c.amber200,
           }}
         >
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
-              <WarningIcon sx={{ color: '#F59E0B', mt: 0.25 }} />
+              <WarningIcon sx={{ color: c.amber500, mt: 0.25 }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                 Important Information
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, ml: 4 }}>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <CheckCircleIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                <CheckCircleIcon fontSize="small" sx={{ color: c.amber500 }} />
                 <Typography variant="body2">
                   Your booking remains in <strong>Reserved</strong> status until payment verification is complete
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <CheckCircleIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                <CheckCircleIcon fontSize="small" sx={{ color: c.amber500 }} />
                 <Typography variant="body2">
                   On successful payment, your booking status will automatically update to <strong>Paid</strong>
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <CheckCircleIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                <CheckCircleIcon fontSize="small" sx={{ color: c.amber500 }} />
                 <Typography variant="body2">
                   You will receive a confirmation email with your transaction reference ID
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <CheckCircleIcon fontSize="small" sx={{ color: '#F59E0B' }} />
+                <CheckCircleIcon fontSize="small" sx={{ color: c.amber500 }} />
                 <Typography variant="body2">
                   Please do not close this window or navigate away during processing
                 </Typography>
@@ -100,7 +101,7 @@ export default function ProcessingPayment() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    bgcolor: '#E0F2FE',
+                    bgcolor: c.sky100,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -125,7 +126,7 @@ export default function ProcessingPayment() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    bgcolor: '#D1FAE5',
+                    bgcolor: c.emerald100,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -147,9 +148,9 @@ export default function ProcessingPayment() {
                 <Card
                   elevation={0}
                   sx={{
-                    bgcolor: '#F1F5F9',
+                    bgcolor: c.slate100,
                     border: 1,
-                    borderColor: '#E2E8F0',
+                    borderColor: c.slate200,
                     mb: 4,
                     maxWidth: 500,
                     mx: 'auto',
@@ -219,7 +220,7 @@ export default function ProcessingPayment() {
                           p: 1.5,
                           borderRadius: 1,
                           border: 1,
-                          borderColor: '#E2E8F0',
+                          borderColor: c.slate200,
                         }}
                       >
                         <Typography

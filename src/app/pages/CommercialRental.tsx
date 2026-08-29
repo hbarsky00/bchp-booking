@@ -16,6 +16,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { c } from '../tokens';
 
 export default function CommercialRental() {
   return (
@@ -64,10 +65,10 @@ export default function CommercialRental() {
                 <Card 
                   elevation={0} 
                   sx={{ 
-                    bgcolor: '#F3F4F6', 
+                    bgcolor: c.gray100, 
                     mb: 3,
                     border: 1,
-                    borderColor: '#E5E7EB'
+                    borderColor: c.gray200
                   }}
                 >
                   <CardContent sx={{ p: 2.5 }}>
@@ -217,9 +218,9 @@ export default function CommercialRental() {
                 <Card
                   elevation={0}
                   sx={{
-                    bgcolor: '#EFF6FF',
+                    bgcolor: c.blue50,
                     border: 1,
-                    borderColor: '#BFDBFE',
+                    borderColor: c.blue200,
                   }}
                 >
                   <CardContent sx={{ p: 2 }}>

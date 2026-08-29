@@ -18,6 +18,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ShieldIcon from '@mui/icons-material/Shield';
 import LockIcon from '@mui/icons-material/Lock';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import { c } from '../tokens';
 
 interface CartItem {
   id: number;
@@ -165,9 +166,9 @@ export default function ShoppingCart() {
                         key={item.id}
                         variant="outlined"
                         sx={{
-                          bgcolor: '#F8FAFC',
+                          bgcolor: c.slate50,
                           border: 1,
-                          borderColor: '#E2E8F0',
+                          borderColor: c.slate200,
                         }}
                       >
                         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -301,9 +302,9 @@ export default function ShoppingCart() {
                 elevation={0}
                 sx={{
                   mt: 3,
-                  bgcolor: '#EFF6FF',
+                  bgcolor: c.blue50,
                   border: 1,
-                  borderColor: '#BFDBFE',
+                  borderColor: c.blue200,
                 }}
               >
                 <CardContent sx={{ p: 3 }}>
@@ -434,9 +435,9 @@ export default function ShoppingCart() {
                   elevation={0}
                   sx={{
                     mt: 3,
-                    bgcolor: '#F0FDF4',
+                    bgcolor: c.green50,
                     border: 1,
-                    borderColor: '#BBF7D0',
+                    borderColor: c.green200,
                   }}
                 >
                   <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>

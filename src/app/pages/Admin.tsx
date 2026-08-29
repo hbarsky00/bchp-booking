@@ -34,6 +34,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import BlockIcon from '@mui/icons-material/Block';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import { c } from '../tokens';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -161,13 +162,13 @@ export default function Admin() {
   const getDateColor = (status: string) => {
     switch (status) {
       case 'selected':
-        return { bgcolor: '#BFDBFE', border: '2px solid #3B82F6' };
+        return { bgcolor: c.blue200, border: `2px solid ${c.blue500}` };
       case 'booked':
-        return { bgcolor: '#FECACA', border: '1px solid #FCA5A5' };
+        return { bgcolor: c.red200, border: `1px solid ${c.red300}` };
       case 'blocked':
-        return { bgcolor: '#E5E7EB', border: '1px solid #D1D5DB' };
+        return { bgcolor: c.gray200, border: `1px solid ${c.gray300}` };
       default:
-        return { bgcolor: 'white', border: '1px solid #E5E7EB' };
+        return { bgcolor: 'white', border: `1px solid ${c.gray200}` };
     }
   };
 
@@ -175,7 +176,7 @@ export default function Admin() {
     <Layout>
       <Box>
         {/* Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 4 }}>
           <Box>
             <Typography variant="h1" gutterBottom>
               Admin Dashboard
@@ -188,10 +189,10 @@ export default function Admin() {
             icon={<CheckCircleIcon />}
             label="Admin Access"
             sx={{
-              bgcolor: '#DCFCE7',
-              color: '#15803D',
+              bgcolor: c.green100,
+              color: c.green700,
               fontWeight: 600,
-              border: '1px solid #BBF7D0',
+              border: `1px solid ${c.green200}`,
             }}
           />
         </Box>
@@ -202,7 +203,7 @@ export default function Admin() {
             <Card elevation={1}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                  <FilterAltIcon sx={{ color: '#0284C7', fontSize: 20 }} />
+                  <FilterAltIcon sx={{ color: c.sky600, fontSize: 20 }} />
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>
                     Filters
                   </Typography>
@@ -223,12 +224,12 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          bgcolor: propertyType === 'residential' ? '#0EA5E9' : 'white',
-                          borderColor: '#E5E7EB',
-                          color: propertyType === 'residential' ? 'white' : '#64748B',
+                          bgcolor: propertyType === 'residential' ? c.sky500 : 'white',
+                          borderColor: c.gray200,
+                          color: propertyType === 'residential' ? 'white' : c.slate500,
                           '&:hover': {
-                            bgcolor: propertyType === 'residential' ? '#0284C7' : '#F8FAFC',
-                            borderColor: '#E5E7EB',
+                            bgcolor: propertyType === 'residential' ? c.sky600 : c.slate50,
+                            borderColor: c.gray200,
                           },
                         }}
                       >
@@ -242,12 +243,12 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          bgcolor: propertyType === 'commercial' ? '#0EA5E9' : 'white',
-                          borderColor: '#E5E7EB',
-                          color: propertyType === 'commercial' ? 'white' : '#64748B',
+                          bgcolor: propertyType === 'commercial' ? c.sky500 : 'white',
+                          borderColor: c.gray200,
+                          color: propertyType === 'commercial' ? 'white' : c.slate500,
                           '&:hover': {
-                            bgcolor: propertyType === 'commercial' ? '#0284C7' : '#F8FAFC',
-                            borderColor: '#E5E7EB',
+                            bgcolor: propertyType === 'commercial' ? c.sky600 : c.slate50,
+                            borderColor: c.gray200,
                           },
                         }}
                       >
@@ -270,9 +271,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedFloor === 'all' ? 600 : 400,
+                          color: selectedFloor === 'all' ? c.sky600 : c.slate500,
+                          bgcolor: selectedFloor === 'all' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedFloor === 'all' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -286,9 +289,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedFloor === '2nd Floor' ? 600 : 400,
+                          color: selectedFloor === '2nd Floor' ? c.sky600 : c.slate500,
+                          bgcolor: selectedFloor === '2nd Floor' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedFloor === '2nd Floor' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -302,9 +307,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedFloor === '3rd Floor' ? 600 : 400,
+                          color: selectedFloor === '3rd Floor' ? c.sky600 : c.slate500,
+                          bgcolor: selectedFloor === '3rd Floor' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedFloor === '3rd Floor' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -327,9 +334,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedUnit === 'all' ? 600 : 400,
+                          color: selectedUnit === 'all' ? c.sky600 : c.slate500,
+                          bgcolor: selectedUnit === 'all' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedUnit === 'all' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -343,9 +352,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedUnit === 'Unit 201' ? 600 : 400,
+                          color: selectedUnit === 'Unit 201' ? c.sky600 : c.slate500,
+                          bgcolor: selectedUnit === 'Unit 201' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedUnit === 'Unit 201' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -359,9 +370,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedUnit === 'Unit 301' ? 600 : 400,
+                          color: selectedUnit === 'Unit 301' ? c.sky600 : c.slate500,
+                          bgcolor: selectedUnit === 'Unit 301' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedUnit === 'Unit 301' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -375,9 +388,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          color: '#64748B',
+                          fontWeight: selectedUnit === 'Unit 202' ? 600 : 400,
+                          color: selectedUnit === 'Unit 202' ? c.sky600 : c.slate500,
+                          bgcolor: selectedUnit === 'Unit 202' ? c.sky50 : 'transparent',
                           '&:hover': {
-                            bgcolor: '#F1F5F9',
+                            bgcolor: selectedUnit === 'Unit 202' ? c.sky100 : c.slate100,
                           },
                         }}
                       >
@@ -393,9 +408,9 @@ export default function Admin() {
                     fullWidth
                     sx={{
                       textTransform: 'none',
-                      color: '#0EA5E9',
+                      color: c.sky500,
                       '&:hover': {
-                        bgcolor: '#F0F9FF',
+                        bgcolor: c.sky50,
                       },
                     }}
                     variant="text"
@@ -425,19 +440,19 @@ export default function Admin() {
                     {/* Legend */}
                     <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 16, height: 16, bgcolor: 'white', border: '1px solid #E5E7EB' }} />
+                        <Box sx={{ width: 16, height: 16, bgcolor: 'white', border: `1px solid ${c.gray200}` }} />
                         <Typography variant="caption">Available</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 16, height: 16, bgcolor: '#FECACA', border: '1px solid #FCA5A5' }} />
+                        <Box sx={{ width: 16, height: 16, bgcolor: c.red200, border: `1px solid ${c.red300}` }} />
                         <Typography variant="caption">Booked</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 16, height: 16, bgcolor: '#E5E7EB', border: '1px solid #D1D5DB' }} />
+                        <Box sx={{ width: 16, height: 16, bgcolor: c.gray200, border: `1px solid ${c.gray300}` }} />
                         <Typography variant="caption">Blocked</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 16, height: 16, bgcolor: '#BFDBFE', border: '2px solid #3B82F6' }} />
+                        <Box sx={{ width: 16, height: 16, bgcolor: c.blue200, border: `2px solid ${c.blue500}` }} />
                         <Typography variant="caption">Selected</Typography>
                       </Box>
                     </Box>
@@ -522,11 +537,11 @@ export default function Admin() {
                           fullWidth
                           startIcon={<BlockIcon />}
                           sx={{
-                            bgcolor: '#FCA5A5',
-                            color: '#7F1D1D',
+                            bgcolor: c.red300,
+                            color: c.red900,
                             textTransform: 'none',
                             '&:hover': {
-                              bgcolor: '#F87171',
+                              bgcolor: c.red400,
                             },
                           }}
                         >
@@ -539,11 +554,11 @@ export default function Admin() {
                           fullWidth
                           startIcon={<EventAvailableIcon />}
                           sx={{
-                            bgcolor: '#86EFAC',
-                            color: '#14532D',
+                            bgcolor: c.green300,
+                            color: c.green900,
                             textTransform: 'none',
                             '&:hover': {
-                              bgcolor: '#4ADE80',
+                              bgcolor: c.green400,
                             },
                           }}
                         >
@@ -561,7 +576,7 @@ export default function Admin() {
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <PendingActionsIcon sx={{ color: '#F59E0B' }} />
+                        <PendingActionsIcon sx={{ color: c.amber500 }} />
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
                           Pending Approvals
                         </Typography>
@@ -570,8 +585,8 @@ export default function Admin() {
                         label="3"
                         size="small"
                         sx={{
-                          bgcolor: '#FEF3C7',
-                          color: '#92400E',
+                          bgcolor: c.amber100,
+                          color: c.amber800,
                           fontWeight: 700,
                         }}
                       />
@@ -616,10 +631,10 @@ export default function Admin() {
                                   size="small"
                                   startIcon={<CheckCircleIcon />}
                                   sx={{
-                                    bgcolor: '#22C55E',
+                                    bgcolor: c.green500,
                                     textTransform: 'none',
                                     '&:hover': {
-                                      bgcolor: '#16A34A',
+                                      bgcolor: c.green600,
                                     },
                                   }}
                                 >
@@ -633,10 +648,10 @@ export default function Admin() {
                                   size="small"
                                   startIcon={<CloseIcon />}
                                   sx={{
-                                    bgcolor: '#EF4444',
+                                    bgcolor: c.red500,
                                     textTransform: 'none',
                                     '&:hover': {
-                                      bgcolor: '#DC2626',
+                                      bgcolor: c.red600,
                                     },
                                   }}
                                 >
@@ -729,8 +744,8 @@ export default function Admin() {
                           label={booking.status}
                           size="small"
                           sx={{
-                            bgcolor: booking.status === 'Checked In' ? '#DBEAFE' : '#D1FAE5',
-                            color: booking.status === 'Checked In' ? '#1E40AF' : '#065F46',
+                            bgcolor: booking.status === 'Checked In' ? c.blue100 : c.emerald100,
+                            color: booking.status === 'Checked In' ? c.blue800 : c.emerald800,
                             fontWeight: 600,
                           }}
                         />

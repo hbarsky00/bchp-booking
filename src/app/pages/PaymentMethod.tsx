@@ -24,6 +24,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import SpeedIcon from '@mui/icons-material/Speed';
 import SecurityIcon from '@mui/icons-material/Security';
 import BedIcon from '@mui/icons-material/Bed';
+import { c } from '../tokens';
 
 export default function PaymentMethod() {
   const navigate = useNavigate();
@@ -245,25 +246,25 @@ export default function PaymentMethod() {
             </Card>
 
             {/* Processing Fees Info */}
-            <Card elevation={1} sx={{ mt: 2, bgcolor: '#FEF3C7', border: '1px solid #FDE68A' }}>
+            <Card elevation={1} sx={{ mt: 2, bgcolor: c.amber100, border: `1px solid ${c.amber200}` }}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <InfoIcon sx={{ color: '#92400E', fontSize: 20 }} />
-                  <Typography variant="subtitle1" sx={{ color: '#0F172A', fontWeight: 600 }}>
+                  <InfoIcon sx={{ color: c.amber800, fontSize: 20 }} />
+                  <Typography variant="subtitle1" sx={{ color: c.slate900, fontWeight: 600 }}>
                     Processing Fees
                   </Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: '#475569', mb: 1.5 }}>
+                <Typography variant="body2" sx={{ color: c.slate600, mb: 1.5 }}>
                   Transaction fees vary by payment method. BSV offers the lowest fees and fastest processing time.
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Typography variant="body2" sx={{ color: '#1E293B' }}>
+                  <Typography variant="body2" sx={{ color: c.slate800 }}>
                     • <strong>BSV:</strong> 0.5% transaction fee
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#1E293B' }}>
+                  <Typography variant="body2" sx={{ color: c.slate800 }}>
                     • <strong>Stablecoin:</strong> 1% transaction fee
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#1E293B' }}>
+                  <Typography variant="body2" sx={{ color: c.slate800 }}>
                     • <strong>Card:</strong> 2.9% + $0.30 processing fee
                   </Typography>
                 </Box>
@@ -271,18 +272,18 @@ export default function PaymentMethod() {
             </Card>
 
             {/* Blockchain Verification */}
-            <Card elevation={1} sx={{ mt: 2, bgcolor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+            <Card elevation={1} sx={{ mt: 2, bgcolor: c.blue50, border: `1px solid ${c.blue100}` }}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <VerifiedIcon sx={{ color: '#0EA5E9', fontSize: 20 }} />
-                  <Typography variant="subtitle1" sx={{ color: '#0F172A', fontWeight: 600 }}>
+                  <VerifiedIcon sx={{ color: c.sky500, fontSize: 20 }} />
+                  <Typography variant="subtitle1" sx={{ color: c.slate900, fontWeight: 600 }}>
                     Blockchain Verification
                   </Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: '#475569', mb: 1 }}>
+                <Typography variant="body2" sx={{ color: c.slate600, mb: 1 }}>
                   All payments are secured and verified on the blockchain with a unique reference ID for complete transparency.
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#475569' }}>
+                <Typography variant="body2" sx={{ color: c.slate600 }}>
                   Your booking remains in <strong>Reserved</strong> status until payment is successfully processed.
                 </Typography>
               </CardContent>
