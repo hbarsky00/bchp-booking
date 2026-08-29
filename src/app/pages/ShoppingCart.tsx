@@ -166,9 +166,9 @@ export default function ShoppingCart() {
                         key={item.id}
                         variant="outlined"
                         sx={{
-                          bgcolor: c.slate50,
+                          bgcolor: c.stone50,
                           border: 1,
-                          borderColor: c.slate200,
+                          borderColor: c.stone200,
                         }}
                       >
                         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>

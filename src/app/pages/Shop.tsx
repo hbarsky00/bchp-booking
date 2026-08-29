@@ -265,13 +265,13 @@ export default function Shop() {
               label={category}
               onClick={() => setSelectedCategory(category)}
               sx={{
-                bgcolor: selectedCategory === category ? c.sky700 : 'white',
-                color: selectedCategory === category ? 'white' : c.slate500,
+                bgcolor: selectedCategory === category ? c.coral700 : 'white',
+                color: selectedCategory === category ? 'white' : c.stone500,
                 borderColor: c.gray200,
                 border: selectedCategory === category ? 'none' : '1px solid',
                 fontWeight: selectedCategory === category ? 600 : 400,
                 '&:hover': {
-                  bgcolor: selectedCategory === category ? c.sky700 : c.slate50,
+                  bgcolor: selectedCategory === category ? c.coral700 : c.stone50,
                 },
               }}
             />
@@ -294,7 +294,7 @@ export default function Shop() {
                         position: 'absolute',
                         top: 12,
                         right: 12,
-                        bgcolor: c.sky700,
+                        bgcolor: c.coral700,
                         color: 'white',
                         fontWeight: 700,
                         zIndex: 1,
@@ -342,8 +342,8 @@ export default function Shop() {
                           size="small"
                           onClick={() => handleDecreaseQuantity(product.id)}
                           sx={{
-                            bgcolor: c.slate100,
-                            '&:hover': { bgcolor: c.slate200 },
+                            bgcolor: c.stone100,
+                            '&:hover': { bgcolor: c.stone200 },
                           }}
                         >
                           <RemoveIcon fontSize="small" />
@@ -389,34 +389,34 @@ export default function Shop() {
         <Card elevation={1} sx={{ bgcolor: c.blue50, mb: 3 }}>
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-              <InfoIcon sx={{ color: c.sky700 }} />
-              <Typography variant="h6" component="h2" sx={{ color: c.slate900 }}>Shopping Information</Typography>
+              <InfoIcon sx={{ color: c.coral700 }} />
+              <Typography variant="h6" component="h2" sx={{ color: c.stone900 }}>Shopping Information</Typography>
             </Box>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <LocalShippingIcon fontSize="small" sx={{ color: c.sky700 }} />
-                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Instant Delivery</Typography>
+                  <LocalShippingIcon fontSize="small" sx={{ color: c.coral700 }} />
+                  <Typography variant="subtitle2" sx={{ color: c.stone900 }}>Instant Delivery</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.slate600 }}>
+                <Typography variant="body2" sx={{ color: c.stone600 }}>
                   Items delivered to your room within 30 minutes of order confirmation. Our staff will notify you upon arrival.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                   <Box sx={{ fontSize: 20 }}>💳</Box>
-                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Multiple Payment Options</Typography>
+                  <Typography variant="subtitle2" sx={{ color: c.stone900 }}>Multiple Payment Options</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.slate600 }}>
+                <Typography variant="body2" sx={{ color: c.stone600 }}>
                   Pay with BSV, stablecoins, or card
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <VerifiedIcon fontSize="small" sx={{ color: c.sky700 }} />
-                  <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Secure Checkout</Typography>
+                  <VerifiedIcon fontSize="small" sx={{ color: c.coral700 }} />
+                  <Typography variant="subtitle2" sx={{ color: c.stone900 }}>Secure Checkout</Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.slate600 }}>
+                <Typography variant="body2" sx={{ color: c.stone600 }}>
                   Blockchain-verified transactions
                 </Typography>
               </Grid>

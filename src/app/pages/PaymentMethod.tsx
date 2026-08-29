@@ -250,21 +250,21 @@ export default function PaymentMethod() {
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                   <InfoIcon sx={{ color: c.amber800, fontSize: 20 }} />
-                  <Typography variant="subtitle1" sx={{ color: c.slate900, fontWeight: 600 }}>
+                  <Typography variant="subtitle1" sx={{ color: c.stone900, fontWeight: 600 }}>
                     Processing Fees
                   </Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.slate600, mb: 1.5 }}>
+                <Typography variant="body2" sx={{ color: c.stone600, mb: 1.5 }}>
                   Transaction fees vary by payment method. BSV offers the lowest fees and fastest processing time.
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Typography variant="body2" sx={{ color: c.slate800 }}>
+                  <Typography variant="body2" sx={{ color: c.stone800 }}>
                     • <strong>BSV:</strong> 0.5% transaction fee
                   </Typography>
-                  <Typography variant="body2" sx={{ color: c.slate800 }}>
+                  <Typography variant="body2" sx={{ color: c.stone800 }}>
                     • <strong>Stablecoin:</strong> 1% transaction fee
                   </Typography>
-                  <Typography variant="body2" sx={{ color: c.slate800 }}>
+                  <Typography variant="body2" sx={{ color: c.stone800 }}>
                     • <strong>Card:</strong> 2.9% + $0.30 processing fee
                   </Typography>
                 </Box>
@@ -275,15 +275,15 @@ export default function PaymentMethod() {
             <Card elevation={1} sx={{ mt: 2, bgcolor: c.blue50, border: `1px solid ${c.blue100}` }}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <VerifiedIcon sx={{ color: c.sky700, fontSize: 20 }} />
-                  <Typography variant="subtitle1" sx={{ color: c.slate900, fontWeight: 600 }}>
+                  <VerifiedIcon sx={{ color: c.coral700, fontSize: 20 }} />
+                  <Typography variant="subtitle1" sx={{ color: c.stone900, fontWeight: 600 }}>
                     Blockchain Verification
                   </Typography>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.slate600, mb: 1 }}>
+                <Typography variant="body2" sx={{ color: c.stone600, mb: 1 }}>
                   All payments are secured and verified on the blockchain with a unique reference ID for complete transparency.
                 </Typography>
-                <Typography variant="body2" sx={{ color: c.slate600 }}>
+                <Typography variant="body2" sx={{ color: c.stone600 }}>
                   Your booking remains in <strong>Reserved</strong> status until payment is successfully processed.
                 </Typography>
               </CardContent>

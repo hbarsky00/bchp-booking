@@ -235,7 +235,7 @@ export default function BookingDetails() {
                       width: 96,
                       height: 96,
                       borderRadius: 2,
-                      background: `linear-gradient(135deg, ${c.sky50} 0%, ${c.blue50} 70.711%)`,
+                      background: `linear-gradient(135deg, ${c.coral50} 0%, ${c.blue50} 70.711%)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

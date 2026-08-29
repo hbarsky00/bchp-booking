@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import { c } from '../tokens';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -48,6 +52,7 @@ const availableUnits = [
     rating: 4.9,
     price: 45,
     available: true,
+    verified: true,
   },
   {
     id: 2,
@@ -65,6 +70,7 @@ const availableUnits = [
     rating: 4.8,
     price: 52,
     available: true,
+    verified: true,
   },
   {
     id: 3,
@@ -82,6 +88,7 @@ const availableUnits = [
     rating: 5.0,
     price: 65,
     available: true,
+    verified: true,
   },
   {
     id: 4,
@@ -99,6 +106,7 @@ const availableUnits = [
     rating: 4.7,
     price: 58,
     available: true,
+    verified: true,
   },
   {
     id: 5,
@@ -116,6 +124,7 @@ const availableUnits = [
     rating: 4.6,
     price: 42,
     available: true,
+    verified: true,
   },
   {
     id: 6,
@@ -132,6 +141,7 @@ const availableUnits = [
     rating: 4.9,
     price: 68,
     available: false,
+    verified: true,
   },
 ];
 
@@ -139,6 +149,9 @@ export default function SearchResults() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sortBy, setSortBy] = useState('recommended');
+  const [saved, setSaved] = useState<number[]>([]);
+  const toggleSaved = (id: number) =>
+    setSaved(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
   const [filterOpen, setFilterOpen] = useState(false); // Collapsed by default on mobile
   
   // Get search params from navigation state and set as initial values
@@ -305,145 +318,107 @@ export default function SearchResults() {
           </Box>
         </Box>
 
-        {/* Property Grid - 3 per row */}
-        <Grid container spacing={3}>
+        {/* Listing grid — image-led, chromeless, the card is the photo */}
+        <Grid container spacing={{ xs: 3, md: 4 }} rowSpacing={{ xs: 4, md: 5 }}>
           {availableUnits.map((unit) => (
-            <Grid key={unit.id} size={{ xs: 12, sm: 6, md: 4 }}>
-              <Card 
-                elevation={2}
-                sx={{ 
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
+            <Grid key={unit.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <Box
+                role="button"
+                tabIndex={unit.available ? 0 : -1}
+                aria-label={`${unit.name}, $${unit.price} per night`}
+                onClick={() => unit.available && handleSelectUnit(unit)}
+                onKeyDown={(e) => {
+                  if (unit.available && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    handleSelectUnit(unit);
+                  }
+                }}
+                sx={{
                   cursor: unit.available ? 'pointer' : 'not-allowed',
-                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                  '& .unit-image': {
-                    filter: unit.available ? 'none' : 'grayscale(1) brightness(0.92)',
-                  },
-                  '&:hover': {
-                    transform: unit.available ? 'translateY(-4px)' : 'none',
-                    boxShadow: unit.available ? 6 : 2,
-                  },
+                  '&:hover .listing-photo img': { transform: unit.available ? 'scale(1.045)' : 'none' },
                   '@media (prefers-reduced-motion: reduce)': {
-                    transition: 'none',
-                    '&:hover': { transform: 'none' },
+                    '&:hover .listing-photo img': { transform: 'none' },
                   },
                 }}
-                onClick={() => unit.available && handleSelectUnit(unit)}
               >
-                {/* Property Image */}
-                <Box sx={{ position: 'relative' }}>
-                  <CardMedia
-                    className="unit-image"
+                <Box
+                  className="listing-photo"
+                  sx={{
+                    position: 'relative', borderRadius: 4, overflow: 'hidden',
+                    aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5,
+                  }}
+                >
+                  <Box
                     component="img"
-                    height="200"
-                    image={unit.image}
+                    src={unit.image}
                     alt={unit.name}
-                  />
-                  {/* Floor Badge */}
-                  <Chip
-                    icon={<HomeIcon fontSize="small" />}
-                    label={unit.floor}
-                    size="small"
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 12, 
-                      left: 12,
-                      bgcolor: 'rgba(255, 255, 255, 0.95)',
-                      fontWeight: 600,
+                    loading="lazy"
+                    sx={{
+                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                      transition: 'transform .45s cubic-bezier(.22,1,.36,1)',
+                      filter: unit.available ? 'none' : 'grayscale(1) brightness(.94)',
                     }}
                   />
-                  {/* Available Badge */}
-                  {unit.available ? (
-                    <Chip
-                      label="Available"
-                      size="small"
-                      color="success"
-                      sx={{ 
-                        position: 'absolute', 
-                        top: 12, 
-                        right: 12,
-                        fontWeight: 600,
-                      }}
-                    />
-                  ) : (
-                    <Chip
-                      label="BOOKED"
-                      size="small"
-                      sx={{ 
-                        position: 'absolute', 
-                        top: 12, 
-                        right: 12,
-                        bgcolor: 'rgba(0, 0, 0, 0.6)',
-                        color: 'white',
-                        fontWeight: 700,
-                      }}
-                    />
-                  )}
-                </Box>
 
-                <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  {/* Property Name & Rating */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
-                      {unit.name}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <StarIcon sx={{ fontSize: 16, color: 'warning.main' }} />
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        {unit.rating}
+                  {!unit.available && (
+                    <Box sx={{
+                      position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+                      bgcolor: 'rgba(28,25,23,0.45)',
+                    }}>
+                      <Typography sx={{ color: '#fff', fontWeight: 700, letterSpacing: '0.06em', fontSize: 13 }}>
+                        BOOKED
                       </Typography>
                     </Box>
-                  </Box>
+                  )}
 
-                  {/* Description */}
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {unit.description}
-                  </Typography>
-
-                  {/* Amenities */}
-                  <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                    {unit.amenities.map((amenity, index) => (
-                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        {getAmenityIcon(amenity.icon)}
-                        <Typography variant="caption">{amenity.label}</Typography>
-                      </Box>
-                    ))}
-                  </Box>
-
-                  {/* Price & Button */}
-                  <Box sx={{ mt: 'auto' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" display="block">
-                          {unit.available ? 'From' : ''}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                          <Typography variant="h5" component="p" sx={{ fontWeight: 700 }}>
-                            ${unit.price}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            / night
-                          </Typography>
-                        </Box>
-                      </Box>
+                  {unit.verified && unit.available && (
+                    <Box sx={{
+                      position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 0.5,
+                      bgcolor: '#fff', borderRadius: 999, px: 1.25, py: 0.5,
+                      boxShadow: '0 2px 8px rgba(28,25,23,.16)',
+                    }}>
+                      <VerifiedIcon sx={{ fontSize: 14, color: c.green700 }} />
+                      <Typography component="span" sx={{ fontSize: 12, fontWeight: 700, color: c.stone900 }}>
+                        On-chain verified
+                      </Typography>
                     </Box>
-                    <Button
-                      variant={unit.available ? 'contained' : 'outlined'}
-                      fullWidth
-                      disabled={!unit.available}
-                      onClick={() => handleSelectUnit(unit)}
-                      sx={{ 
-                        textTransform: 'none',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {unit.available ? 'View Details' : 'Unavailable'}
-                    </Button>
+                  )}
+
+                  <IconButton
+                    aria-label={saved.includes(unit.id) ? `Remove ${unit.name} from saved` : `Save ${unit.name}`}
+                    onClick={(e) => { e.stopPropagation(); toggleSaved(unit.id); }}
+                    sx={{
+                      position: 'absolute', top: 6, right: 6, color: '#fff',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,.15)' },
+                    }}
+                  >
+                    {saved.includes(unit.id)
+                      ? <FavoriteIcon sx={{ fontSize: 22, color: c.coral500 }} />
+                      : <FavoriteBorderIcon sx={{ fontSize: 22, filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.5))' }} />}
+                  </IconButton>
+                </Box>
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'baseline' }}>
+                  <Typography variant="subtitle1" component="h2" sx={{ fontWeight: 600, color: c.stone900 }}>
+                    {unit.name}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.375, flexShrink: 0 }}>
+                    <StarIcon sx={{ fontSize: 14, color: c.stone900 }} />
+                    <Typography component="span" className="tnum" sx={{ fontSize: 14, color: c.stone900 }}>
+                      {unit.rating}
+                    </Typography>
                   </Box>
-                </CardContent>
-              </Card>
+                </Box>
+
+                <Typography variant="body2" sx={{ color: c.stone600, mb: 0.25 }}>
+                  {unit.floor} · {unit.amenities.map(a => a.label).join(' · ')}
+                </Typography>
+
+                <Typography className="tnum" sx={{ mt: 0.75, fontSize: 15, color: c.stone900 }}>
+                  <Box component="span" sx={{ fontWeight: 700 }}>${unit.price}</Box>
+                  <Box component="span" sx={{ color: c.stone600 }}> night</Box>
+                </Typography>
+              </Box>
             </Grid>
           ))}
         </Grid>

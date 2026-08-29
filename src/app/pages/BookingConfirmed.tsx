@@ -174,7 +174,7 @@ export default function BookingConfirmed() {
                       Accommodation
                     </Typography>
                   </Box>
-                  <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
+                  <Card elevation={0} sx={{ bgcolor: c.stone50, border: 1, borderColor: c.stone200 }}>
                     <CardContent sx={{ p: 2 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                         <Box>
@@ -345,7 +345,7 @@ export default function BookingConfirmed() {
 
             {/* Timeline Cards */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
+              <Card elevation={0} sx={{ bgcolor: c.stone50, border: 1, borderColor: c.stone200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <EmailIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -359,7 +359,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
+              <Card elevation={0} sx={{ bgcolor: c.stone50, border: 1, borderColor: c.stone200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <NotificationsIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -373,7 +373,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
+              <Card elevation={0} sx={{ bgcolor: c.stone50, border: 1, borderColor: c.stone200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <VpnKeyIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -387,7 +387,7 @@ export default function BookingConfirmed() {
                 </CardContent>
               </Card>
 
-              <Card elevation={0} sx={{ bgcolor: c.slate50, border: 1, borderColor: c.slate200 }}>
+              <Card elevation={0} sx={{ bgcolor: c.stone50, border: 1, borderColor: c.stone200 }}>
                 <CardContent sx={{ p: 2, display: 'flex', gap: 2 }}>
                   <TokenIcon sx={{ color: 'primary.main' }} />
                   <Box>
@@ -455,7 +455,7 @@ export default function BookingConfirmed() {
                     <Typography variant="caption">Your booking</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Box sx={{ width: 12, height: 12, bgcolor: c.slate200, borderRadius: 0.5 }} />
+                    <Box sx={{ width: 12, height: 12, bgcolor: c.stone200, borderRadius: 0.5 }} />
                     <Typography variant="caption">Today</Typography>
                   </Box>
                 </Box>

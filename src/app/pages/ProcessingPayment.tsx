@@ -101,7 +101,7 @@ export default function ProcessingPayment() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    bgcolor: c.sky100,
+                    bgcolor: c.coral100,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -148,9 +148,9 @@ export default function ProcessingPayment() {
                 <Card
                   elevation={0}
                   sx={{
-                    bgcolor: c.slate100,
+                    bgcolor: c.stone100,
                     border: 1,
-                    borderColor: c.slate200,
+                    borderColor: c.stone200,
                     mb: 4,
                     maxWidth: 500,
                     mx: 'auto',
@@ -220,7 +220,7 @@ export default function ProcessingPayment() {
                           p: 1.5,
                           borderRadius: 1,
                           border: 1,
-                          borderColor: c.slate200,
+                          borderColor: c.stone200,
                         }}
                       >
                         <Typography

@@ -203,7 +203,7 @@ export default function Admin() {
             <Card elevation={1}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                  <FilterAltIcon sx={{ color: c.sky700, fontSize: 20 }} />
+                  <FilterAltIcon sx={{ color: c.coral700, fontSize: 20 }} />
                   <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Filters
                   </Typography>
@@ -224,11 +224,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          bgcolor: propertyType === 'residential' ? c.sky700 : 'white',
+                          bgcolor: propertyType === 'residential' ? c.coral700 : 'white',
                           borderColor: c.gray200,
-                          color: propertyType === 'residential' ? 'white' : c.slate500,
+                          color: propertyType === 'residential' ? 'white' : c.stone500,
                           '&:hover': {
-                            bgcolor: propertyType === 'residential' ? c.sky700 : c.slate50,
+                            bgcolor: propertyType === 'residential' ? c.coral700 : c.stone50,
                             borderColor: c.gray200,
                           },
                         }}
@@ -243,11 +243,11 @@ export default function Admin() {
                         sx={{
                           textTransform: 'none',
                           justifyContent: 'flex-start',
-                          bgcolor: propertyType === 'commercial' ? c.sky700 : 'white',
+                          bgcolor: propertyType === 'commercial' ? c.coral700 : 'white',
                           borderColor: c.gray200,
-                          color: propertyType === 'commercial' ? 'white' : c.slate500,
+                          color: propertyType === 'commercial' ? 'white' : c.stone500,
                           '&:hover': {
-                            bgcolor: propertyType === 'commercial' ? c.sky700 : c.slate50,
+                            bgcolor: propertyType === 'commercial' ? c.coral700 : c.stone50,
                             borderColor: c.gray200,
                           },
                         }}
@@ -272,10 +272,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedFloor === 'all' ? 600 : 400,
-                          color: selectedFloor === 'all' ? c.sky700 : c.slate500,
-                          bgcolor: selectedFloor === 'all' ? c.sky50 : 'transparent',
+                          color: selectedFloor === 'all' ? c.coral700 : c.stone500,
+                          bgcolor: selectedFloor === 'all' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedFloor === 'all' ? c.sky100 : c.slate100,
+                            bgcolor: selectedFloor === 'all' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -290,10 +290,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedFloor === '2nd Floor' ? 600 : 400,
-                          color: selectedFloor === '2nd Floor' ? c.sky700 : c.slate500,
-                          bgcolor: selectedFloor === '2nd Floor' ? c.sky50 : 'transparent',
+                          color: selectedFloor === '2nd Floor' ? c.coral700 : c.stone500,
+                          bgcolor: selectedFloor === '2nd Floor' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedFloor === '2nd Floor' ? c.sky100 : c.slate100,
+                            bgcolor: selectedFloor === '2nd Floor' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -308,10 +308,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedFloor === '3rd Floor' ? 600 : 400,
-                          color: selectedFloor === '3rd Floor' ? c.sky700 : c.slate500,
-                          bgcolor: selectedFloor === '3rd Floor' ? c.sky50 : 'transparent',
+                          color: selectedFloor === '3rd Floor' ? c.coral700 : c.stone500,
+                          bgcolor: selectedFloor === '3rd Floor' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedFloor === '3rd Floor' ? c.sky100 : c.slate100,
+                            bgcolor: selectedFloor === '3rd Floor' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -335,10 +335,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedUnit === 'all' ? 600 : 400,
-                          color: selectedUnit === 'all' ? c.sky700 : c.slate500,
-                          bgcolor: selectedUnit === 'all' ? c.sky50 : 'transparent',
+                          color: selectedUnit === 'all' ? c.coral700 : c.stone500,
+                          bgcolor: selectedUnit === 'all' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedUnit === 'all' ? c.sky100 : c.slate100,
+                            bgcolor: selectedUnit === 'all' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -353,10 +353,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedUnit === 'Unit 201' ? 600 : 400,
-                          color: selectedUnit === 'Unit 201' ? c.sky700 : c.slate500,
-                          bgcolor: selectedUnit === 'Unit 201' ? c.sky50 : 'transparent',
+                          color: selectedUnit === 'Unit 201' ? c.coral700 : c.stone500,
+                          bgcolor: selectedUnit === 'Unit 201' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedUnit === 'Unit 201' ? c.sky100 : c.slate100,
+                            bgcolor: selectedUnit === 'Unit 201' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -371,10 +371,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedUnit === 'Unit 301' ? 600 : 400,
-                          color: selectedUnit === 'Unit 301' ? c.sky700 : c.slate500,
-                          bgcolor: selectedUnit === 'Unit 301' ? c.sky50 : 'transparent',
+                          color: selectedUnit === 'Unit 301' ? c.coral700 : c.stone500,
+                          bgcolor: selectedUnit === 'Unit 301' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedUnit === 'Unit 301' ? c.sky100 : c.slate100,
+                            bgcolor: selectedUnit === 'Unit 301' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -389,10 +389,10 @@ export default function Admin() {
                           textTransform: 'none',
                           justifyContent: 'flex-start',
                           fontWeight: selectedUnit === 'Unit 202' ? 600 : 400,
-                          color: selectedUnit === 'Unit 202' ? c.sky700 : c.slate500,
-                          bgcolor: selectedUnit === 'Unit 202' ? c.sky50 : 'transparent',
+                          color: selectedUnit === 'Unit 202' ? c.coral700 : c.stone500,
+                          bgcolor: selectedUnit === 'Unit 202' ? c.coral50 : 'transparent',
                           '&:hover': {
-                            bgcolor: selectedUnit === 'Unit 202' ? c.sky100 : c.slate100,
+                            bgcolor: selectedUnit === 'Unit 202' ? c.coral100 : c.stone100,
                           },
                         }}
                       >
@@ -408,9 +408,9 @@ export default function Admin() {
                     fullWidth
                     sx={{
                       textTransform: 'none',
-                      color: c.sky700,
+                      color: c.coral700,
                       '&:hover': {
-                        bgcolor: c.sky50,
+                        bgcolor: c.coral50,
                       },
                     }}
                     variant="text"

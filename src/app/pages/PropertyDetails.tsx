@@ -1,6 +1,10 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import ShareIcon from '@mui/icons-material/Share';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -30,6 +34,7 @@ import { c } from '../tokens';
 
 export default function PropertyDetails() {
   const navigate = useNavigate();
+  const [saved, setSaved] = useState(false);
   const location = useLocation();
   const { unit, searchParams } = (location.state as any) || {};
 
@@ -43,6 +48,19 @@ export default function PropertyDetails() {
   if (!unit) {
     return null;
   }
+
+  // The mock unit carries a single photo; pad the mosaic with interior shots so the
+  // layout is exercised. Real listings would ship their own gallery array.
+  // Dedupe: a unit's own photo may also appear in the filler set, and a repeated
+  // src as a React key makes React drop siblings.
+  const gallery: string[] = [...new Set([
+    unit.image,
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800',
+    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800',
+    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+  ])].slice(0, 5);
 
   const getAmenityIcon = (iconType: string) => {
     switch (iconType) {
@@ -73,44 +91,69 @@ export default function PropertyDetails() {
   return (
     <Layout>
       <Box>
-        {/* Header with Back Button */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-          <IconButton
-            onClick={() => navigate(-1)}
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              '&:hover': {
-                bgcolor: 'action.hover',
-              }
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Box>
-            <Typography variant="h1" gutterBottom>
-              {unit.name}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Review property details and amenities
-            </Typography>
+        {/* Title block — name first, credentials underneath, actions right */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ flex: 1, minWidth: 240 }}>
+            <Typography variant="h1" sx={{ mb: 1 }}>{unit.name}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', color: c.stone600, fontSize: 14 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: .375, color: c.stone900 }}>
+                <StarIcon sx={{ fontSize: 15 }} />
+                <Box component="span" className="tnum" sx={{ fontWeight: 700 }}>{unit.rating}</Box>
+              </Box>
+              <Box component="span">·</Box>
+              <Box component="span" sx={{ textDecoration: 'underline', fontWeight: 600, color: c.stone900 }}>{unit.floor}</Box>
+              <Box component="span">·</Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: .5, color: c.green700, fontWeight: 700 }}>
+                <VerifiedIcon sx={{ fontSize: 15 }} />
+                On-chain verified
+              </Box>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', gap: .5 }}>
+            <Button startIcon={<ShareIcon />} onClick={() => navigate(-1)}
+              sx={{ color: c.stone900, textDecoration: 'underline', px: 1.25 }}>
+              Share
+            </Button>
+            <Button
+              startIcon={saved ? <FavoriteIcon sx={{ color: c.coral500 }} /> : <FavoriteBorderIcon />}
+              onClick={() => setSaved(v => !v)}
+              aria-pressed={saved}
+              sx={{ color: c.stone900, textDecoration: 'underline', px: 1.25 }}
+            >
+              {saved ? 'Saved' : 'Save'}
+            </Button>
           </Box>
         </Box>
 
-        <Grid container spacing={3}>
+        {/* Gallery mosaic — one hero frame plus a supporting grid */}
+        <Box
+          sx={{
+            display: 'grid', gap: 1, mb: { xs: 4, md: 6 },
+            borderRadius: 4, overflow: 'hidden',
+            gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' },
+            gridTemplateRows: { xs: 'auto', md: '190px 190px' },
+            aspectRatio: { xs: '4 / 3', md: 'auto' },
+          }}
+        >
+          {gallery.map((src, i) => (
+            <Box
+              key={`${i}-${src}`}
+              component="img"
+              src={src}
+              alt={i === 0 ? unit.name : `${unit.name}, view ${i + 1}`}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              sx={{
+                width: '100%', height: '100%', objectFit: 'cover', display: { xs: i === 0 ? 'block' : 'none', md: 'block' },
+                gridRow: { md: i === 0 ? 'span 2' : 'auto' },
+                bgcolor: c.stone100,
+              }}
+            />
+          ))}
+        </Box>
+
+        <Grid container spacing={{ xs: 3, md: 6 }}>
           {/* Property Details */}
           <Grid size={{ xs: 12, lg: 8 }}>
-            {/* Main Image */}
-            <Card elevation={2} sx={{ mb: 3 }}>
-              <CardMedia
-                component="img"
-                height="400"
-                image={unit.image}
-                alt={unit.name}
-                sx={{ objectFit: 'cover' }}
-              />
-            </Card>
-
             {/* Property Info */}
             <Card elevation={1} sx={{ mb: 3 }}>
               <CardContent sx={{ p: 3 }}>
