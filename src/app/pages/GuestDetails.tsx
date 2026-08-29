@@ -42,7 +42,30 @@ export default function GuestDetails() {
   const [specialRequests, setSpecialRequests] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateGuest = () => {
+    const next: Record<string, string> = {};
+    if (!fullName.trim()) next.fullName = 'Enter the name the booking is under';
+    if (!phone.trim()) next.phone = 'We need a phone number for check-in';
+    if (!email.trim()) next.email = 'Enter an email address for your confirmation';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) next.email = 'That does not look like a valid email address';
+    if (!termsAccepted) next.terms = 'Please accept the booking terms to continue';
+    return next;
+  };
+
   const handleContinue = () => {
+    const found = validateGuest();
+    setErrors(found);
+    if (Object.keys(found).length) {
+      const first = ['fullName', 'phone', 'email'].find(k => found[k]);
+      if (first) document.querySelector<HTMLElement>(`[data-field="${first}"] input`)?.focus();
+      return;
+    }
+    return continueToShop();
+  };
+
+  const continueToShop = () => {
     navigate('/shop');
   };
 
@@ -114,6 +137,9 @@ export default function GuestDetails() {
                       fullWidth
                       required
                       placeholder="Enter your full name"
+                      data-field="fullName"
+                      error={Boolean(errors.fullName)}
+                      helperText={errors.fullName ?? ' '}
                       inputProps={{ 'aria-label': 'Full name' }}
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
@@ -135,6 +161,9 @@ export default function GuestDetails() {
                       fullWidth
                       required
                       placeholder="+62 812 3456 7890"
+                      data-field="phone"
+                      error={Boolean(errors.phone)}
+                      helperText={errors.phone ?? ' '}
                       inputProps={{ 'aria-label': 'Phone number' }}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
@@ -157,6 +186,9 @@ export default function GuestDetails() {
                       required
                       type="email"
                       placeholder="your.email@example.com"
+                      data-field="email"
+                      error={Boolean(errors.email)}
+                      helperText={errors.email ?? ' '}
                       inputProps={{ 'aria-label': 'Email address' }}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -196,11 +228,17 @@ export default function GuestDetails() {
                   </Box>
 
                   <Box sx={{ mt: 2 }}>
+                    {errors.terms && (
+                      <Typography role="alert" variant="body2" sx={{ color: 'error.main', mb: 0.5 }}>
+                        {errors.terms}
+                      </Typography>
+                    )}
                     <FormControlLabel
                       control={
                         <Checkbox
                           checked={termsAccepted}
                           onChange={(e) => setTermsAccepted(e.target.checked)}
+                          sx={{ color: errors.terms ? 'error.main' : undefined }}
                         />
                       }
                       label={
@@ -237,7 +275,6 @@ export default function GuestDetails() {
                   variant="contained"
                   endIcon={<ArrowForwardIcon />}
                   fullWidth
-                  disabled={!termsAccepted || !fullName || !phone || !email}
                   onClick={handleContinue}
                   sx={{ mt: 3 }}
                 >

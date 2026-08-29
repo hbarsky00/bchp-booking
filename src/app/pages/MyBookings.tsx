@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import { c } from '../tokens';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Snackbar from '@mui/material/Snackbar';
@@ -112,6 +114,14 @@ export default function MyBookings() {
     setCurrentTab(newValue);
   };
 
+  const TAB_FILTERS: ((s: string) => boolean)[] = [
+    () => true,                                   // All bookings
+    (st) => st === 'Paid',                        // Active
+    (st) => st === 'Checked Out',                 // Past
+    (st) => st === 'Cancelled',                   // Cancelled
+  ];
+  const visibleBookings = bookings.filter(b => TAB_FILTERS[currentTab](b.status));
+
   return (
     <Layout>
       <Box>
@@ -146,8 +156,23 @@ export default function MyBookings() {
               <Divider />
 
               <Box sx={{ p: 3 }}>
+                {visibleBookings.length === 0 && (
+                  <Box sx={{ textAlign: 'center', py: 6, px: 2 }}>
+                    <BookmarkIcon sx={{ fontSize: 40, color: c.stone300, mb: 1.5 }} />
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      Nothing here yet
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: c.stone600, mx: 'auto', mb: 3 }}>
+                      You have no {['', 'active', 'past', 'cancelled'][currentTab]} bookings.
+                    </Typography>
+                    <Button variant="contained" onClick={() => navigate('/book-stay')}>
+                      Find a stay
+                    </Button>
+                  </Box>
+                )}
+
                 <Grid container spacing={2}>
-                  {bookings.map((booking) => (
+                  {visibleBookings.map((booking) => (
                     <Grid key={booking.id} size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
                       <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

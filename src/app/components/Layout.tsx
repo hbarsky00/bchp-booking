@@ -14,7 +14,6 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Paper from '@mui/material/Paper';
 import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import BedIcon from '@mui/icons-material/Bed';
 import BusinessIcon from '@mui/icons-material/Business';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -152,15 +151,6 @@ export default function Layout({ children }: LayoutProps) {
               ))}
             </Box>
 
-            <Tooltip title="Your trips">
-              <IconButton
-                aria-label="Your trips"
-                onClick={() => navigate('/my-bookings')}
-                sx={{ color: c.stone600 }}
-              >
-                <NotificationsIcon />
-              </IconButton>
-            </Tooltip>
             <Tooltip title="Account">
               <IconButton
                 onClick={(e) => setAccountMenu(e.currentTarget)}

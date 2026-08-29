@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -31,11 +32,61 @@ export default function ContactSupport() {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log('Support request submitted');
-    navigate(-1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState(false);
+
+  const validate = () => {
+    const next: Record<string, string> = {};
+    if (!name.trim()) next.name = 'Enter your name so we know who to reply to';
+    if (!email.trim()) next.email = 'Enter an email address';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) next.email = 'That does not look like a valid email address';
+    if (!subject.trim()) next.subject = 'Add a short subject';
+    if (!message.trim()) next.message = 'Tell us what you need help with';
+    else if (message.trim().length < 10) next.message = 'A little more detail helps us answer faster';
+    return next;
   };
+
+  // The button stays enabled: a greyed-out button never explains what is missing.
+  // Validating on submit lets every problem be named at once.
+  const handleSubmit = () => {
+    const found = validate();
+    setErrors(found);
+    if (Object.keys(found).length) {
+      const first = ['name', 'email', 'subject', 'message'].find(k => found[k]);
+      document.querySelector<HTMLElement>(`[data-field="${first}"] input, [data-field="${first}"] textarea`)?.focus();
+      return;
+    }
+    setSent(true);
+  };
+
+  if (sent) {
+    return (
+      <Layout>
+        <Box sx={{ maxWidth: 560, mx: 'auto', textAlign: 'center', py: { xs: 6, md: 10 } }}>
+          <CheckCircleIcon sx={{ fontSize: 56, color: 'success.main', mb: 2 }} />
+          <Typography variant="h1" gutterBottom>Message sent</Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary', mx: 'auto', mb: 1 }}>
+            Thanks {name.trim().split(' ')[0]} — our team replies within 2 hours.
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mx: 'auto', mb: 4 }}>
+            We will reply to {email.trim()}.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button variant="contained" onClick={() => navigate('/book-stay')}>Back to stays</Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setSent(false); setErrors({});
+                setName(''); setEmail(''); setPhone(''); setSubject(''); setMessage('');
+              }}
+            >
+              Send another message
+            </Button>
+          </Box>
+        </Box>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -86,6 +137,9 @@ export default function ContactSupport() {
                       fullWidth
                       required
                       placeholder="Enter your full name"
+                      data-field="name"
+                      error={Boolean(errors.name)}
+                      helperText={errors.name ?? ' '}
                       inputProps={{ 'aria-label': 'Your name' }}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -108,6 +162,9 @@ export default function ContactSupport() {
                       required
                       type="email"
                       placeholder="your.email@example.com"
+                      data-field="email"
+                      error={Boolean(errors.email)}
+                      helperText={errors.email ?? ' '}
                       inputProps={{ 'aria-label': 'Email address' }}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -149,6 +206,9 @@ export default function ContactSupport() {
                       fullWidth
                       required
                       placeholder="What can we help you with?"
+                      data-field="subject"
+                      error={Boolean(errors.subject)}
+                      helperText={errors.subject ?? ' '}
                       inputProps={{ 'aria-label': 'Subject' }}
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
@@ -172,6 +232,9 @@ export default function ContactSupport() {
                       multiline
                       rows={6}
                       placeholder="Please provide details about your inquiry..."
+                      data-field="message"
+                      error={Boolean(errors.message)}
+                      helperText={errors.message ?? ' '}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       inputProps={{ maxLength: 1000, 'aria-label': 'Message' }}
@@ -193,7 +256,6 @@ export default function ContactSupport() {
                   variant="contained"
                   endIcon={<SendIcon />}
                   fullWidth
-                  disabled={!name || !email || !subject || !message}
                   onClick={handleSubmit}
                   sx={{ mt: 3 }}
                 >

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -280,6 +281,24 @@ export default function Shop() {
         </Box>
 
         {/* Products Grid */}
+        {filteredProducts.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8, px: 2 }}>
+            <SearchOffIcon sx={{ fontSize: 40, color: c.stone300, mb: 1.5 }} />
+            <Typography variant="h5" component="h2" gutterBottom>
+              No items match your search
+            </Typography>
+            <Typography variant="body2" sx={{ color: c.stone600, mx: 'auto', mb: 3 }}>
+              Try a different term, or browse all items.
+            </Typography>
+            <Button
+              variant="outlined"
+              onClick={() => { setSearchQuery(''); setSelectedCategory('All Items'); }}
+            >
+              Clear search
+            </Button>
+          </Box>
+        )}
+
         <Grid container spacing={3} sx={{ mb: 4 }}>
           {filteredProducts.map((product) => {
             const quantity = productQuantities[product.id] || 0;
