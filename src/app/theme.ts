@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { c } from './tokens';
+import { c, r } from './tokens';
 
 // Figtree: warm geometric with real personality in the heavier weights, and off the
 // overused-font lists that Inter/Roboto/Space Grotesk sit on.
@@ -53,7 +53,7 @@ export const theme = createTheme({
   },
 
   spacing: 8,
-  shape: { borderRadius: 14 },
+  shape: { borderRadius: r.md },
 
   components: {
     MuiTypography: {
@@ -70,7 +70,7 @@ export const theme = createTheme({
       defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
-          borderRadius: 10,
+          borderRadius: r.md,
           textTransform: 'none',
           fontWeight: 600,
           paddingTop: 11,
@@ -91,7 +91,7 @@ export const theme = createTheme({
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          borderRadius: 16,
+          borderRadius: r.lg,
           border: `1px solid ${c.stone200}`,
           backgroundImage: 'none',
         },
@@ -99,7 +99,7 @@ export const theme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        root: { borderRadius: 999, height: 'auto', minHeight: 28, paddingTop: 4, paddingBottom: 4, fontWeight: 600 },
+        root: { borderRadius: r.pill, height: 'auto', minHeight: 28, paddingTop: 4, paddingBottom: 4, fontWeight: 600 },
         label: { lineHeight: 1.4 },
       },
     },
@@ -108,7 +108,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 12,
+            borderRadius: r.md,
             backgroundColor: '#FFFFFF',
             '& fieldset': { borderColor: c.stone300 },
             '&:hover fieldset': { borderColor: c.stone500 },
@@ -117,7 +117,7 @@ export const theme = createTheme({
       },
     },
     MuiOutlinedInput: {
-      styleOverrides: { root: { borderRadius: 12 } },
+      styleOverrides: { root: { borderRadius: r.md } },
     },
     MuiTable: {
       styleOverrides: { root: { fontVariantNumeric: 'tabular-nums' } },

@@ -7,6 +7,10 @@
  * around 3.6:1 on white, which fails WCAG AA the moment it holds a label.
  */
 export const c = {
+  // Absolute neutrals — tokenised so the "no raw hex outside tokens.ts" rule is literal.
+  white: '#FFFFFF',
+  black: '#000000',
+
   // Warm neutrals — the whole interface sits on these
   stone50: '#FAF9F7',
   stone100: '#F4F2EE',
@@ -70,4 +74,20 @@ export const c = {
   violet100: '#F3EFE7',
   violet200: '#E5DCC9',
   violet600: '#8A6D3B',
+} as const;
+
+/**
+ * Radius scale, in pixels.
+ *
+ * Always use these values (or a plain `${r.md}px` string) rather than a bare number in
+ * `sx`. MUI multiplies a numeric `sx.borderRadius` by `theme.shape.borderRadius`, so
+ * `borderRadius: 4` silently became 56px and ballooned every image corner.
+ */
+export const r = {
+  none: 0,
+  sm: 6,
+  md: 8,
+  lg: 10,
+  xl: 12,
+  pill: 999,
 } as const;

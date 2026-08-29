@@ -30,7 +30,7 @@ import DeckIcon from '@mui/icons-material/Deck';
 import HotelIcon from '@mui/icons-material/Hotel';
 import PeopleIcon from '@mui/icons-material/People';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 
 export default function PropertyDetails() {
   const navigate = useNavigate();
@@ -129,7 +129,7 @@ export default function PropertyDetails() {
         <Box
           sx={{
             display: 'grid', gap: 1, mb: { xs: 4, md: 6 },
-            borderRadius: 4, overflow: 'hidden',
+            borderRadius: `${r.md}px`, overflow: 'hidden',
             gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' },
             gridTemplateRows: { xs: 'auto', md: '190px 190px' },
             aspectRatio: { xs: '4 / 3', md: 'auto' },

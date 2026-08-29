@@ -59,7 +59,7 @@ export default function Layout({ children }: LayoutProps) {
         position="sticky"
         color="default"
         elevation={0}
-        sx={{ bgcolor: '#FFFFFF', borderBottom: `1px solid ${c.stone200}` }}
+        sx={{ bgcolor: c.white, borderBottom: `1px solid ${c.stone200}` }}
       >
         <Container maxWidth="xl" disableGutters>
           <Toolbar sx={{ gap: 2, minHeight: { xs: 64, md: 76 }, px: { xs: 2, md: 3 } }}>
@@ -75,7 +75,7 @@ export default function Layout({ children }: LayoutProps) {
               <Box sx={{ width: 30, height: 30, borderRadius: '50%', display: 'grid', placeItems: 'center',
                 bgcolor: c.coral600,
                 backgroundImage: `linear-gradient(145deg, ${c.coral500}, ${c.coral700})` }}>
-                <Typography component="span" sx={{ color: '#fff', fontWeight: 800, fontSize: 15, lineHeight: 1 }}>B</Typography>
+                <Typography component="span" sx={{ color: c.white, fontWeight: 800, fontSize: 15, lineHeight: 1 }}>B</Typography>
               </Box>
               <Typography component="span" sx={{ fontWeight: 800, fontSize: 19, letterSpacing: '-0.03em', color: c.stone900 }}>
                 bchp
@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
                 sx={{
                   display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.5,
                   mx: 'auto', px: 2.5, py: 1.25, cursor: 'pointer',
-                  border: `1px solid ${c.stone300}`, borderRadius: 999, bgcolor: '#fff',
+                  border: `1px solid ${c.stone300}`, borderRadius: 999, bgcolor: c.white,
                   boxShadow: '0 1px 2px rgba(28,25,23,0.06)', transition: 'box-shadow .2s',
                   '&:hover': { boxShadow: '0 2px 10px rgba(28,25,23,0.12)' },
                 }}
@@ -101,7 +101,7 @@ export default function Layout({ children }: LayoutProps) {
                 <Box sx={{ width: '1px', height: 20, bgcolor: c.stone200 }} />
                 <Typography component="span" sx={{ fontSize: 14, color: c.stone600 }}>Add guests</Typography>
                 <Box sx={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: '50%', bgcolor: 'primary.main' }}>
-                  <SearchIcon sx={{ fontSize: 16, color: '#fff' }} />
+                  <SearchIcon sx={{ fontSize: 16, color: c.white }} />
                 </Box>
               </Box>
             )}

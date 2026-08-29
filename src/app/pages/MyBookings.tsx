@@ -287,7 +287,7 @@ export default function MyBookings() {
                         top: 12,
                         bottom: 12,
                         width: 4,
-                        borderRadius: 2,
+                        borderRadius: '2px',
                         bgcolor: `${token.color}.main`,
                       },
                     }}

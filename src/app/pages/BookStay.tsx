@@ -33,7 +33,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InputAdornment from '@mui/material/InputAdornment';
 import PeopleIcon from '@mui/icons-material/People';
 import HotelIcon from '@mui/icons-material/Hotel';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 
 export default function BookStay() {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ export default function BookStay() {
         {/* Hero: photography first, search on top of it — the shape of a stay, not a form */}
         <Box
           sx={{
-            position: 'relative', borderRadius: { xs: 4, md: 6 }, overflow: 'hidden',
+            position: 'relative', borderRadius: `${r.lg}px`, overflow: 'hidden',
             minHeight: { xs: 420, md: 480 },
             display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
             px: { xs: 3, md: 7 }, py: { xs: 4, md: 7 }, mb: { xs: 5, md: 8 },
@@ -85,12 +85,12 @@ export default function BookStay() {
               backdropFilter: 'blur(2px)',
               borderRadius: 999, px: 1.5, py: 0.5,
             }}>
-              <VerifiedIcon sx={{ fontSize: 15, color: '#fff' }} />
-              <Typography component="span" sx={{ fontSize: 12.5, fontWeight: 600, color: '#fff' }}>
+              <VerifiedIcon sx={{ fontSize: 15, color: c.white }} />
+              <Typography component="span" sx={{ fontSize: 12.5, fontWeight: 600, color: c.white }}>
                 Settled on-chain · no chargebacks
               </Typography>
             </Box>
-            <Typography variant="h1" sx={{ color: '#fff', mb: 1.5 }}>
+            <Typography variant="h1" sx={{ color: c.white, mb: 1.5 }}>
               Stay in Yogyakarta,<br />pay in crypto
             </Typography>
             <Typography sx={{ color: 'rgba(255,255,255,.86)', fontSize: { xs: 15, md: 17 }, maxWidth: 480 }}>
@@ -105,10 +105,12 @@ export default function BookStay() {
           aria-label="Search availability"
           sx={{
             mt: { xs: -9, md: -12 }, mx: { xs: 0, md: 2 }, mb: { xs: 5, md: 8 },
-            position: 'relative', bgcolor: '#fff', borderRadius: { xs: 4, md: 999 },
+            position: 'relative', bgcolor: c.white, borderRadius: `${r.lg}px`,
             boxShadow: '0 6px 16px rgba(28,25,23,.10), 0 1px 3px rgba(28,25,23,.08)',
-            p: { xs: 2.5, md: 1.25 },
-            display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' },
+            p: { xs: 2, md: 1.25 },
+            display: 'grid', alignItems: { md: 'center' },
+            gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr) auto' },
+            columnGap: { xs: 2, md: 0 }, rowGap: { xs: 2, md: 0 },
           }}
         >
           {[
@@ -146,10 +148,15 @@ export default function BookStay() {
             )},
           ].map((field, i, arr) => (
             <Box key={field.label} sx={{
-              flex: 1, minWidth: 0, px: { xs: 0, md: 2.5 }, py: { xs: 1, md: 0.5 },
-              borderBottom: { xs: i < arr.length - 1 ? `1px solid ${c.stone200}` : 0, md: 0 },
-              borderRight: { xs: 0, md: i < arr.length - 1 ? `1px solid ${c.stone200}` : 0 },
-              mb: { xs: i < arr.length - 1 ? 1 : 0, md: 0 },
+              minWidth: 0, py: { xs: 0, md: 0.5 },
+              // Divider only between the pair on mobile; between every field on desktop.
+              borderRight: {
+                xs: i % 2 === 0 ? `1px solid ${c.stone200}` : 0,
+                md: i < arr.length - 1 ? `1px solid ${c.stone200}` : 0,
+              },
+              // Breathing room on both sides of a divider, never flush against it.
+              pl: { xs: i % 2 === 1 ? 2 : 0, md: 2.5 },
+              pr: { xs: i % 2 === 0 ? 2 : 0, md: 2.5 },
             }}>
               <Typography component="span" sx={{ display: 'block', fontSize: 12, fontWeight: 700, color: c.stone900, mb: .25 }}>
                 {field.label}
@@ -163,8 +170,9 @@ export default function BookStay() {
             onClick={handleSearchAvailability}
             startIcon={<SearchIcon />}
             sx={{
-              ml: { md: 1.5 }, mt: { xs: 2, md: 0 }, flexShrink: 0,
-              borderRadius: 999, px: 3.5, minHeight: 52,
+              ml: { md: 1.5 }, flexShrink: 0,
+              gridColumn: { xs: '1 / -1', md: 'auto' },
+              borderRadius: `${r.md}px`, px: 3.5, minHeight: 52,
               width: { xs: '100%', md: 'auto' },
             }}
           >
@@ -182,7 +190,7 @@ export default function BookStay() {
             <Grid key={f.title} size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{
-                  flexShrink: 0, width: 42, height: 42, borderRadius: 2.5, display: 'grid', placeItems: 'center',
+                  flexShrink: 0, width: 42, height: 42, borderRadius: `${r.md}px`, display: 'grid', placeItems: 'center',
                   bgcolor: c.stone100, color: c.stone900,
                 }}>
                   {f.icon}
@@ -218,7 +226,7 @@ export default function BookStay() {
                   '@media (prefers-reduced-motion: reduce)': { '&:hover img': { transform: 'none' } },
                 }}
               >
-                <Box sx={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5 }}>
+                <Box sx={{ position: 'relative', borderRadius: `${r.md}px`, overflow: 'hidden', aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5 }}>
                   <Box component="img" src={u.image} alt={u.name} loading="lazy"
                     sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                           transition: 'transform .45s cubic-bezier(.22,1,.36,1)' }} />

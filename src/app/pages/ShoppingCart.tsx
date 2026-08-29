@@ -18,7 +18,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ShieldIcon from '@mui/icons-material/Shield';
 import LockIcon from '@mui/icons-material/Lock';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 
 interface CartItem {
   id: number;
@@ -183,7 +183,7 @@ export default function ShoppingCart() {
                                 sx={{
                                   width: { xs: 60, sm: 64 },
                                   height: { xs: 60, sm: 64 },
-                                  borderRadius: 2,
+                                  borderRadius: `${r.sm}px`,
                                   objectFit: 'cover',
                                   bgcolor: 'white',
                                   flexShrink: 0,

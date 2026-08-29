@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -344,7 +344,7 @@ export default function SearchResults() {
                 <Box
                   className="listing-photo"
                   sx={{
-                    position: 'relative', borderRadius: 4, overflow: 'hidden',
+                    position: 'relative', borderRadius: `${r.md}px`, overflow: 'hidden',
                     aspectRatio: '20 / 19', bgcolor: c.stone100, mb: 1.5,
                   }}
                 >
@@ -365,7 +365,7 @@ export default function SearchResults() {
                       position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
                       bgcolor: 'rgba(28,25,23,0.45)',
                     }}>
-                      <Typography sx={{ color: '#fff', fontWeight: 700, letterSpacing: '0.06em', fontSize: 13 }}>
+                      <Typography sx={{ color: c.white, fontWeight: 700, letterSpacing: '0.06em', fontSize: 13 }}>
                         BOOKED
                       </Typography>
                     </Box>
@@ -374,7 +374,7 @@ export default function SearchResults() {
                   {unit.verified && unit.available && (
                     <Box sx={{
                       position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 0.5,
-                      bgcolor: '#fff', borderRadius: 999, px: 1.25, py: 0.5,
+                      bgcolor: c.white, borderRadius: 999, px: 1.25, py: 0.5,
                       boxShadow: '0 2px 8px rgba(28,25,23,.16)',
                     }}>
                       <VerifiedIcon sx={{ fontSize: 14, color: c.green700 }} />
@@ -388,7 +388,7 @@ export default function SearchResults() {
                     aria-label={saved.includes(unit.id) ? `Remove ${unit.name} from saved` : `Save ${unit.name}`}
                     onClick={(e) => { e.stopPropagation(); toggleSaved(unit.id); }}
                     sx={{
-                      position: 'absolute', top: 6, right: 6, color: '#fff',
+                      position: 'absolute', top: 6, right: 6, color: c.white,
                       '&:hover': { bgcolor: 'rgba(255,255,255,.15)' },
                     }}
                   >
