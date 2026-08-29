@@ -51,7 +51,7 @@ export default function ContactSupport() {
                 bgcolor: 'action.hover',
               }
             }}
-          >
+           aria-label="Go back">
             <ArrowBackIcon />
           </IconButton>
           <Box>
@@ -86,6 +86,7 @@ export default function ContactSupport() {
                       fullWidth
                       required
                       placeholder="Enter your full name"
+                      inputProps={{ 'aria-label': 'Your name' }}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       InputProps={{
@@ -107,6 +108,7 @@ export default function ContactSupport() {
                       required
                       type="email"
                       placeholder="your.email@example.com"
+                      inputProps={{ 'aria-label': 'Email address' }}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       InputProps={{
@@ -126,6 +128,7 @@ export default function ContactSupport() {
                     <TextField
                       fullWidth
                       placeholder="+62 812 3456 7890"
+                      inputProps={{ 'aria-label': 'Phone number (optional)' }}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       InputProps={{
@@ -146,6 +149,7 @@ export default function ContactSupport() {
                       fullWidth
                       required
                       placeholder="What can we help you with?"
+                      inputProps={{ 'aria-label': 'Subject' }}
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
                       InputProps={{
@@ -170,7 +174,7 @@ export default function ContactSupport() {
                       placeholder="Please provide details about your inquiry..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      inputProps={{ maxLength: 1000 }}
+                      inputProps={{ maxLength: 1000, 'aria-label': 'Message' }}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>

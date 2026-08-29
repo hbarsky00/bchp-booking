@@ -158,7 +158,7 @@ export default function FAQs() {
                 bgcolor: 'action.hover',
               }
             }}
-          >
+           aria-label="Go back">
             <ArrowBackIcon />
           </IconButton>
           <Box>

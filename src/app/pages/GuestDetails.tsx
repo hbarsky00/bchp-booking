@@ -79,7 +79,7 @@ export default function GuestDetails() {
                 bgcolor: 'action.hover',
               }
             }}
-          >
+           aria-label="Go back">
             <ArrowBackIcon />
           </IconButton>
           <Box>
@@ -114,6 +114,7 @@ export default function GuestDetails() {
                       fullWidth
                       required
                       placeholder="Enter your full name"
+                      inputProps={{ 'aria-label': 'Full name' }}
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       InputProps={{
@@ -134,6 +135,7 @@ export default function GuestDetails() {
                       fullWidth
                       required
                       placeholder="+62 812 3456 7890"
+                      inputProps={{ 'aria-label': 'Phone number' }}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       InputProps={{
@@ -155,6 +157,7 @@ export default function GuestDetails() {
                       required
                       type="email"
                       placeholder="your.email@example.com"
+                      inputProps={{ 'aria-label': 'Email address' }}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       InputProps={{
@@ -178,7 +181,7 @@ export default function GuestDetails() {
                       placeholder="Any special requests or notes for your stay? (e.g., early check-in, dietary requirements, accessibility needs)"
                       value={specialRequests}
                       onChange={(e) => setSpecialRequests(e.target.value)}
-                      inputProps={{ maxLength: 500 }}
+                      inputProps={{ maxLength: 500, 'aria-label': 'Special requests (optional)' }}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end" sx={{ alignSelf: 'flex-start', mt: 1 }}>

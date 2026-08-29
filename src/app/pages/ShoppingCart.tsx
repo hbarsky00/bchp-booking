@@ -94,7 +94,7 @@ export default function ShoppingCart() {
               borderColor: 'divider',
               '&:hover': { bgcolor: 'action.hover' },
             }}
-          >
+           aria-label="Go back">
             <ArrowBackIcon />
           </IconButton>
           <Box>
@@ -203,6 +203,7 @@ export default function ShoppingCart() {
 
                               {/* Remove Button - Desktop */}
                               <IconButton
+                                aria-label={`Remove ${item.name} from cart`}
                                 size="small"
                                 onClick={() => removeItem(item.id)}
                                 sx={{
@@ -226,6 +227,7 @@ export default function ShoppingCart() {
                               {/* Quantity Controls */}
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <IconButton
+                                  aria-label={`Decrease quantity of ${item.name}`}
                                   size="small"
                                   onClick={() => updateQuantity(item.id, -1)}
                                   disabled={item.quantity <= 1}
@@ -250,6 +252,7 @@ export default function ShoppingCart() {
                                   {item.quantity}
                                 </Typography>
                                 <IconButton
+                                  aria-label={`Increase quantity of ${item.name}`}
                                   size="small"
                                   onClick={() => updateQuantity(item.id, 1)}
                                   sx={{
@@ -274,6 +277,7 @@ export default function ShoppingCart() {
 
                               {/* Remove Button - Mobile */}
                               <IconButton
+                                aria-label={`Remove ${item.name} from cart`}
                                 size="small"
                                 onClick={() => removeItem(item.id)}
                                 sx={{

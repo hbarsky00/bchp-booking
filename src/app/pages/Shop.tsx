@@ -230,6 +230,7 @@ export default function Shop() {
           <IconButton
             color="primary"
             onClick={() => navigate('/shopping-cart')}
+            aria-label={`Shopping cart, ${totalCartItems} item${totalCartItems === 1 ? '' : 's'}`}
             sx={{ bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }}
           >
             <Badge badgeContent={totalCartItems} color="error">

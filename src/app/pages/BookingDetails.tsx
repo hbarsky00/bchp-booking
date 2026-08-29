@@ -173,7 +173,7 @@ export default function BookingDetails() {
       <Box>
         {/* Header */}
         <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconButton onClick={() => navigate(-1)} sx={{ border: 1, borderColor: 'divider' }}>
+          <IconButton onClick={() => navigate(-1)} sx={{ border: 1, borderColor: 'divider' }} aria-label="Go back">
             <ArrowBackIcon />
           </IconButton>
           <Box>

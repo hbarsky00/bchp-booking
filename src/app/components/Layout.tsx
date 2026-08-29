@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import AppBar from '@mui/material/AppBar';
@@ -19,9 +20,14 @@ import BusinessIcon from '@mui/icons-material/Business';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 
 interface LayoutProps {
   children: ReactNode;
@@ -41,19 +47,41 @@ const sections = [
   { label: 'Commercial', value: '/commercial-rental', icon: <BusinessIcon />, match: ['/commercial-rental'] },
   { label: 'Shop', value: '/shop', icon: <StorefrontIcon />, match: ['/shop', '/shopping-cart'] },
   { label: 'Trips', value: '/my-bookings', icon: <BookmarkIcon />, match: ['/my-bookings', '/booking-details'] },
-  { label: 'Help', value: '/faqs', icon: <HelpOutlineIcon />, match: ['/faqs', '/contact-support'] },
-  { label: 'Admin', value: '/admin', icon: <AdminPanelSettingsIcon />, match: ['/admin'] },
+];
+
+/** Account-level destinations. Not places you browse, so they live under the avatar. */
+const accountItems = [
+  { label: 'Help centre', value: '/faqs', icon: <HelpOutlineIcon fontSize="small" />, match: ['/faqs'] },
+  { label: 'Contact support', value: '/contact-support', icon: <SupportAgentIcon fontSize="small" />, match: ['/contact-support'] },
+  { label: 'Admin', value: '/admin', icon: <AdminPanelSettingsIcon fontSize="small" />, match: ['/admin'] },
 ];
 
 export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [accountMenu, setAccountMenu] = useState<HTMLElement | null>(null);
   const current = sections.find(s => s.match.some(p => location.pathname.startsWith(p)));
+  const currentAccount = accountItems.find(a => a.match.some(p => location.pathname.startsWith(p)));
+  const go = (to: string) => { setAccountMenu(null); navigate(to); };
   const onSearchSurface = location.pathname.startsWith('/book-stay');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Box
+        component="a"
+        href="#main"
+        sx={{
+          position: 'absolute', left: 8, top: -60, zIndex: 2000,
+          px: 2, py: 1.25, borderRadius: `${r.md}px`,
+          bgcolor: c.stone900, color: c.white, fontWeight: 600, fontSize: 14,
+          textDecoration: 'none', transition: 'top .15s',
+          '&:focus-visible': { top: 8 },
+        }}
+      >
+        Skip to content
+      </Box>
+
       <AppBar
         position="sticky"
         color="default"
@@ -107,7 +135,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5 }}>
+            <Box component="nav" aria-label="Sections" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5 }}>
               {sections.slice(1).map(s => (
                 <Button
                   key={s.value}
@@ -133,12 +161,56 @@ export default function Layout({ children }: LayoutProps) {
                 <NotificationsIcon />
               </IconButton>
             </Tooltip>
-            <Avatar sx={{ width: 34, height: 34, bgcolor: c.stone900, fontSize: 14, fontWeight: 700 }}>G</Avatar>
+            <Tooltip title="Account">
+              <IconButton
+                onClick={(e) => setAccountMenu(e.currentTarget)}
+                aria-label="Account menu"
+                aria-haspopup="menu"
+                aria-expanded={Boolean(accountMenu)}
+                sx={{ p: 0.5 }}
+              >
+                <Avatar sx={{
+                  width: 34, height: 34, fontSize: 14, fontWeight: 700,
+                  bgcolor: currentAccount ? c.coral600 : c.stone900,
+                }}>G</Avatar>
+              </IconButton>
+            </Tooltip>
+
+            <Menu
+              anchorEl={accountMenu}
+              open={Boolean(accountMenu)}
+              onClose={() => setAccountMenu(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{ paper: { sx: { minWidth: 216, mt: 1 } } }}
+            >
+              <Box sx={{ px: 2, py: 1.25 }}>
+                <Typography sx={{ fontWeight: 700, fontSize: 14 }}>Guest</Typography>
+                <Typography sx={{ fontSize: 12.5, color: c.stone600 }}>Not signed in</Typography>
+              </Box>
+              <Divider />
+              {accountItems.map(item => (
+                <MenuItem
+                  key={item.value}
+                  onClick={() => go(item.value)}
+                  selected={currentAccount?.value === item.value}
+                >
+                  <ListItemIcon sx={{ color: c.stone600 }}>{item.icon}</ListItemIcon>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Menu>
           </Toolbar>
         </Container>
       </AppBar>
 
-      <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 3, md: 5 }, pb: { xs: 12, md: 5 } }}>
+      <Container
+        component="main"
+        id="main"
+        tabIndex={-1}
+        maxWidth="xl"
+        sx={{ flexGrow: 1, py: { xs: 3, md: 5 }, pb: { xs: 12, md: 5 }, outline: 'none' }}
+      >
         {children}
       </Container>
 
@@ -168,6 +240,8 @@ export default function Layout({ children }: LayoutProps) {
         }}
       >
         <BottomNavigation
+          component="nav"
+          aria-label="Sections"
           value={current?.value ?? false}
           onChange={(_e, v) => navigate(v, v === '/book-stay' ? { state: null } : undefined)}
           showLabels
