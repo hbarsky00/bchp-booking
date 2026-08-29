@@ -265,13 +265,13 @@ export default function Shop() {
               label={category}
               onClick={() => setSelectedCategory(category)}
               sx={{
-                bgcolor: selectedCategory === category ? c.sky500 : 'white',
+                bgcolor: selectedCategory === category ? c.sky700 : 'white',
                 color: selectedCategory === category ? 'white' : c.slate500,
                 borderColor: c.gray200,
                 border: selectedCategory === category ? 'none' : '1px solid',
                 fontWeight: selectedCategory === category ? 600 : 400,
                 '&:hover': {
-                  bgcolor: selectedCategory === category ? c.sky600 : c.slate50,
+                  bgcolor: selectedCategory === category ? c.sky700 : c.slate50,
                 },
               }}
             />
@@ -294,7 +294,7 @@ export default function Shop() {
                         position: 'absolute',
                         top: 12,
                         right: 12,
-                        bgcolor: c.sky500,
+                        bgcolor: c.sky700,
                         color: 'white',
                         fontWeight: 700,
                         zIndex: 1,
@@ -311,14 +311,14 @@ export default function Shop() {
                     alt={product.name}
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" component="h2" gutterBottom>
                       {product.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                       {product.description}
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="h5" color="primary" fontWeight={600}>
+                      <Typography variant="h5" component="p" color="primary" fontWeight={600}>
                         ${product.price.toFixed(2)}
                       </Typography>
                       <Chip
@@ -389,13 +389,13 @@ export default function Shop() {
         <Card elevation={1} sx={{ bgcolor: c.blue50, mb: 3 }}>
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-              <InfoIcon sx={{ color: c.sky500 }} />
-              <Typography variant="h6" sx={{ color: c.slate900 }}>Shopping Information</Typography>
+              <InfoIcon sx={{ color: c.sky700 }} />
+              <Typography variant="h6" component="h2" sx={{ color: c.slate900 }}>Shopping Information</Typography>
             </Box>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <LocalShippingIcon fontSize="small" sx={{ color: c.sky500 }} />
+                  <LocalShippingIcon fontSize="small" sx={{ color: c.sky700 }} />
                   <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Instant Delivery</Typography>
                 </Box>
                 <Typography variant="body2" sx={{ color: c.slate600 }}>
@@ -413,7 +413,7 @@ export default function Shop() {
               </Grid>
               <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <VerifiedIcon fontSize="small" sx={{ color: c.sky500 }} />
+                  <VerifiedIcon fontSize="small" sx={{ color: c.sky700 }} />
                   <Typography variant="subtitle2" sx={{ color: c.slate900 }}>Secure Checkout</Typography>
                 </Box>
                 <Typography variant="body2" sx={{ color: c.slate600 }}>
@@ -430,7 +430,7 @@ export default function Shop() {
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <ShoppingCartIcon color="primary" />
-                <Typography variant="h6">Ready to continue?</Typography>
+                <Typography variant="h6" component="h2">Ready to continue?</Typography>
               </Box>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 You can add items now or continue to payment and shop during your stay.

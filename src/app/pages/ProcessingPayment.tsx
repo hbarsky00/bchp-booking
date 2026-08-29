@@ -111,7 +111,7 @@ export default function ProcessingPayment() {
                 >
                   <CircularProgress size={40} />
                 </Box>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 700, mb: 1 }}>
                   Processing Payment...
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -137,7 +137,7 @@ export default function ProcessingPayment() {
                   <CheckCircleIcon sx={{ fontSize: 48, color: 'success.main' }} />
                 </Box>
 
-                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                <Typography variant="h4" component="h2" sx={{ fontWeight: 700, mb: 1 }}>
                   Payment Successful!
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>

@@ -52,7 +52,7 @@ export default function PaymentMethod() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <PaymentIcon color="primary" />
                   <Box>
-                    <Typography variant="h6">Choose Payment Method</Typography>
+                    <Typography variant="h6" component="h2">Choose Payment Method</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Select how you would like to pay
                     </Typography>
@@ -275,7 +275,7 @@ export default function PaymentMethod() {
             <Card elevation={1} sx={{ mt: 2, bgcolor: c.blue50, border: `1px solid ${c.blue100}` }}>
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <VerifiedIcon sx={{ color: c.sky500, fontSize: 20 }} />
+                  <VerifiedIcon sx={{ color: c.sky700, fontSize: 20 }} />
                   <Typography variant="subtitle1" sx={{ color: c.slate900, fontWeight: 600 }}>
                     Blockchain Verification
                   </Typography>
@@ -296,7 +296,7 @@ export default function PaymentMethod() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <BedIcon color="primary" />
-                  <Typography variant="h6">Booking Summary</Typography>
+                  <Typography variant="h6" component="h2">Booking Summary</Typography>
                 </Box>
                 <Chip label="Reserved" color="primary" size="small" sx={{ mb: 2 }} />
 
@@ -315,7 +315,7 @@ export default function PaymentMethod() {
                   />
                 </Box>
 
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" component="h2" gutterBottom>
                   Sunset Studio Suite
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
@@ -390,8 +390,8 @@ export default function PaymentMethod() {
                 <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                  <Typography variant="h6">Total</Typography>
-                  <Typography variant="h5" color="primary" fontWeight={600}>
+                  <Typography variant="h6" component="p">Total</Typography>
+                  <Typography variant="h5" component="p" color="primary" fontWeight={600}>
                     $134.00
                   </Typography>
                 </Box>

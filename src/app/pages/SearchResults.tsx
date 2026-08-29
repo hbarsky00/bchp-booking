@@ -316,12 +316,18 @@ export default function SearchResults() {
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative',
-                  opacity: unit.available ? 1 : 0.6,
                   cursor: unit.available ? 'pointer' : 'not-allowed',
-                  transition: 'all 0.2s ease-in-out',
+                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                  '& .unit-image': {
+                    filter: unit.available ? 'none' : 'grayscale(1) brightness(0.92)',
+                  },
                   '&:hover': {
                     transform: unit.available ? 'translateY(-4px)' : 'none',
                     boxShadow: unit.available ? 6 : 2,
+                  },
+                  '@media (prefers-reduced-motion: reduce)': {
+                    transition: 'none',
+                    '&:hover': { transform: 'none' },
                   },
                 }}
                 onClick={() => unit.available && handleSelectUnit(unit)}
@@ -329,6 +335,7 @@ export default function SearchResults() {
                 {/* Property Image */}
                 <Box sx={{ position: 'relative' }}>
                   <CardMedia
+                    className="unit-image"
                     component="img"
                     height="200"
                     image={unit.image}
@@ -379,7 +386,7 @@ export default function SearchResults() {
                 <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   {/* Property Name & Rating */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
                       {unit.name}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -413,7 +420,7 @@ export default function SearchResults() {
                           {unit.available ? 'From' : ''}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                          <Typography variant="h5" component="p" sx={{ fontWeight: 700 }}>
                             ${unit.price}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">

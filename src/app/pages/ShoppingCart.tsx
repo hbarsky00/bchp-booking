@@ -115,7 +115,7 @@ export default function ShoppingCart() {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ShoppingBagIcon sx={{ color: 'primary.main' }} />
-                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                       Cart Items
                     </Typography>
                     <Box
@@ -148,7 +148,7 @@ export default function ShoppingCart() {
                 {cartItems.length === 0 ? (
                   <Box sx={{ textAlign: 'center', py: 8 }}>
                     <ShoppingBagIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                    <Typography variant="h6" component="h2" color="text.secondary" gutterBottom>
                       Your cart is empty
                     </Typography>
                     <Button
@@ -268,7 +268,7 @@ export default function ShoppingCart() {
 
                               {/* Price */}
                               <Typography
-                                variant="h6"
+                                variant="h6" component="p"
                                 sx={{ color: 'primary.main', fontWeight: 700 }}
                               >
                                 ${(item.price * item.quantity).toFixed(2)}
@@ -343,7 +343,7 @@ export default function ShoppingCart() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <ReceiptIcon sx={{ color: 'primary.main' }} />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Order Summary
                   </Typography>
                 </Box>
@@ -384,11 +384,11 @@ export default function ShoppingCart() {
 
                   {/* Total */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                       Total
                     </Typography>
                     <Typography
-                      variant="h5"
+                      variant="h5" component="p"
                       sx={{ color: 'primary.main', fontWeight: 700 }}
                     >
                       ${total.toFixed(2)}

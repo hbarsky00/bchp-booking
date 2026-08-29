@@ -130,7 +130,7 @@ export default function BookingDetails() {
             <Card elevation={1} sx={{ mb: 3 }}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6">Booking Status</Typography>
+                  <Typography variant="h6" component="h2">Booking Status</Typography>
                   <Chip
                     icon={<CheckCircleIcon />}
                     label={bookingData.status}
@@ -244,7 +244,7 @@ export default function BookingDetails() {
                     <BedIcon sx={{ fontSize: 40, color: 'primary.main' }} />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="h5" gutterBottom>
+                    <Typography variant="h5" component="h2" gutterBottom>
                       {bookingData.unit.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -296,25 +296,25 @@ export default function BookingDetails() {
                     <Typography variant="body2" color="text.secondary">
                       Duration
                     </Typography>
-                    <Typography variant="h6">{bookingData.nights} nights</Typography>
+                    <Typography variant="h6" component="h2">{bookingData.nights} nights</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                       Guests
                     </Typography>
-                    <Typography variant="h6">{bookingData.adults} adults</Typography>
+                    <Typography variant="h6" component="h2">{bookingData.adults} adults</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                       Room rate
                     </Typography>
-                    <Typography variant="h6">{bookingData.payment.breakdown.nights}</Typography>
+                    <Typography variant="h6" component="h2">{bookingData.payment.breakdown.nights}</Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                       Total
                     </Typography>
-                    <Typography variant="h6" color="primary.main">
+                    <Typography variant="h6" component="h2" color="primary.main">
                       {bookingData.payment.amount}
                     </Typography>
                   </Grid>
@@ -325,7 +325,7 @@ export default function BookingDetails() {
             {/* Guest Information Card */}
             <Card elevation={1} sx={{ mb: 3 }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" component="h2" gutterBottom>
                   Guest Information
                 </Typography>
                 <Grid container spacing={2}>
@@ -361,7 +361,7 @@ export default function BookingDetails() {
             <Card elevation={1}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6">Payment Information</Typography>
+                  <Typography variant="h6" component="h2">Payment Information</Typography>
                   <Chip icon={<VerifiedIcon />} label="Verified" color="success" size="small" />
                 </Box>
 
@@ -402,7 +402,7 @@ export default function BookingDetails() {
                     <Typography variant="body2" color="text.secondary">
                       Total payment
                     </Typography>
-                    <Typography variant="h6" color="primary.main">
+                    <Typography variant="h6" component="h2" color="primary.main">
                       {bookingData.payment.amount}
                     </Typography>
                   </Grid>
@@ -436,7 +436,7 @@ export default function BookingDetails() {
                   <Typography variant="subtitle1" fontWeight={600}>
                     Total
                   </Typography>
-                  <Typography variant="h6" color="primary.main" fontWeight={600}>
+                  <Typography variant="h6" component="h2" color="primary.main" fontWeight={600}>
                     {bookingData.payment.amount}
                   </Typography>
                 </Box>

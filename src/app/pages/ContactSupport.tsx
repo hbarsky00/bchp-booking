@@ -71,7 +71,7 @@ export default function ContactSupport() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <ChatIcon color="primary" />
-                  <Typography variant="h6">Send Us a Message</Typography>
+                  <Typography variant="h6" component="h2">Send Us a Message</Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   Fill out the form below and we'll get back to you within 24 hours
@@ -205,7 +205,7 @@ export default function ContactSupport() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <SupportAgentIcon color="primary" />
-                  <Typography variant="h6">Contact Information</Typography>
+                  <Typography variant="h6" component="h2">Contact Information</Typography>
                 </Box>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -314,7 +314,7 @@ export default function ContactSupport() {
 
             <Card elevation={1} sx={{ mt: 3, bgcolor: 'primary.main', color: 'white' }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+                <Typography variant="h6" component="h2" gutterBottom sx={{ color: 'white' }}>
                   Need Immediate Help?
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.9)' }}>

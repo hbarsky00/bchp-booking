@@ -130,13 +130,13 @@ export default function PropertyDetails() {
                         sx={{ fontWeight: 600 }}
                       />
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+                    <Typography variant="h5" component="h2" sx={{ fontWeight: 700, mb: 1 }}>
                       {unit.name}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <StarIcon sx={{ fontSize: 20, color: 'warning.main' }} />
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
                       {unit.rating}
                     </Typography>
                   </Box>
@@ -149,7 +149,7 @@ export default function PropertyDetails() {
                 <Divider sx={{ my: 3 }} />
 
                 {/* Room Details */}
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                   Room Details
                 </Typography>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -197,7 +197,7 @@ export default function PropertyDetails() {
                 <Divider sx={{ my: 3 }} />
 
                 {/* Amenities */}
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                   Amenities
                 </Typography>
                 <Grid container spacing={2}>
@@ -220,7 +220,7 @@ export default function PropertyDetails() {
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
                   Booking Summary
                 </Typography>
 
@@ -230,7 +230,7 @@ export default function PropertyDetails() {
                     Price per night
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                    <Typography variant="h4" component="p" sx={{ fontWeight: 700, color: 'primary.main' }}>
                       ${unit.price}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

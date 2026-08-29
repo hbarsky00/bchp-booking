@@ -221,7 +221,7 @@ export default function FAQs() {
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                     <Box sx={{ color: `${category.color}.main` }}>{category.icon}</Box>
-                    <Typography variant="h6">{category.name}</Typography>
+                    <Typography variant="h6" component="h2">{category.name}</Typography>
                     <Chip label={`${category.faqs.length} questions`} size="small" sx={{ ml: 1 }} />
                   </Box>
 
@@ -244,7 +244,7 @@ export default function FAQs() {
                         </Typography>
                       </AccordionSummary>
                       <AccordionDetails>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '68ch' }}>
                           {faq.answer}
                         </Typography>
                       </AccordionDetails>
@@ -258,7 +258,7 @@ export default function FAQs() {
           <Card elevation={1}>
             <CardContent sx={{ p: 6, textAlign: 'center' }}>
               <HelpOutlineIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" component="h2" gutterBottom>
                 No FAQs Found
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -282,7 +282,7 @@ export default function FAQs() {
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
               <Box>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" component="h2" gutterBottom>
                   Still need help?
                 </Typography>
                 <Typography variant="body2" color="text.secondary">

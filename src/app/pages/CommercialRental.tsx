@@ -47,7 +47,7 @@ export default function CommercialRental() {
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                     <StorefrontIcon sx={{ color: 'primary.main', fontSize: 32 }} />
-                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
                       Bitcoin Snack Bar
                     </Typography>
                     <Chip 
@@ -99,7 +99,7 @@ export default function CommercialRental() {
 
                 {/* Features */}
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                     Space Features
                   </Typography>
                   <Grid container spacing={2}>
@@ -156,7 +156,7 @@ export default function CommercialRental() {
 
                 {/* Ideal For */}
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                     Ideal For
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -174,7 +174,7 @@ export default function CommercialRental() {
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
                   Rental Inquiry
                 </Typography>
 
@@ -238,7 +238,7 @@ export default function CommercialRental() {
             {/* Additional Info */}
             <Card elevation={1} sx={{ mt: 3 }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                   Quick Facts
                 </Typography>
                 

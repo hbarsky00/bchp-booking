@@ -26,6 +26,7 @@ export const c = {
   sky100: '#E0F2FE',
   sky500: '#0EA5E9',
   sky600: '#0284C7',
+  sky700: '#0369A1',
   sky800: '#075985',
 
   // Accent — blue (informational)

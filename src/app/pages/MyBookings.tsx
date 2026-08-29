@@ -268,7 +268,7 @@ export default function MyBookings() {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <TokenIcon color="secondary" />
-                    <Typography variant="h6">{tokens[0].name}</Typography>
+                    <Typography variant="h6" component="h2">{tokens[0].name}</Typography>
                   </Box>
                   <Chip label={`${tokens[0].count} tokens`} color="secondary" size="small" />
                 </Box>
@@ -279,11 +279,20 @@ export default function MyBookings() {
                     variant="outlined"
                     sx={{
                       mb: index < tokens.length - 2 ? 2 : 0,
-                      borderLeft: 4,
-                      borderColor: `${token.color}.main`,
+                      position: 'relative',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        left: 8,
+                        top: 12,
+                        bottom: 12,
+                        width: 4,
+                        borderRadius: 2,
+                        bgcolor: `${token.color}.main`,
+                      },
                     }}
                   >
-                    <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                    <CardContent sx={{ pl: 3, '&:last-child': { pb: 2 } }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                         <Typography variant="subtitle2">{token.name}</Typography>
                         <Chip label={token.status} size="small" color={token.color as any} />
@@ -309,7 +318,7 @@ export default function MyBookings() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <TrendingUpIcon color="primary" />
-                  <Typography variant="h6">Booking Statistics</Typography>
+                  <Typography variant="h6" component="h2">Booking Statistics</Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 2 }}>
                   Your activity summary
@@ -320,7 +329,7 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total bookings
                     </Typography>
-                    <Typography variant="h6">5</Typography>
+                    <Typography variant="h6" component="h2">5</Typography>
                   </Box>
                   <Chip label="+21% this year" size="small" color="success" sx={{ mb: 2 }} />
                 </Box>
@@ -332,7 +341,7 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total nights
                     </Typography>
-                    <Typography variant="h6">15</Typography>
+                    <Typography variant="h6" component="h2">15</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
                     Across all stays
@@ -346,7 +355,7 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total spent
                     </Typography>
-                    <Typography variant="h6">$3,010</Typography>
+                    <Typography variant="h6" component="p">$3,010</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
                     All-time payments
@@ -358,7 +367,7 @@ export default function MyBookings() {
             {/* Need Help Card */}
             <Card elevation={1}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
+                <Typography variant="h6" component="h2" sx={{ mb: 1 }}>
                   Need Help?
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

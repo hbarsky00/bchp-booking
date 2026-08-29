@@ -59,7 +59,7 @@ export default function BookStay() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <CalendarTodayIcon sx={{ color: 'primary.main' }} />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Select Dates
                   </Typography>
                 </Box>
@@ -175,7 +175,7 @@ export default function BookStay() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <LightbulbOutlinedIcon sx={{ color: c.violet600 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Booking Tips
                   </Typography>
                 </Box>
@@ -217,7 +217,7 @@ export default function BookStay() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <ShieldIcon sx={{ color: 'success.main' }} />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Secure Booking
                   </Typography>
                 </Box>

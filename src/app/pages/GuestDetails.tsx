@@ -99,7 +99,7 @@ export default function GuestDetails() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <PersonIcon color="primary" />
-                  <Typography variant="h6">Contact Information</Typography>
+                  <Typography variant="h6" component="h2">Contact Information</Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   All fields marked with * are required
@@ -250,7 +250,7 @@ export default function GuestDetails() {
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <ReceiptIcon color="primary" />
-                  <Typography variant="h6">Booking Summary</Typography>
+                  <Typography variant="h6" component="h2">Booking Summary</Typography>
                 </Box>
                 <Chip label="Light booking" size="small" color="info" sx={{ mb: 2 }} />
 
@@ -347,8 +347,8 @@ export default function GuestDetails() {
                 <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                  <Typography variant="h6">Total</Typography>
-                  <Typography variant="h5" color="primary" fontWeight={600}>
+                  <Typography variant="h6" component="p">Total</Typography>
+                  <Typography variant="h5" component="p" color="primary" fontWeight={600}>
                     ${bookingData.pricing.total.toFixed(2)}
                   </Typography>
                 </Box>
@@ -408,7 +408,7 @@ export default function GuestDetails() {
                 <HelpOutlineIcon sx={{ color: 'white' }} />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" component="h2" gutterBottom>
                   Need Help?
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

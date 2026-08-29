@@ -108,7 +108,7 @@ export default function BookingConfirmed() {
             <Card elevation={1} sx={{ mb: 3 }}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Booking Summary
                   </Typography>
                   <Chip
@@ -185,7 +185,7 @@ export default function BookingConfirmed() {
                             {bookingData.accommodation.type}
                           </Typography>
                         </Box>
-                        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                        <Typography variant="h6" component="p" sx={{ color: 'primary.main', fontWeight: 700 }}>
                           ${bookingData.accommodation.price.toFixed(2)}
                         </Typography>
                       </Box>
@@ -301,10 +301,10 @@ export default function BookingConfirmed() {
                   </Box>
                   <Divider sx={{ mb: 2 }} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                       Total Paid
                     </Typography>
-                    <Typography variant="h5" sx={{ color: 'success.main', fontWeight: 700 }}>
+                    <Typography variant="h5" component="p" sx={{ color: 'success.main', fontWeight: 700 }}>
                       ${bookingData.payment.total.toFixed(2)}
                     </Typography>
                   </Box>
