@@ -81,7 +81,10 @@ export default function Photo({
             // instead of being stranded invisible.
             position: 'relative',
             width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-            animation: state === 'loaded' ? 'photoIn .3s ease both' : 'none',
+            // No 'both' fill: the element's resting opacity is 1, and the keyframe only
+            // interpolates while it runs. With fill-mode the paused/throttled animation
+            // pins the image at the 'from' state and it never becomes visible.
+            animation: state === 'loaded' ? 'photoIn .3s ease' : 'none',
             transition: 'transform .45s cubic-bezier(.22,1,.36,1)',
             '@media (prefers-reduced-motion: reduce)': { animation: 'none', transition: 'none' },
             ...imgSx,
