@@ -20,7 +20,9 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import LockIcon from '@mui/icons-material/Lock';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { c, r } from '../tokens';
-import { useCart } from '../lib/cart';
+import { placeOrder, useCart, type Order } from '../lib/cart';
+import { formatDate, guestKey, loadDraft, nightsBetween } from '../lib/bookings';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 
@@ -47,14 +49,85 @@ export default function ShoppingCart() {
     image: i.image,
   }));
 
+  // Mid-booking the cart is "your whole order": the stay plus any extras. Showing only
+  // the snacks made people think they had lost the room they had just chosen.
+  const draft = loadDraft();
+  const stayNights = draft ? nightsBetween(draft.checkIn, draft.checkOut) : 0;
+  const stayTotal = draft ? draft.price * stayNights : 0;
+
+  const [placing, setPlacing] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
+  const [placed, setPlaced] = useState<Order | null>(null);
+
+  const handlePlaceOrder = async () => {
+    if (placing || !cartItems.length) return;
+    setPlacing(true);
+    setOrderError(null);
+    try {
+      setPlaced(await placeOrder(guestKey()));
+    } catch (e) {
+      setOrderError((e as Error).message);
+    } finally {
+      setPlacing(false);
+    }
+  };
+
   const updateQuantity = (id: number, change: number) => { void changeQty(id, change); };
   const removeItem = (id: number) => { void remove(id); };
   const clearCart = () => { void clear(); };
 
   const subtotal = cart.subtotal;
-  const tax = subtotal * 0.085;
-  const deliveryFee = 0;
-  const total = subtotal + tax + deliveryFee;
+  const total = stayTotal + subtotal;
+
+  // Placing an order used to dead-end at the booking payment screen. It now ends here,
+  // with a reference, where it is going, and an obvious way onward.
+  if (placed) {
+    return (
+      <Layout>
+        <Box sx={{ maxWidth: 560, mx: 'auto', textAlign: 'center', py: { xs: 5, md: 8 } }}>
+          <CheckCircleIcon sx={{ fontSize: 56, color: 'success.main', mb: 2 }} />
+          <Typography variant="h1" gutterBottom>Order placed</Typography>
+          <Typography variant="body1" sx={{ color: c.stone600, mx: 'auto', mb: 1 }}>
+            {placed.unitName
+              ? `We'll bring it to ${placed.unitName} within 30 minutes.`
+              : 'Collect it from reception whenever you are ready.'}
+          </Typography>
+          <Typography variant="body2" className="tnum" sx={{ color: c.stone600, mx: 'auto', mb: 4 }}>
+            Order {placed.reference}
+          </Typography>
+
+          <Card sx={{ textAlign: 'left', mb: 4 }}>
+            <CardContent>
+              {placed.items.map(line => (
+                <Box key={line.productId} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="body2">{line.quantity} × {line.name}</Typography>
+                  <Typography variant="body2" className="tnum">
+                    ${(line.unitPrice * line.quantity).toFixed(2)}
+                  </Typography>
+                </Box>
+              ))}
+              <Divider sx={{ my: 1.5 }} />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="subtitle1" fontWeight={700}>Total</Typography>
+                <Typography variant="subtitle1" fontWeight={700} className="tnum">
+                  ${placed.subtotal.toFixed(2)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button variant="contained" onClick={() => { setPlaced(null); navigate('/shop'); }}>
+              Order something else
+            </Button>
+            <Button variant="outlined" onClick={() => navigate('/my-bookings')}>
+              View my trips
+            </Button>
+          </Box>
+        </Box>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -82,6 +155,31 @@ export default function ShoppingCart() {
         </Box>
 
         <Grid container spacing={3}>
+          {/* The stay being booked, so the cart shows the whole order and not just snacks */}
+          {draft && (
+            <Grid size={12}>
+              <Card sx={{ mb: 1, bgcolor: c.stone50 }}>
+                <CardContent sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <Photo src={draft.unitImage} alt={draft.unitName} radius={r.sm} sx={{ width: 72, height: 72, flexShrink: 0 }} />
+                  <Box sx={{ flex: 1, minWidth: 180 }}>
+                    <Typography variant="overline" sx={{ color: c.stone600 }}>Your stay</Typography>
+                    <Typography variant="h5" component="h2">{draft.unitName}</Typography>
+                    <Typography variant="body2" sx={{ color: c.stone600 }}>
+                      {formatDate(draft.checkIn)} – {formatDate(draft.checkOut)} · {stayNights} night{stayNights === 1 ? '' : 's'} · {draft.unitFloor}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h5" component="p" className="tnum">${stayTotal.toFixed(2)}</Typography>
+                    <Typography variant="caption" sx={{ color: c.stone600 }}>
+                      ${draft.price.toFixed(2)} × {stayNights}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+
+
           {/* Cart Items - Left Column */}
           <Grid size={{ xs: 12, lg: 8 }}>
             <Card elevation={1}>
@@ -334,65 +432,61 @@ export default function ShoppingCart() {
                   </Typography>
                 </Box>
 
-                {/* Pricing Breakdown */}
+                {/* Pricing Breakdown — mirrors what will actually be charged. There is
+                    no tax or delivery fee in the booking total, so none is shown. */}
                 <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                  {draft && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        {draft.unitName} · {stayNights} night{stayNights === 1 ? '' : 's'}
+                      </Typography>
+                      <Typography variant="body2" className="tnum" sx={{ fontWeight: 600 }}>
+                        ${stayTotal.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
                     <Typography variant="body2" color="text.secondary">
-                      Subtotal
+                      {draft ? 'Extras from the shop' : 'Items'}
                     </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    <Typography variant="body2" className="tnum" sx={{ fontWeight: 600 }}>
                       ${subtotal.toFixed(2)}
                     </Typography>
                   </Box>
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Tax (8.5%)
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      ${tax.toFixed(2)}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Delivery Fee
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'success.main', fontWeight: 700 }}
-                    >
+                    <Typography variant="body2" color="text.secondary">Delivery</Typography>
+                    <Typography variant="body2" sx={{ color: 'success.main', fontWeight: 700 }}>
                       Free
                     </Typography>
                   </Box>
 
                   <Divider sx={{ mb: 3 }} />
 
-                  {/* Total */}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
-                      Total
-                    </Typography>
-                    <Typography
-                      variant="h5" component="p"
-                      sx={{ color: 'primary.main', fontWeight: 700 }}
-                    >
-                      ${total.toFixed(2)}
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>Total</Typography>
+                    <Typography variant="h5" component="p" className="tnum" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                      ${(stayTotal + subtotal).toFixed(2)}
                     </Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
-                    Including all taxes and fees
+                    {draft ? 'Stay and extras, paid together' : 'No delivery charge'}
                   </Typography>
                 </Box>
+
+                {orderError && (
+                  <Alert severity="error" sx={{ mb: 2 }}>{orderError}</Alert>
+                )}
 
                 {/* Action Buttons */}
                 <Button
                   variant="contained"
                   fullWidth
                   size="large"
-                  disabled={cartItems.length === 0}
-                  onClick={() => navigate('/payment-method')}
-                  startIcon={<LockIcon />}
+                  onClick={draft ? () => navigate('/payment-method') : handlePlaceOrder}
+                  disabled={placing || (!draft && cartItems.length === 0)}
+                  startIcon={placing ? <CircularProgress size={18} color="inherit" /> : <LockIcon />}
                   sx={{
                     mb: 1.5,
                     py: 1.5,
@@ -401,7 +495,9 @@ export default function ShoppingCart() {
                     fontWeight: 600,
                   }}
                 >
-                  Checkout
+                  {placing ? 'Placing order…'
+                    : draft ? `Continue to payment · $${(stayTotal + subtotal).toFixed(2)}`
+                    : 'Place order'}
                 </Button>
 
                 <Button

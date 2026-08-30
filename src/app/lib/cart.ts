@@ -46,6 +46,48 @@ async function call(path: string, init?: RequestInit): Promise<Cart> {
   return res.json()
 }
 
+export interface OrderLine { productId: number; name: string; unitPrice: number; quantity: number; image: string }
+export interface Order {
+  id: number
+  reference: string
+  status: 'placed' | 'delivered' | 'cancelled'
+  subtotal: number
+  note: string
+  createdAt: string
+  bookingReference: string | null
+  unitName: string | null
+  items: OrderLine[]
+}
+
+/** Turns the current cart into an order. The server empties the cart on success. */
+export async function placeOrder(guestKeyValue: string, note = ''): Promise<Order> {
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ cartId: cartId(), guestKey: guestKeyValue, note }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error((data as any).error ?? `Request failed (${res.status})`)
+  return data as Order
+}
+
+export function useOrders(guestKeyValue: string) {
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/orders?guestKey=${guestKeyValue}`)
+      if (res.ok) setOrders(await res.json())
+    } finally {
+      setLoading(false)
+    }
+  }, [guestKeyValue])
+
+  useEffect(() => { void refresh() }, [refresh])
+  return { orders, loading, refresh }
+}
+
 export function useCart() {
   const [cart, setCart] = useState<Cart>(EMPTY)
   const [loading, setLoading] = useState(true)

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { formatDate, useBooking } from '../lib/bookings';
 import { downloadText } from '../lib/actions';
 import Box from '@mui/material/Box';
@@ -540,6 +541,15 @@ export default function BookingConfirmed() {
                     sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
                   >
                     Download receipt
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<StorefrontIcon />}
+                    onClick={() => navigate('/shop')}
+                    sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                  >
+                    Order to your room
                   </Button>
                   <Button
                     variant="outlined"

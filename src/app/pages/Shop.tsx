@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
 import { useCart } from '../lib/cart';
+import { loadDraft } from '../lib/bookings';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
@@ -163,13 +164,14 @@ export default function Shop() {
   
   // Track quantities for each product
   const { cart, error: cartError, changeQty, quantityOf } = useCart();
+  // A booking in progress changes what "next" means on this page.
+  const draft = loadDraft();
   
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   // Check if we're in booking flow (came from guest-details)
-  const isBookingFlow = location.state?.fromBookingFlow || false;
 
   // Calculate total cart items
   const totalCartItems = cart.itemCount;
@@ -263,6 +265,54 @@ export default function Shop() {
         </Box>
 
         {/* Products Grid */}
+        <Box
+          sx={{
+            position: 'sticky',
+            top: { xs: 64, md: 76 },
+            zIndex: 2,
+            mx: { xs: -2, md: -3 },
+            px: { xs: 2, md: 3 },
+            py: 1.5,
+            mb: 3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            flexWrap: 'wrap',
+            bgcolor: c.white,
+            borderBottom: `1px solid ${c.stone200}`,
+          }}
+        >
+          <Box sx={{ flex: 1, minWidth: 180 }}>
+            {draft ? (
+              <>
+                <Typography variant="subtitle2">Adding extras to {draft.unitName}</Typography>
+                <Typography variant="caption" sx={{ color: c.stone600 }}>
+                  You'll pay for the stay and any extras together.
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="subtitle2">
+                  {totalCartItems > 0
+                    ? `${totalCartItems} item${totalCartItems === 1 ? '' : 's'} in your cart`
+                    : 'Room service'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: c.stone600 }}>
+                  {totalCartItems > 0 ? 'Delivered to your room in about 30 minutes.' : 'Add items and we bring them to you.'}
+                </Typography>
+              </>
+            )}
+          </Box>
+          <Button
+            variant="contained"
+            endIcon={<ArrowForwardIcon />}
+            disabled={!draft && totalCartItems === 0}
+            onClick={() => navigate(draft ? '/payment-method' : '/shopping-cart')}
+          >
+            {draft ? 'Continue to payment' : totalCartItems > 0 ? `Review cart (${totalCartItems})` : 'Cart empty'}
+          </Button>
+        </Box>
+
         {cartError && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={undefined}>
             {cartError} — your cart could not be updated.
@@ -430,41 +480,20 @@ export default function Shop() {
           </CardContent>
         </Card>
 
-        {/* Booking Flow Navigation - Only shown during booking flow */}
-        {isBookingFlow && (
-          <Card elevation={1} sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                <ShoppingCartIcon color="primary" />
-                <Typography variant="h6" component="h2">Ready to continue?</Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                You can add items now or continue to payment and shop during your stay.
+        {/* Secondary paths only — the primary action lives in the sticky bar above,
+            so repeating it here would be two buttons competing for the same job. */}
+        {draft && (
+          <Card elevation={0} sx={{ bgcolor: c.stone50 }}>
+            <CardContent sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ color: c.stone600, flex: 1, minWidth: 200 }}>
+                Not shopping today? You can go straight to payment.
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<ArrowBackIcon />}
-                  onClick={() => navigate('/guest-details')}
-                >
-                  Back to Details
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={handleSkipToPayment}
-                  sx={{ flex: { xs: '1 1 100%', sm: '0 1 auto' } }}
-                >
-                  Skip Shopping
-                </Button>
-                <Button
-                  variant="contained"
-                  endIcon={<ArrowForwardIcon />}
-                  onClick={handleContinueToPayment}
-                  sx={{ flex: { xs: '1 1 100%', sm: '1 1 auto' } }}
-                >
-                  Continue to Payment {totalCartItems > 0 && `(${totalCartItems} items)`}
-                </Button>
-              </Box>
+              <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={() => navigate('/guest-details')}>
+                Back to details
+              </Button>
+              <Button variant="outlined" onClick={handleSkipToPayment}>
+                Skip shopping
+              </Button>
             </CardContent>
           </Card>
         )}
@@ -475,7 +504,7 @@ export default function Shop() {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}

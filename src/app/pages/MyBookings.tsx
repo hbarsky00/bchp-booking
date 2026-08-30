@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
 import Skeleton from '@mui/material/Skeleton';
 import Alert from '@mui/material/Alert';
-import { formatDate, useMyBookings } from '../lib/bookings';
+import { formatDate, guestKey, useMyBookings } from '../lib/bookings';
+import { useOrders } from '../lib/cart';
 import { c } from '../tokens';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Menu from '@mui/material/Menu';
@@ -76,6 +77,7 @@ export default function MyBookings() {
   const closeMenu = () => setMenu(null);
   const [currentTab, setCurrentTab] = useState(0);
   const { bookings: raw, loading: bookingsLoading, error: bookingsError, cancel } = useMyBookings();
+  const { orders } = useOrders(guestKey());
 
   // Shape the API rows into what this page renders.
   const bookings = raw.map(b => ({
@@ -436,6 +438,38 @@ export default function MyBookings() {
           </Grid>
         </Grid>
       </Box>
+        {orders.length > 0 && (
+          <Card sx={{ mt: 3 }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h5" component="h2" gutterBottom>Room service orders</Typography>
+              {orders.map(o => (
+                <Box
+                  key={o.reference}
+                  sx={{
+                    display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap',
+                    py: 1.5, borderTop: `1px solid ${c.stone200}`,
+                  }}
+                >
+                  <Box>
+                    <Typography variant="subtitle2">
+                      {o.items.reduce((n, i) => n + i.quantity, 0)} items · {o.reference}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: c.stone600 }}>
+                      {o.items.map(i => `${i.quantity} × ${i.name}`).join(', ')}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: c.stone600 }}>
+                      {o.unitName ? `Delivering to ${o.unitName}` : 'Collect from reception'}
+                    </Typography>
+                  </Box>
+                  <Typography variant="subtitle1" className="tnum" sx={{ fontWeight: 700 }}>
+                    ${o.subtotal.toFixed(2)}
+                  </Typography>
+                </Box>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
       <Menu anchorEl={menu?.anchor ?? null} open={Boolean(menu)} onClose={closeMenu}>
         <MenuItem onClick={() => { if (menu) navigate(`/booking-details/${menu.ref}`); closeMenu(); }}>
           View details
