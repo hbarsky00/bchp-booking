@@ -172,6 +172,11 @@ Rules:
   figures are "from $base" with no dates, and the quoted average once dates are chosen.
 - Seven 44px columns need every pixel of a 375px card, so the month grid has **no gutters**
   and each cell fills its column.
+- **A date that cannot be chosen must look like it.** A cell that fails the minimum-stay
+  rule is disabled, greyed and says why in its accessible name, and the rule is stated
+  under the grid the moment a check-in is picked. It previously stayed fully styled with a
+  pointer cursor and silently ignored the click — the worst kind of dead control, because
+  the guest concludes the site is broken rather than that the stay is too short.
 
 ## Mobile
 

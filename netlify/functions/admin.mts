@@ -35,7 +35,8 @@ async function handler(req: Request) {
       from bookings`)
 
     const units = await query(`
-      select u.id, u.name, u.floor, u.active,
+      select u.id, u.name, u.floor, u.active, u.min_nights as "minNights",
+             u.price::float8 as price,
              count(b.id) filter (where b.status <> 'cancelled')::int as "liveBookings"
       from units u left join bookings b on b.unit_id = u.id
       group by u.id order by u.id`)
@@ -45,6 +46,24 @@ async function handler(req: Request) {
 
   if (req.method === 'PATCH') {
     const body: any = await req.json().catch(() => ({}))
+
+    // Room settings. Minimum stay was a constant of 3 for every room; whoever owns the
+    // rooms decides which of them are worth withholding from a weekend.
+    if (body.unitId !== undefined) {
+      const unitId = Number(body.unitId)
+      const minNights = Number(body.minNights)
+      if (!Number.isInteger(unitId)) return bad('unitId must be an integer')
+      if (!Number.isInteger(minNights) || minNights < 1 || minNights > 30) {
+        return bad('Minimum stay must be a whole number of nights from 1 to 30')
+      }
+      const rows = await query(
+        'update units set min_nights = $1::int where id = $2::int returning id, name, min_nights as "minNights"',
+        [minNights, unitId],
+      )
+      if (!rows.length) return bad('No unit with that id', 404)
+      return json(rows[0])
+    }
+
     const reference = String(body.reference ?? '')
     const status = String(body.status ?? '')
     if (!reference) return bad('reference is required')

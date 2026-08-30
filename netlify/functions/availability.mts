@@ -3,7 +3,6 @@ import { query } from '../lib/tx.mts'
 import { asDate, eachNight, quote, seasonFor, type Season } from '../lib/pricing.mts'
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
-const MIN_NIGHTS = 3
 const MAX_WINDOW_DAYS = 400
 
 /**
@@ -25,8 +24,8 @@ async function handler(req: Request) {
   if (to <= from) return bad('to must be after from')
   if (eachNight(from, to).length > MAX_WINDOW_DAYS) return bad(`Ask for at most ${MAX_WINDOW_DAYS} days at a time`)
 
-  const [unit] = await query<{ id: number; name: string; price: string; max_guests: number; active: boolean }>(
-    'select id, name, price, max_guests, active from units where id = $1', [unitId],
+  const [unit] = await query<{ id: number; name: string; price: string; max_guests: number; active: boolean; min_nights: number }>(
+    'select id, name, price, max_guests, active, min_nights from units where id = $1', [unitId],
   )
   if (!unit) return bad('No such unit', 404)
 
@@ -70,13 +69,16 @@ async function handler(req: Request) {
   let selection = null
   if (DATE.test(checkIn) && DATE.test(checkOut) && checkOut > checkIn) {
     const clash = eachNight(checkIn, checkOut).find(d => takenSet.has(d))
+    const nights = eachNight(checkIn, checkOut).length
     selection = clash
       ? { ok: false as const, reason: `${clash} is already booked` }
-      : { ok: true as const, ...quote(base, checkIn, checkOut, seasons) }
+      : nights < unit.min_nights
+        ? { ok: false as const, reason: `${unit.name} has a ${unit.min_nights}-night minimum` }
+        : { ok: true as const, ...quote(base, checkIn, checkOut, seasons) }
   }
 
   return json({
-    unitId, unitName: unit.name, basePrice: base, minNights: MIN_NIGHTS,
+    unitId, unitName: unit.name, basePrice: base, minNights: unit.min_nights,
     from, to, days, selection,
   })
 }

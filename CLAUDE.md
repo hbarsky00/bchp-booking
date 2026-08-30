@@ -154,6 +154,11 @@ node --experimental-strip-types netlify/lib/pricing.mts
   the single source; the payment screen mirrors it for a live figure and the server
   recomputes it as the authority. Card surcharging is restricted in some jurisdictions and
   by some card network rules — set `card` to zero to absorb it.
+- **Minimum stay is per room (`units.min_nights`, default 1) and enforced server-side.**
+  It was a constant of 3 in the availability function, applied to every room and checked
+  only in the browser — the API took one-night stays all along, so the rule was neither
+  visible nor kept. Three nights everywhere also bans a weekend, which is two. Editable per
+  room under **Room rules** on the dashboard.
 - `/api/seasons` is full CRUD behind the admin session, surfaced as **Seasonal rates** on
   the dashboard. The migration only seeds a starting set — rates are the owner's to change,
   and changing one must never need a deploy.

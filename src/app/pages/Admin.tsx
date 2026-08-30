@@ -8,6 +8,7 @@ import { useAdmin } from '../lib/admin';
 import { changePassword, passwordProblem, useSession } from '../lib/auth';
 import ChangePasswordDialog from '../components/ChangePasswordDialog';
 import SeasonManager from '../components/SeasonManager';
+import RoomRules from '../components/RoomRules';
 import Snackbar from '@mui/material/Snackbar';
 import { downloadCsv } from '../lib/actions';
 import Box from '@mui/material/Box';
@@ -277,6 +278,12 @@ export default function Admin() {
 
         {/* Pricing is business data, so it lives above the day-to-day booking list rather
             than behind a migration. */}
+        <RoomRules
+          units={admin.data?.units ?? []}
+          loading={admin.loading}
+          onSave={admin.setMinNights}
+        />
+
         <SeasonManager />
 
         <Grid container spacing={3}>

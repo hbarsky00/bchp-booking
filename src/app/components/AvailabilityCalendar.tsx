@@ -20,6 +20,13 @@ import type { AvailabilityDay } from '../lib/availability';
  */
 
 const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+const addDays = (date: string, n: number) =>
+  new Date(Date.parse(date + 'T00:00:00Z') + n * 86_400_000).toISOString().slice(0, 10);
+
+const formatShort = (date: string) =>
+  new Date(date + 'T00:00:00Z').toLocaleDateString(undefined,
+    { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' });
 const iso = (y: number, m: number, d: number) =>
   `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
@@ -75,6 +82,10 @@ export default function AvailabilityCalendar({
 
   const nightsFrom = (a: string, b: string) =>
     Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000);
+
+  /** While a check-in is set, anything closer than the minimum cannot close the range. */
+  const tooShort = (date: string) =>
+    !!checkIn && !checkOut && date > checkIn && nightsFrom(checkIn, date) < minNights;
 
   const pick = (date: string) => {
     const day = byDate.get(date);
@@ -161,15 +172,20 @@ export default function AvailabilityCalendar({
                   const isIn = date === checkIn;
                   const isOut = date === checkOut;
                   const inRange = !!checkIn && !!rangeEnd && date > checkIn && date < rangeEnd;
-                  const disabled = past || !known || (booked && !checkIn) || (booked && !!checkOut);
+                  const short = tooShort(date);
+                  const disabled = past || !known || short || (booked && !checkIn) || (booked && !!checkOut);
 
                   return (
                     <Box
                       key={date}
                       component="button"
                       type="button"
-                      disabled={past || !known}
-                      aria-label={`${date}${booked ? ', booked' : day ? `, $${day.rate}` : ''}`}
+                      disabled={past || !known || short}
+                      aria-label={
+                        `${date}${booked ? ', booked'
+                          : short ? `, too short — ${minNights}-night minimum`
+                          : day ? `, $${day.rate}` : ''}`
+                      }
                       aria-pressed={isIn || isOut}
                       onMouseEnter={() => setHover(date)}
                       onMouseLeave={() => setHover('')}
@@ -182,9 +198,11 @@ export default function AvailabilityCalendar({
                         // the grid has no gutters and each cell fills its whole column.
                         minHeight: 44, px: 0, py: 0.25,
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        cursor: past || !known || (booked && (!checkIn || !!checkOut)) ? 'not-allowed' : 'pointer',
+                        cursor: disabled ? 'not-allowed' : 'pointer',
                         bgcolor: isIn || isOut ? c.coral600 : inRange ? c.coral50 : 'transparent',
-                        color: isIn || isOut ? c.white : past || !known ? c.stone300 : booked ? c.stone500 : c.stone900,
+                        color: isIn || isOut ? c.white
+                          : past || !known || short ? c.stone300
+                          : booked ? c.stone600 : c.stone900,
                         opacity: 1,
                         '&:hover:not(:disabled)': {
                           bgcolor: isIn || isOut ? c.coral700 : booked ? 'transparent' : c.coral50,
@@ -224,6 +242,14 @@ export default function AvailabilityCalendar({
           );
         })}
       </Box>
+
+      {/* Say the rule at the moment it starts to bite, not in a card further down the page. */}
+      {checkIn && !checkOut && minNights > 1 && (
+        <Typography variant="caption" sx={{ display: 'block', mt: 1.25, color: c.stone600 }}>
+          {minNights}-night minimum — choose {formatShort(addDays(checkIn, minNights))} or later
+          to check out.
+        </Typography>
+      )}
 
       <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1.5 }}>
         {[

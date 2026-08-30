@@ -64,6 +64,16 @@ async function handler(req: Request) {
         if (guests > u.max_guests) {
           throw Object.assign(new Error(`That unit sleeps ${u.max_guests}`), { status: 409 })
         }
+        // The minimum was enforced only in the browser, so the API took one-night stays
+        // while the calendar refused them. A rule the server does not keep is not a rule.
+        const requested = Math.round(
+          (Date.parse(checkOut + 'T00:00:00Z') - Date.parse(checkIn + 'T00:00:00Z')) / 86_400_000,
+        )
+        if (requested < u.min_nights) {
+          throw Object.assign(
+            new Error(`${u.name} has a ${u.min_nights}-night minimum`), { status: 409 },
+          )
+        }
 
         const clash = await q(
           `select reference from bookings

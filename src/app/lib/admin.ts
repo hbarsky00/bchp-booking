@@ -11,7 +11,7 @@ export interface AdminBooking extends Booking {
 export interface AdminData {
   bookings: AdminBooking[]
   stats: { totalBookings: number; pending: number; paid: number; cancelled: number; revenue: number }
-  units: { id: number; name: string; floor: string; active: boolean; liveBookings: number }[]
+  units: { id: number; name: string; floor: string; active: boolean; liveBookings: number; minNights: number; price: number }[]
 }
 
 /**
@@ -63,5 +63,14 @@ export function useAdmin() {
     await refresh()
   }, [refresh])
 
-  return { data, loading, error, signedOut, refresh, setStatus }
+  const setMinNights = useCallback(async (unitId: number, minNights: number) => {
+    await adminFetch({
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ unitId, minNights }),
+    })
+    await refresh()
+  }, [refresh])
+
+  return { data, loading, error, signedOut, refresh, setStatus, setMinNights }
 }

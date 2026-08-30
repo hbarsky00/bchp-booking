@@ -507,25 +507,23 @@ export default function PropertyDetails() {
                   {!checkIn || !checkOut ? 'Choose your dates' : 'Book now'}
                 </Button>
 
-                {/* Info */}
-                <Card
-                  elevation={0}
-                  sx={{
-                    mt: 3,
-                    bgcolor: c.green50,
-                    border: 1,
-                    borderColor: c.green200,
-                  }}
-                >
-                  <CardContent sx={{ p: 2 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5, color: 'success.dark' }}>
-                      Minimum Stay: 3 Nights
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      All bookings require a minimum stay of 3 nights
-                    </Typography>
-                  </CardContent>
-                </Card>
+                {/* Stated only when there is a rule to state, and read from the room
+                    rather than asserted. It used to hardcode "3 Nights" for every room. */}
+                {minNights > 1 && (
+                  <Card
+                    elevation={0}
+                    sx={{ mt: 3, bgcolor: c.green50, border: 1, borderColor: c.green200 }}
+                  >
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5, color: c.green700 }}>
+                        Minimum stay: {minNights} night{minNights === 1 ? '' : 's'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {unit.name} is booked in stays of at least {minNights} nights.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
               </CardContent>
             </Card>
           </Grid>
