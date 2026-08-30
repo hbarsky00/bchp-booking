@@ -142,8 +142,9 @@ API:
 - `/api/products`, `/api/cart` — shop catalogue and the persistent cart
 - `/api/units` — stays; with `?checkIn&checkOut` each carries real `available`
 - `/api/bookings` — GET by `?reference` or `?guestKey`, POST to create, PATCH to cancel
-- `/api/admin` — every booking incl. guest PII. **Gated on `ADMIN_TOKEN` and fails
-  closed**: unset variable means the endpoint refuses, never defaults to public.
+- `/api/auth/*` — sign in, sign out, session check, change password, reset
+- `/api/admin` — every booking incl. guest PII. **Gated on the admin session cookie and
+  fails closed**: no valid session, no data. See "Admin authentication" above.
 
 **Double-booking is prevented by a row lock, not a constraint.** The booking transaction
 does `select … from units where id = $1 for update` before checking overlap, so every
