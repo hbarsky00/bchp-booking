@@ -1,27 +1,17 @@
 import { bad, guard, json } from '../lib/db.mts'
 import { query } from '../lib/tx.mts'
+import { requireAdmin } from '../lib/auth.mts'
 
 /**
  * Admin data: every booking, including guest names, emails and phone numbers.
  *
- * There is no user auth in this app, so this endpoint is gated on a shared secret in
- * ADMIN_TOKEN. It **fails closed** — if the variable is not set the endpoint refuses
- * outright rather than serving everyone's personal details to the open internet.
+ * Gated on the signed-in administrator's session cookie. This used to accept a shared
+ * secret in a request header, which meant the credential had to live somewhere
+ * JavaScript could read it — and anything that could read it could replay it. It still
+ * fails closed: no valid session, no data.
  */
-function authorise(req: Request): Response | null {
-  const expected = process.env.ADMIN_TOKEN
-  if (!expected) return bad('Admin access is not configured on this deploy', 503)
-
-  const supplied = req.headers.get('x-admin-token') ?? ''
-  // Constant-time-ish: compare full length so a wrong token cannot be probed by timing.
-  const ok =
-    supplied.length === expected.length &&
-    supplied.split('').reduce((acc, ch, i) => acc | (ch.charCodeAt(0) ^ expected.charCodeAt(i)), 0) === 0
-  return ok ? null : bad('Not authorised', 401)
-}
-
 async function handler(req: Request) {
-  const denied = authorise(req)
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   if (req.method === 'GET') {

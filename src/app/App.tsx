@@ -23,6 +23,7 @@ const CommercialRental = lazy(() => import('./pages/CommercialRental'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ContactSupport = lazy(() => import('./pages/ContactSupport'));
 const FAQs = lazy(() => import('./pages/FAQs'));
+const Login = lazy(() => import('./pages/Login'));
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -47,6 +48,9 @@ function AnimatedRoutes() {
         <Route path="/commercial-rental" element={<CommercialRental />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/admin" element={<Admin />} />
+        {/* Sign-in and the reset link share one page; the token in the query picks the mode. */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<Login />} />
         <Route path="/search-results" element={<SearchResults />} />
         <Route path="/property-details" element={<PropertyDetails />} />
         <Route path="/guest-details" element={<GuestDetails />} />

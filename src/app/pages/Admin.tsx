@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import Layout from '../components/Layout';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import { formatDate } from '../lib/bookings';
 import { useAdmin } from '../lib/admin';
+import { changePassword, passwordProblem, useSession } from '../lib/auth';
+import ChangePasswordDialog from '../components/ChangePasswordDialog';
 import Snackbar from '@mui/material/Snackbar';
 import { downloadCsv } from '../lib/actions';
 import Box from '@mui/material/Box';
@@ -39,6 +41,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PeopleIcon from '@mui/icons-material/People';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import BlockIcon from '@mui/icons-material/Block';
+import LogoutIcon from '@mui/icons-material/Logout';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { c } from '../tokens';
 
@@ -125,7 +128,8 @@ const currentBookings = [
 export default function Admin() {
   const navigate = useNavigate();
   const admin = useAdmin();
-  const [tokenInput, setTokenInput] = useState('');
+  const { session, signOut } = useSession();
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const [propertyType, setPropertyType] = useState('residential');
   const [selectedFloor, setSelectedFloor] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState('all');
@@ -228,32 +232,8 @@ export default function Admin() {
     }
   };
 
-  if (admin.needsToken) {
-    return (
-      <Layout>
-        <Box sx={{ maxWidth: 460, mx: 'auto', py: { xs: 6, md: 10 } }}>
-          <Typography variant="h1" gutterBottom>Admin access</Typography>
-          <Typography variant="body2" sx={{ color: c.stone600, mb: 3 }}>
-            This dashboard shows every guest's contact details, so it is behind a token.
-            Set ADMIN_TOKEN in the Netlify environment and paste it here.
-          </Typography>
-          {admin.error && <Alert severity="error" sx={{ mb: 2 }}>{admin.error}</Alert>}
-          <TextField
-            fullWidth
-            type="password"
-            label="Admin token"
-            value={tokenInput}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTokenInput(e.target.value)}
-            onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter') void admin.unlock(tokenInput); }}
-            sx={{ mb: 2 }}
-          />
-          <Button variant="contained" fullWidth onClick={() => void admin.unlock(tokenInput)}>
-            Unlock dashboard
-          </Button>
-        </Box>
-      </Layout>
-    );
-  }
+  // Not signed in: the sign-in form lives on one page, not duplicated behind every gate.
+  if (admin.signedOut) return <Navigate to="/login" replace />;
 
   return (
     <Layout>
@@ -268,16 +248,30 @@ export default function Admin() {
               Manage availability, approvals, and bookings
             </Typography>
           </Box>
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="Admin Access"
-            sx={{
-              bgcolor: c.green100,
-              color: c.green700,
-              fontWeight: 600,
-              border: `1px solid ${c.green200}`,
-            }}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+            <Chip
+              icon={<CheckCircleIcon />}
+              label={session?.email ?? 'Signed in'}
+              sx={{
+                bgcolor: c.green100,
+                color: c.green700,
+                fontWeight: 600,
+                border: `1px solid ${c.green200}`,
+                maxWidth: 280,
+              }}
+            />
+            <Button variant="outlined" size="small" onClick={() => setPasswordOpen(true)}>
+              Change password
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<LogoutIcon />}
+              onClick={() => void signOut().then(() => navigate('/login', { replace: true }))}
+            >
+              Sign out
+            </Button>
+          </Box>
         </Box>
 
         <Grid container spacing={3}>
@@ -868,6 +862,7 @@ export default function Admin() {
         message={toast}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       />
+      <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
     </Layout>
   );
 }

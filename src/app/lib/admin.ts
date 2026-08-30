@@ -14,23 +14,19 @@ export interface AdminData {
   units: { id: number; name: string; floor: string; active: boolean; liveBookings: number }[]
 }
 
-const TOKEN = 'bitstay.adminToken'
-
 /**
- * The admin token is held in sessionStorage, not localStorage: it unlocks every guest's
- * contact details, so it should die with the tab rather than linger on the machine.
+ * Admin data fetching.
+ *
+ * There is no credential in this file. Authorisation rides on the HttpOnly session cookie
+ * the browser sends by itself — this used to hold a shared admin token in sessionStorage
+ * and attach it by hand, which meant any script on the page could read and reuse it.
  */
-export const getToken = () => { try { return sessionStorage.getItem(TOKEN) ?? '' } catch { return '' } }
-export const setToken = (t: string) => { try { sessionStorage.setItem(TOKEN, t) } catch { /* blocked */ } }
-export const clearToken = () => { try { sessionStorage.removeItem(TOKEN) } catch { /* blocked */ } }
-
 async function adminFetch<T>(init?: RequestInit): Promise<T> {
-  const res = await fetch('/api/admin', {
-    ...init,
-    headers: { ...(init?.headers ?? {}), 'x-admin-token': getToken() },
-  })
+  const res = await fetch('/api/admin', { ...init, credentials: 'same-origin' })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw Object.assign(new Error((data as any).error ?? `Request failed (${res.status})`), { status: res.status })
+  if (!res.ok) {
+    throw Object.assign(new Error((data as any).error ?? `Request failed (${res.status})`), { status: res.status })
+  }
   return data as T
 }
 
@@ -38,30 +34,25 @@ export function useAdmin() {
   const [data, setData] = useState<AdminData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [needsToken, setNeedsToken] = useState(!getToken())
+  /** True once the server has told us this session is not signed in. */
+  const [signedOut, setSignedOut] = useState(false)
 
   const refresh = useCallback(async () => {
-    if (!getToken()) { setNeedsToken(true); setLoading(false); return }
     setLoading(true)
     try {
       setData(await adminFetch<AdminData>())
       setError(null)
-      setNeedsToken(false)
+      setSignedOut(false)
     } catch (e) {
       const err = e as Error & { status?: number }
-      if (err.status === 401) { clearToken(); setNeedsToken(true) }
-      setError(err.message)
+      if (err.status === 401) setSignedOut(true)
+      else setError(err.message)
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
-
-  const unlock = useCallback(async (token: string) => {
-    setToken(token.trim())
-    await refresh()
-  }, [refresh])
 
   const setStatus = useCallback(async (reference: string, status: string) => {
     await adminFetch({
@@ -72,5 +63,5 @@ export function useAdmin() {
     await refresh()
   }, [refresh])
 
-  return { data, loading, error, needsToken, unlock, refresh, setStatus }
+  return { data, loading, error, signedOut, refresh, setStatus }
 }

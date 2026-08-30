@@ -84,6 +84,39 @@ node ~/Documents/impeccable/cli/bin/cli.js detect http://localhost:4174/<route> 
 If the preview server is down, every scan returns `[]`, which reads as a perfect score.
 Always confirm the server responds before trusting a clean result.
 
+## Admin authentication
+
+One administrator, no sign-up. Guests book without an account; `/admin` is the only gated
+area, and `/login` is the only door into it.
+
+- **The credential is never in the repo.** `ADMIN_PASSWORD_HASH` holds an scrypt hash, and
+  `.env` is gitignored. Generate a hash with `npm run admin:password` — it prompts, so the
+  password never lands in shell history.
+- **The session is an HttpOnly cookie**, signed with `SESSION_SECRET` (32+ chars, fails
+  closed if unset). `document.cookie` cannot see it. This replaced a shared token kept in
+  sessionStorage, which any injected script could read and replay.
+- **The database is the source of truth**, seeded from `ADMIN_EMAIL` /
+  `ADMIN_PASSWORD_HASH` on first sign-in. After that the env vars are ignored, which is
+  what lets the password be changed from the dashboard without a redeploy.
+- **`session_epoch`** is embedded in every cookie and bumped on any password change, so
+  changing the password signs out every other device.
+- **Lockout after 8 failed attempts, 15 minutes**, counted in the database because
+  serverless instances share no memory.
+- **Reset links** are single-use, hashed at rest, and expire in 30 minutes. With
+  `RESEND_API_KEY` + `RESET_EMAIL_FROM` set they are emailed; otherwise the link is written
+  to the function log, which only the site owner can read.
+
+Required environment variables: `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`.
+Optional: `RESEND_API_KEY`, `RESET_EMAIL_FROM`. `ADMIN_TOKEN` is dead — delete it.
+
+**Locked out with no mail configured?** Delete the row (`delete from admin_users;`) and the
+next sign-in re-seeds it from the environment.
+
+Watch out: Postgres cannot infer a type for a parameter that is both assigned to a column
+and compared against another parameter. Every placeholder in the auth queries is cast
+explicitly (`$1::int`); without that, `recordFailure` threw on every wrong password, which
+turned a 401 into a 500 and meant the lockout never engaged.
+
 ## Database
 
 Netlify managed Postgres. `NETLIFY_DATABASE_URL` is injected by Netlify in builds,

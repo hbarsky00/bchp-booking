@@ -53,7 +53,7 @@ const sections = [
 const accountItems = [
   { label: 'Help centre', value: '/faqs', icon: <HelpOutlineIcon fontSize="small" />, match: ['/faqs'] },
   { label: 'Contact support', value: '/contact-support', icon: <SupportAgentIcon fontSize="small" />, match: ['/contact-support'] },
-  { label: 'Admin', value: '/admin', icon: <AdminPanelSettingsIcon fontSize="small" />, match: ['/admin'] },
+  { label: 'Admin sign-in', value: '/admin', icon: <AdminPanelSettingsIcon fontSize="small" />, match: ['/admin', '/login'] },
 ];
 
 export default function Layout({ children }: LayoutProps) {
