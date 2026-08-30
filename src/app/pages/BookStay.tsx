@@ -8,12 +8,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import TokenIcon from '@mui/icons-material/Token';
 import StarIcon from '@mui/icons-material/Star';
 
-const previewUnits = [
-  { name: 'Satoshi Room', floor: '2nd floor · 2 guests', rating: 4.9, price: 45, image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800' },
-  { name: 'Nakamoto Room', floor: '2nd floor · 2 guests', rating: 4.8, price: 52, image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800' },
-  { name: 'Tominaga Room', floor: '3rd floor · 3 guests', rating: 5.0, price: 65, image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800' },
-  { name: 'Peer to Peer Room', floor: '3rd floor · 4 guests', rating: 4.7, price: 68, image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800' },
-];
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -23,7 +18,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import ShieldIcon from '@mui/icons-material/Shield';
+import Skeleton from '@mui/material/Skeleton';
 import { c, r } from '../tokens';
+import { useUnits } from '../lib/bookings';
 
 export default function BookStay() {
   const navigate = useNavigate();
@@ -31,6 +28,22 @@ export default function BookStay() {
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState('');
   const [beds, setBeds] = useState('');
+
+  // The real catalogue. When dates are in the hero search these carry genuine
+  // availability and the seasonal rate for those nights, not a base price.
+  const { units, loading: unitsLoading } = useUnits(checkIn || undefined, checkOut || undefined);
+  const previewUnits = units.slice(0, 4);
+
+  /** A card goes to its own room. It used to run the same search as "Show all". */
+  const openUnit = (unit: (typeof units)[number]) => {
+    const query = new URLSearchParams({ unit: String(unit.id) });
+    if (checkIn) query.set('checkIn', checkIn);
+    if (checkOut) query.set('checkOut', checkOut);
+    if (guests) query.set('guests', guests);
+    navigate(`/property-details?${query}`, {
+      state: { unit, searchParams: { checkIn, checkOut, guests } },
+    });
+  };
 
   const handleSearchAvailability = () => {
     // Navigate to search results with search parameters
@@ -202,21 +215,49 @@ export default function BookStay() {
           </Button>
         </Box>
         <Grid container spacing={{ xs: 3, md: 4 }} rowSpacing={{ xs: 4, md: 5 }}>
+          {unitsLoading && [0, 1, 2, 3].map(i => (
+            <Grid key={`s${i}`} size={{ xs: 12, sm: 6, md: 3 }}>
+              <Skeleton variant="rounded" sx={{ aspectRatio: '20 / 19', mb: 1.5 }} />
+              <Skeleton variant="text" width="70%" />
+              <Skeleton variant="text" width="45%" />
+            </Grid>
+          ))}
           {previewUnits.map(u => (
-            <Grid key={u.name} size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid key={u.id} size={{ xs: 12, sm: 6, md: 3 }}>
               <Box
                 role="button"
-                tabIndex={0}
-                aria-label={`${u.name}, $${u.price} per night`}
-                onClick={handleSearchAvailability}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSearchAvailability(); } }}
+                tabIndex={u.available ? 0 : -1}
+                aria-disabled={!u.available}
+                aria-label={`${u.name}, ${u.available ? `from $${u.nightlyRate ?? u.price} per night` : 'not available for these dates'}`}
+                onClick={() => u.available && openUnit(u)}
+                onKeyDown={(e) => {
+                  if (u.available && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openUnit(u); }
+                }}
                 sx={{
-                  cursor: 'pointer',
-                  '&:hover img': { transform: 'scale(1.045)' },
+                  cursor: u.available ? 'pointer' : 'not-allowed',
+                  '&:hover img': { transform: u.available ? 'scale(1.045)' : 'none' },
                   '@media (prefers-reduced-motion: reduce)': { '&:hover img': { transform: 'none' } },
                 }}
               >
-                <Photo src={u.image} alt={u.name} ratio="20 / 19" sx={{ mb: 1.5 }} />
+                <Box sx={{ position: 'relative', mb: 1.5 }}>
+                  <Photo
+                    src={u.image}
+                    alt={u.name}
+                    ratio="20 / 19"
+                    imgSx={{ filter: u.available ? 'none' : 'grayscale(1) brightness(.94)' }}
+                  />
+                  {!u.available && (
+                    <Box sx={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', bgcolor: 'rgba(28,25,23,0.35)' }}>
+                      <Typography sx={{
+                        bgcolor: c.stone900, color: c.white, fontWeight: 700,
+                        letterSpacing: '0.06em', fontSize: 12, whiteSpace: 'nowrap',
+                        px: 1.75, py: 0.75, borderRadius: `${r.pill}px`,
+                      }}>
+                        BOOKED
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'baseline' }}>
                   <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }}>{u.name}</Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: .375 }}>
@@ -224,9 +265,15 @@ export default function BookStay() {
                     <Typography component="span" className="tnum" sx={{ fontSize: 14 }}>{u.rating}</Typography>
                   </Box>
                 </Box>
-                <Typography variant="body2" sx={{ color: c.stone600 }}>{u.floor}</Typography>
+                <Typography variant="body2" sx={{ color: c.stone600 }}>
+                  {u.floor} · {u.maxGuests} guest{u.maxGuests === 1 ? '' : 's'}
+                </Typography>
                 <Typography className="tnum" sx={{ mt: .75, fontSize: 15 }}>
-                  <Box component="span" sx={{ fontWeight: 700 }}>${u.price}</Box>
+                  {/* No dates chosen means no single nightly price — rates move by season. */}
+                  {!u.nightlyRate && <Box component="span" sx={{ color: c.stone600 }}>from </Box>}
+                  <Box component="span" sx={{ fontWeight: 700 }}>
+                    ${(u.nightlyRate ?? u.price).toFixed(2).replace(/\.00$/, '')}
+                  </Box>
                   <Box component="span" sx={{ color: c.stone600 }}> night</Box>
                 </Typography>
               </Box>
