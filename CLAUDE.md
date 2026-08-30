@@ -24,6 +24,20 @@ The traps that have already cost real time:
 - Images go through `<Photo>`, never a bare `<img>` or `CardMedia` — it owns the
   skeleton, the fade-in and the error fallback. A cached image never fires `onLoad`,
   so `Photo` settles from the element on mount; don't remove that.
+- Every checkout screen renders `<CheckoutHeader>` and nothing else supplies a back
+  button or a step count. See the "Checkout" section of `DESIGN_SYSTEM.md`.
+- **A screen may not display data it invented.** This app shipped with a payment summary
+  naming a room that is in no database, a confirmation calendar fixed to one month, and
+  a statistics card contradicting the bookings listed beside it — all of it looking
+  exactly like real data. If a value isn't in the booking, the draft or the API, render
+  an empty state instead.
+
+## Things that are not addressable but should be
+
+`/property-details` reads its unit from `?unit=<id>` and refetches when arriving cold, so
+listings can be shared and refreshed. `/guest-details`, `/payment-method` and
+`/booking-confirmed` still depend on router state or the saved draft: entering them
+directly redirects out, on purpose. If you add a step, decide which of the two it is.
 
 ## Editing this codebase
 

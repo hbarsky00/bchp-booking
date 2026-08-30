@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -132,27 +133,33 @@ export default function ShoppingCart() {
   return (
     <Layout>
       <Box>
-        {/* Back Button and Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-          <IconButton
-            onClick={() => navigate('/shop')}
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              '&:hover': { bgcolor: 'action.hover' },
-            }}
-           aria-label="Go back">
-            <ArrowBackIcon />
-          </IconButton>
-          <Box>
-            <Typography variant="h1" gutterBottom sx={{ mb: 0.5 }}>
-              Shopping Cart
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Review your items and proceed to checkout
-            </Typography>
+        {/* Mid-booking the cart is step 2 of the funnel; reached from the nav it is just
+            a cart, and dressing it in checkout chrome would invent a flow that isn't there. */}
+        {draft ? (
+          <CheckoutHeader
+            step={1}
+            title="Your cart"
+            subtitle={`Extras for ${draft.unitName}. Add what you want, then head to payment.`}
+            backTo="/shop"
+            backLabel="Back to extras"
+          />
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+            <IconButton
+              onClick={() => navigate('/shop')}
+              sx={{ border: 1, borderColor: 'divider', '&:hover': { bgcolor: 'action.hover' } }}
+              aria-label="Back to shop"
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <Box>
+              <Typography variant="h1" gutterBottom sx={{ mb: 0.5 }}>Shopping cart</Typography>
+              <Typography variant="body1" color="text.secondary">
+                Review your items and place your order
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        )}
 
         <Grid container spacing={3}>
           {/* The stay being booked, so the cart shows the whole order and not just snacks */}

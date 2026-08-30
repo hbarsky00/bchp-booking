@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { formatDate, useBooking } from '../lib/bookings';
 import { downloadText } from '../lib/actions';
@@ -18,19 +18,17 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BedIcon from '@mui/icons-material/Bed';
 import PersonIcon from '@mui/icons-material/Person';
-import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import ChatIcon from '@mui/icons-material/Chat';
 import InfoIcon from '@mui/icons-material/Info';
 import WarningIcon from '@mui/icons-material/Warning';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import TokenIcon from '@mui/icons-material/Token';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ShieldIcon from '@mui/icons-material/Shield';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { c } from '../tokens';
+import { c, r } from '../tokens';
 
 export default function BookingConfirmed() {
   const navigate = useNavigate();
@@ -51,7 +49,39 @@ export default function BookingConfirmed() {
       'Status:       Paid, settled on-chain',
     ].join('\n'));
   };
-  const [selectedDate, setSelectedDate] = useState(14);
+
+  /**
+   * The month containing check-in, with the booked nights marked. Half-open, like every
+   * other date range here: the check-out day is when the room is handed back, so it is
+   * not shaded as a night stayed.
+   */
+  const calendar = (() => {
+    const iso = booking?.checkIn?.slice(0, 10);
+    const [cy, cm, cd] = (iso ?? '').split('-').map(Number);
+    const anchor = iso ? new Date(Date.UTC(cy, cm - 1, cd)) : new Date();
+    const year = anchor.getUTCFullYear();
+    const month = anchor.getUTCMonth();
+    const first = new Date(Date.UTC(year, month, 1));
+    const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const dayIso = (d: number) =>
+      `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+    const cells: ({ day: number; booked: boolean; isToday: boolean } | null)[] =
+      Array.from({ length: first.getUTCDay() }, () => null);
+    for (let d = 1; d <= daysInMonth; d++) {
+      const day = dayIso(d);
+      cells.push({
+        day: d,
+        booked: !!booking && day >= booking.checkIn.slice(0, 10) && day < booking.checkOut.slice(0, 10),
+        isToday: day === todayIso,
+      });
+    }
+    return {
+      cells,
+      monthLabel: first.toLocaleDateString(undefined, { timeZone: 'UTC', month: 'long', year: 'numeric' }),
+    };
+  })();
 
   // Everything below reflects the booking that was actually written, not a sample.
   const bookingData = {
@@ -97,28 +127,22 @@ export default function BookingConfirmed() {
   return (
     <Layout>
       <Box>
-        {/* Success Header */}
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Box
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              bgcolor: c.emerald100,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mx: 'auto',
-              mb: 2,
-            }}
-          >
-            <CheckCircleIcon sx={{ fontSize: 48, color: 'success.main' }} />
-          </Box>
-          <Typography variant="h1" gutterBottom>
-            Booking Confirmed!
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Your payment has been processed successfully and your booking is now confirmed
+        {/* The funnel's last step keeps the same rail, so the run of screens reads as one
+            flow that finished rather than a separate page that happens to say "confirmed". */}
+        <CheckoutHeader
+          step={3}
+          title="Booking confirmed"
+          subtitle="Payment settled and your room is held. The details are below."
+        />
+        <Box
+          sx={{
+            display: 'flex', alignItems: 'center', gap: 1.5, mb: 4, p: 2,
+            bgcolor: c.green50, border: `1px solid ${c.green200}`, borderRadius: `${r.md}px`,
+          }}
+        >
+          <CheckCircleIcon sx={{ fontSize: 28, color: c.green600 }} />
+          <Typography variant="body2" sx={{ fontWeight: 600, color: c.green700 }}>
+            You're all set — a copy of these details is on your Trips page.
           </Typography>
         </Box>
 
@@ -426,45 +450,41 @@ export default function BookingConfirmed() {
 
           {/* Right Column - Calendar & Actions */}
           <Grid size={{ xs: 12, lg: 5 }}>
-            {/* Calendar */}
+            {/*
+              A calendar of the stay that was actually booked. It used to be a fixed
+              fixed month grid with the 19th and 20th shaded in whatever the guest had
+              booked, and a "Today" key that matched no cell on the page.
+            */}
             <Card elevation={1} sx={{ mb: 3 }}>
               <CardContent sx={{ p: 2 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
-                  Your Booking Dates
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }} id="stay-calendar">
+                  Your booking dates
                 </Typography>
                 <Box sx={{ textAlign: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2">March 2026</Typography>
+                  <Typography variant="subtitle2">{calendar.monthLabel}</Typography>
                 </Box>
                 <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(7, 1fr)',
-                    gap: 0.5,
-                    mb: 2,
-                  }}
+                  role="grid"
+                  aria-labelledby="stay-calendar"
+                  sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0.5, mb: 2 }}
                 >
                   {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
                     <Box key={day} sx={{ textAlign: 'center', py: 0.5 }}>
-                      <Typography variant="caption" color="text.secondary">
-                        {day}
-                      </Typography>
+                      <Typography variant="caption" color="text.secondary">{day}</Typography>
                     </Box>
                   ))}
-                  {[null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((date, index) => (
+                  {calendar.cells.map((cell, index) => (
                     <Box
                       key={index}
                       sx={{
-                        textAlign: 'center',
-                        py: 0.5,
-                        bgcolor: date === 19 || date === 20 ? 'primary.main' : 'transparent',
-                        color: date === 19 || date === 20 ? 'white' : 'text.primary',
-                        borderRadius: 1,
-                        cursor: date ? 'pointer' : 'default',
+                        textAlign: 'center', py: 0.5, borderRadius: `${r.sm}px`,
+                        bgcolor: cell?.booked ? c.coral600 : cell?.isToday ? c.stone200 : 'transparent',
+                        color: cell?.booked ? c.white : c.stone900,
                       }}
                     >
-                      {date && (
-                        <Typography variant="caption" sx={{ fontWeight: date === 19 || date === 20 ? 700 : 400 }}>
-                          {date}
+                      {cell && (
+                        <Typography variant="caption" className="tnum" sx={{ fontWeight: cell.booked ? 700 : 400 }}>
+                          {cell.day}
                         </Typography>
                       )}
                     </Box>
@@ -472,11 +492,11 @@ export default function BookingConfirmed() {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Box sx={{ width: 12, height: 12, bgcolor: 'primary.main', borderRadius: 0.5 }} />
-                    <Typography variant="caption">Your booking</Typography>
+                    <Box sx={{ width: 12, height: 12, bgcolor: c.coral600, borderRadius: `${r.sm}px` }} />
+                    <Typography variant="caption">Your stay</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Box sx={{ width: 12, height: 12, bgcolor: c.stone200, borderRadius: 0.5 }} />
+                    <Box sx={{ width: 12, height: 12, bgcolor: c.stone200, borderRadius: `${r.sm}px` }} />
                     <Typography variant="caption">Today</Typography>
                   </Box>
                 </Box>

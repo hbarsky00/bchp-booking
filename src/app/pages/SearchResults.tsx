@@ -15,28 +15,12 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import WifiIcon from '@mui/icons-material/Wifi';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import KitchenIcon from '@mui/icons-material/Kitchen';
 import StarIcon from '@mui/icons-material/Star';
-import WorkIcon from '@mui/icons-material/Work';
-import WeekendIcon from '@mui/icons-material/Weekend';
-import LocalCafeIcon from '@mui/icons-material/LocalCafe';
-import BathtubIcon from '@mui/icons-material/Bathtub';
-import HomeIcon from '@mui/icons-material/Home';
-import DeckIcon from '@mui/icons-material/Deck';
-import HotelIcon from '@mui/icons-material/Hotel';
 
 
 
@@ -80,30 +64,15 @@ export default function SearchResults() {
   }, [location.state]);
 
   const handleSelectUnit = (unit: typeof availableUnits[0]) => {
-    navigate('/property-details', { 
-      state: { 
-        unit,
-        searchParams 
-      } 
-    });
+    const query = new URLSearchParams({ unit: String(unit.id) });
+    if (searchParams.checkIn) query.set('checkIn', searchParams.checkIn);
+    if (searchParams.checkOut) query.set('checkOut', searchParams.checkOut);
+    if (searchParams.guests) query.set('guests', String(searchParams.guests));
+    // State makes the hop instant; the query string makes the page shareable.
+    navigate(`/property-details?${query}`, { state: { unit, searchParams } });
   };
 
-  const getAmenityIcon = (iconType: string) => {
-    switch (iconType) {
-      case 'wifi': return <WifiIcon fontSize="small" />;
-      case 'ac': return <AcUnitIcon fontSize="small" />;
-      case 'kitchen': return <KitchenIcon fontSize="small" />;
-      case 'work': return <WorkIcon fontSize="small" />;
-      case 'lounge': return <WeekendIcon fontSize="small" />;
-      case 'bar': return <DeckIcon fontSize="small" />;
-      case 'bath': return <BathtubIcon fontSize="small" />;
-      case 'beds': return <HotelIcon fontSize="small" />;
-      case 'desk': return <WorkIcon fontSize="small" />;
-      case 'coffee': return <LocalCafeIcon fontSize="small" />;
-      case 'office': return <HomeIcon fontSize="small" />;
-      default: return <WifiIcon fontSize="small" />;
-    }
-  };
+
 
   return (
     <Layout>

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
-import { clearDraft, createBooking, loadDraft } from '../lib/bookings';
+import { clearDraft, createBooking, formatDate, loadDraft, nightsBetween } from '../lib/bookings';
+import { useCart } from '../lib/cart';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -17,9 +19,7 @@ import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import PaymentIcon from '@mui/icons-material/Payment';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import StarIcon from '@mui/icons-material/Star';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import NightsStayIcon from '@mui/icons-material/NightsStay';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -34,13 +34,23 @@ export default function PaymentMethod() {
   const [paymentMethod, setPaymentMethod] = useState('bsv');
 
   const draft = loadDraft();
+  const { cart } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+
+  // What the guest is actually about to pay. This used to be three fixed figures in the
+  // markup, so the summary described a different room, different dates and a different
+  // price from the booking the Confirm button went on to create.
+  const nights = draft ? nightsBetween(draft.checkIn, draft.checkOut) || 1 : 0;
+  const stayTotal = draft ? draft.price * nights : 0;
+  const total = stayTotal + cart.subtotal;
 
   // Nothing to pay for without a draft — that means the flow was entered sideways.
   useEffect(() => {
     if (!draft) navigate('/book-stay', { replace: true });
   }, [draft, navigate]);
+  // Render nothing while that redirect lands; every figure below comes from the draft.
+  if (!draft) return null;
 
   const handleContinue = async () => {
     if (!draft || submitting) return;
@@ -72,12 +82,13 @@ export default function PaymentMethod() {
   return (
     <Layout>
       <Box>
-        <Typography variant="h1" gutterBottom>
-          Payment Method
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Select your preferred payment method to complete your reservation.
-        </Typography>
+        <CheckoutHeader
+          step={2}
+          title="Payment"
+          subtitle="Choose how you want to settle. Nothing is charged until you confirm."
+          backTo="/shop"
+          backLabel="Back to extras"
+        />
 
         <Grid container spacing={3}>
           {/* Payment Options */}
@@ -266,23 +277,18 @@ export default function PaymentMethod() {
                   </Alert>
                 )}
 
-                <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(-1)}
-                  >
-                    Back
-                  </Button>
+                {/* One action. Back is in the checkout header with every other step's. */}
+                <Box sx={{ mt: 4 }}>
                   <Button
                     variant="contained"
-                    endIcon={<ArrowForwardIcon />}
+                    endIcon={submitting ? undefined : <ArrowForwardIcon />}
                     fullWidth
+                    size="large"
                     onClick={handleContinue}
-                  disabled={submitting}
-                  startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : undefined}
+                    disabled={submitting}
+                    startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : undefined}
                   >
-                    Continue
+                    {submitting ? 'Confirming your booking…' : `Confirm and pay $${total.toFixed(2)}`}
                   </Button>
                 </Box>
               </CardContent>
@@ -344,25 +350,21 @@ export default function PaymentMethod() {
                 <Chip label="Reserved" color="primary" size="small" sx={{ mb: 2 }} />
 
                 <Box sx={{ position: 'relative', mb: 2 }}>
-                  <Photo
-                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"
-                    alt="Sunset Studio Suite"
-                    sx={{ height: 120 }}
-                  />
+                  <Photo src={draft.unitImage} alt={draft.unitName} sx={{ height: 120 }} />
                   <Chip
-                    label="2nd Floor"
+                    label={draft.unitFloor}
                     size="small"
                     sx={{ position: 'absolute', top: 8, left: 8, bgcolor: 'background.paper' }}
                   />
                 </Box>
 
                 <Typography variant="h6" component="h2" gutterBottom>
-                  Sunset Studio Suite
+                  {draft.unitName}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-                  <StarIcon sx={{ fontSize: 16, color: 'warning.main' }} />
+                  <BedIcon sx={{ fontSize: 16, color: c.stone500 }} />
                   <Typography variant="body2" color="text.secondary">
-                    4.9 rating
+                    {draft.guests} guest{draft.guests === 1 ? '' : 's'}
                   </Typography>
                 </Box>
 
@@ -374,7 +376,7 @@ export default function PaymentMethod() {
                     Check-in
                   </Typography>
                   <Typography variant="body2" fontWeight={500} sx={{ ml: 'auto' }}>
-                    Feb 20, 2026
+                    {formatDate(draft.checkIn)}
                   </Typography>
                 </Box>
 
@@ -384,7 +386,7 @@ export default function PaymentMethod() {
                     Check-out
                   </Typography>
                   <Typography variant="body2" fontWeight={500} sx={{ ml: 'auto' }}>
-                    Feb 23, 2026
+                    {formatDate(draft.checkOut)}
                   </Typography>
                 </Box>
 
@@ -394,7 +396,7 @@ export default function PaymentMethod() {
                     Duration
                   </Typography>
                   <Typography variant="body2" fontWeight={500} sx={{ ml: 'auto' }}>
-                    3 nights
+                    {nights} night{nights === 1 ? '' : 's'}
                   </Typography>
                 </Box>
 
@@ -402,38 +404,33 @@ export default function PaymentMethod() {
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Room rate
+                    ${draft.price.toFixed(2)} × {nights} night{nights === 1 ? '' : 's'}
                   </Typography>
-                  <Typography variant="body2">$114.00</Typography>
+                  <Typography variant="body2" className="tnum">${stayTotal.toFixed(2)}</Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Service fee
-                  </Typography>
-                  <Typography variant="body2">$12.00</Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Cleaning fee
-                  </Typography>
-                  <Typography variant="body2">$8.00</Typography>
-                </Box>
+                {cart.itemCount > 0 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Extras ({cart.itemCount} item{cart.itemCount === 1 ? '' : 's'})
+                    </Typography>
+                    <Typography variant="body2" className="tnum">${cart.subtotal.toFixed(2)}</Typography>
+                  </Box>
+                )}
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Payment processing
+                    Service fee
                   </Typography>
-                  <Typography variant="body2">—</Typography>
+                  <Typography variant="body2">None</Typography>
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                   <Typography variant="h6" component="p">Total</Typography>
-                  <Typography variant="h5" component="p" color="primary" fontWeight={600}>
-                    $134.00
+                  <Typography variant="h5" component="p" color="primary" fontWeight={600} className="tnum">
+                    ${total.toFixed(2)}
                   </Typography>
                 </Box>
 

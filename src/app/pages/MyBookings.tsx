@@ -35,40 +35,24 @@ import EmailIcon from '@mui/icons-material/Email';
 
 
 
-const tokens = [
-  {
-    id: 1,
-    name: 'My Tokens',
-    subtitle: 'Blockchain verified',
-    count: 3,
-    status: 'active',
-    color: 'secondary',
-  },
-  {
-    id: 2,
-    name: 'Proof of Stay',
-    date: 'Feb 14, 2026',
-    bookingId: 'BST-2026-00762',
-    status: 'verified',
-    color: 'success',
-  },
-  {
-    id: 3,
-    name: 'Thank You Token',
-    date: 'Jan 24, 2026',
-    bookingId: 'BST-2026-00601',
-    status: 'received',
-    color: 'primary',
-  },
-  {
-    id: 4,
-    name: 'Proof of Stay',
-    date: 'Nov 21, 2025',
-    bookingId: 'BST-2025-90098',
-    status: 'archived',
-    color: 'warning',
-  },
-];
+/**
+ * Proof-of-stay tokens are minted against real stays, so they are derived from the
+ * bookings this guest actually has. The previous version was a fixed list quoting
+ * booking references that match nothing in the database.
+ */
+type StayToken = { id: number; name: string; date: string; bookingId: string; status: string; color: string };
+
+const tokensFor = (bookings: { id: number; reference: string; status: string; checkOut: string }[]): StayToken[] =>
+  bookings
+    .filter(b => b.status !== 'cancelled')
+    .map(b => ({
+      id: b.id,
+      name: b.status === 'checked_out' ? 'Proof of Stay' : 'Stay Token',
+      date: formatDate(b.checkOut),
+      bookingId: b.reference,
+      status: b.status === 'checked_out' ? 'verified' : 'pending',
+      color: b.status === 'checked_out' ? 'success' : 'primary',
+    }));
 
 export default function MyBookings() {
   const navigate = useNavigate();
@@ -108,6 +92,19 @@ export default function MyBookings() {
     (st) => st === 'Cancelled',                   // Cancelled
   ];
   const visibleBookings = bookings.filter(b => TAB_FILTERS[currentTab](b.status));
+
+  const stayTokens = tokensFor(raw);
+
+  /**
+   * Real activity. These three figures were fixed in the markup — 5 bookings, 15 nights,
+   * a fixed spend — sitting next to the guest's actual bookings and contradicting them.
+   */
+  const live = raw.filter(b => b.status !== 'cancelled');
+  const stats = {
+    bookings: live.length,
+    nights: live.reduce((n, b) => n + b.nights, 0),
+    spent: live.reduce((n, b) => n + b.total, 0),
+  };
 
   return (
     <Layout>
@@ -305,17 +302,23 @@ export default function MyBookings() {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <TokenIcon color="secondary" />
-                    <Typography variant="h6" component="h2">{tokens[0].name}</Typography>
+                    <Typography variant="h6" component="h2">My tokens</Typography>
                   </Box>
-                  <Chip label={`${tokens[0].count} tokens`} color="secondary" size="small" />
+                  <Chip label={`${stayTokens.length} token${stayTokens.length === 1 ? '' : 's'}`} color="secondary" size="small" />
                 </Box>
 
-                {tokens.slice(1).map((token, index) => (
+                {stayTokens.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    Tokens are minted when you book a stay. You don't have any yet.
+                  </Typography>
+                )}
+
+                {stayTokens.map((token, index) => (
                   <Card
                     key={token.id}
                     variant="outlined"
                     sx={{
-                      mb: index < tokens.length - 2 ? 2 : 0,
+                      mb: index < stayTokens.length - 1 ? 2 : 0,
                       position: 'relative',
                       '&::before': {
                         content: '""',
@@ -363,9 +366,8 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total bookings
                     </Typography>
-                    <Typography variant="h6" component="h2">5</Typography>
+                    <Typography variant="h6" component="p" className="tnum">{stats.bookings}</Typography>
                   </Box>
-                  <Chip label="+21% this year" size="small" color="success" sx={{ mb: 2 }} />
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
@@ -375,7 +377,7 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total nights
                     </Typography>
-                    <Typography variant="h6" component="h2">15</Typography>
+                    <Typography variant="h6" component="p" className="tnum">{stats.nights}</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
                     Across all stays
@@ -389,7 +391,9 @@ export default function MyBookings() {
                     <Typography variant="body2" color="text.secondary">
                       Total spent
                     </Typography>
-                    <Typography variant="h6" component="p">$3,010</Typography>
+                    <Typography variant="h6" component="p" className="tnum">
+                      ${stats.spent.toFixed(2)}
+                    </Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
                     All-time payments

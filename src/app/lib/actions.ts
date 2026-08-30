@@ -56,15 +56,16 @@ const hash = (s: string) => [...s].reduce((a, ch) => (a * 31 + ch.charCodeAt(0))
  * the caller can show the right confirmation instead of guessing.
  */
 export async function shareOrCopy(data: { title: string; text: string; url?: string }):
-  Promise<'shared' | 'copied' | 'failed'> {
+  Promise<'shared' | 'dismissed' | 'copied' | 'failed'> {
   const url = data.url ?? window.location.href;
   if (navigator.share) {
     try {
       await navigator.share({ title: data.title, text: data.text, url });
       return 'shared';
     } catch (err) {
-      // The user dismissing the sheet is not a failure; fall through to clipboard.
-      if ((err as DOMException)?.name === 'AbortError') return 'shared';
+      // Dismissing the sheet is a decision, not a failure — but it is also not a share,
+      // and reporting it as one left the button looking dead.
+      if ((err as DOMException)?.name === 'AbortError') return 'dismissed';
     }
   }
   try {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import Layout from '../components/Layout';
 import Photo from '../components/Photo';
 import ShareIcon from '@mui/icons-material/Share';
@@ -14,8 +14,6 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StarIcon from '@mui/icons-material/Star';
 import WifiIcon from '@mui/icons-material/Wifi';
@@ -30,23 +28,95 @@ import DeckIcon from '@mui/icons-material/Deck';
 import HotelIcon from '@mui/icons-material/Hotel';
 import PeopleIcon from '@mui/icons-material/People';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Snackbar from '@mui/material/Snackbar';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 import { c, r } from '../tokens';
+import { useUnits, nightsBetween } from '../lib/bookings';
+import { shareOrCopy } from '../lib/actions';
 
 export default function PropertyDetails() {
   const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
+  const [toast, setToast] = useState('');
   const location = useLocation();
-  const { unit, searchParams } = (location.state as any) || {};
+  const [params, setParams] = useSearchParams();
+  const state = (location.state as any) || {};
 
-  // Redirect to search results if no unit is provided - MUST be in useEffect
+  /**
+   * A listing has to live at a URL. It used to exist only in router state, so a refresh,
+   * a bookmark or a shared link all bounced the visitor out to search — which made the
+   * Share button pointless even once it worked. The id is now in the query string and the
+   * unit is re-fetched when arriving cold.
+   */
+  const idParam = Number(params.get('unit')) || 0;
+  const searchParams = state.searchParams ?? {
+    checkIn: params.get('checkIn') ?? '',
+    checkOut: params.get('checkOut') ?? '',
+    guests: params.get('guests') ?? '',
+  };
+  const needsFetch = !state.unit && idParam > 0;
+  const { units, loading: unitsLoading } = useUnits(
+    needsFetch ? searchParams.checkIn : undefined,
+    needsFetch ? searchParams.checkOut : undefined,
+  );
+  const unit = state.unit ?? (needsFetch ? units.find(u => u.id === idParam) : undefined);
+
+  // Keep the address bar in step with the listing being shown, so whatever the visitor
+  // copies — from Share or from the browser — resolves for the next person.
   useEffect(() => {
-    if (!unit) {
-      navigate('/search-results');
+    if (state.unit && Number(params.get('unit')) !== state.unit.id) {
+      const next = new URLSearchParams(params);
+      next.set('unit', String(state.unit.id));
+      if (searchParams?.checkIn) next.set('checkIn', searchParams.checkIn);
+      if (searchParams?.checkOut) next.set('checkOut', searchParams.checkOut);
+      if (searchParams?.guests) next.set('guests', String(searchParams.guests));
+      setParams(next, { replace: true, state });
     }
-  }, [unit, navigate]);
+  }, [state, params, setParams, searchParams]);
+
+  // Only give up once there is genuinely nothing to show — never while the fetch is open.
+  useEffect(() => {
+    if (!state.unit && !idParam) navigate('/search-results', { replace: true });
+  }, [state.unit, idParam, navigate]);
+
+  // Dates live here now, seeded from whatever the search carried in.
+  const today = new Date().toISOString().slice(0, 10);
+  const [checkIn, setCheckIn] = useState<string>(searchParams?.checkIn ?? '');
+  const [checkOut, setCheckOut] = useState<string>(searchParams?.checkOut ?? '');
+  const [guests, setGuests] = useState<string>(String(searchParams?.guests || 1));
+  const nights = nightsBetween(checkIn, checkOut);
+  const dateError =
+    checkIn && checkOut && nights <= 0 ? 'Check-out must be after check-in'
+    : checkIn && checkOut && nights < 3 ? 'This stay has a three-night minimum'
+    : '';
+
+  const handleShare = async () => {
+    const result = await shareOrCopy({
+      title: `${unit.name} on BitStay`,
+      text: `${unit.name} — ${unit.floor}, $${unit.price} / night on BitStay`,
+    });
+    setToast(result === 'copied' ? 'Link copied to clipboard'
+      : result === 'failed' ? 'Could not share on this device'
+      : result === 'shared' ? 'Listing shared'
+      : '');
+  };
 
   if (!unit) {
-    return null;
+    return (
+      <Layout>
+        <Box sx={{ py: 10, textAlign: 'center', color: c.stone600 }}>
+          <Typography variant="body1">
+            {unitsLoading ? 'Loading this stay…' : 'That stay is no longer listed.'}
+          </Typography>
+          {!unitsLoading && (
+            <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate('/search-results')}>
+              Browse stays
+            </Button>
+          )}
+        </Box>
+      </Layout>
+    );
   }
 
   // The mock unit carries a single photo; pad the mosaic with interior shots so the
@@ -62,29 +132,30 @@ export default function PropertyDetails() {
     'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
   ])].slice(0, 5);
 
-  const getAmenityIcon = (iconType: string) => {
-    switch (iconType) {
-      case 'wifi': return <WifiIcon fontSize="small" />;
-      case 'ac': return <AcUnitIcon fontSize="small" />;
-      case 'kitchen': return <KitchenIcon fontSize="small" />;
-      case 'work': return <WorkIcon fontSize="small" />;
-      case 'lounge': return <WeekendIcon fontSize="small" />;
-      case 'bar': return <DeckIcon fontSize="small" />;
-      case 'bath': return <BathtubIcon fontSize="small" />;
-      case 'beds': return <HotelIcon fontSize="small" />;
-      case 'desk': return <WorkIcon fontSize="small" />;
-      case 'coffee': return <LocalCafeIcon fontSize="small" />;
-      case 'office': return <HomeIcon fontSize="small" />;
-      default: return <WifiIcon fontSize="small" />;
-    }
+  /**
+   * Amenities arrive from the database as plain labels ('Wifi', 'AC', '2 Beds'), so match
+   * on the label itself. The previous version switched on an `iconType` key that no caller
+   * ever supplied, which is why every amenity rendered the same generic tick.
+   */
+  const getAmenityIcon = (amenity: string) => {
+    const key = amenity.toLowerCase();
+    if (key.includes('wifi')) return <WifiIcon fontSize="small" />;
+    if (key.includes('ac') && !key.includes('back')) return <AcUnitIcon fontSize="small" />;
+    if (key.includes('kitchen')) return <KitchenIcon fontSize="small" />;
+    if (key.includes('bed')) return <HotelIcon fontSize="small" />;
+    if (key.includes('bath')) return <BathtubIcon fontSize="small" />;
+    if (key.includes('lounge')) return <WeekendIcon fontSize="small" />;
+    if (key.includes('bar')) return <DeckIcon fontSize="small" />;
+    if (key.includes('coffee')) return <LocalCafeIcon fontSize="small" />;
+    if (key.includes('office')) return <HomeIcon fontSize="small" />;
+    if (key.includes('desk') || key.includes('work')) return <WorkIcon fontSize="small" />;
+    return <CheckCircleIcon fontSize="small" />;
   };
 
   const handleBookNow = () => {
+    if (dateError || !checkIn || !checkOut) return;
     navigate('/guest-details', {
-      state: {
-        unit,
-        searchParams
-      }
+      state: { unit, searchParams: { checkIn, checkOut, guests } },
     });
   };
 
@@ -110,7 +181,7 @@ export default function PropertyDetails() {
             </Box>
           </Box>
           <Box sx={{ display: 'flex', gap: .5 }}>
-            <Button startIcon={<ShareIcon />} onClick={() => navigate(-1)}
+            <Button startIcon={<ShareIcon />} onClick={handleShare}
               sx={{ color: c.stone900, textDecoration: 'underline', px: 1.25 }}>
               Share
             </Button>
@@ -244,13 +315,11 @@ export default function PropertyDetails() {
                   Amenities
                 </Typography>
                 <Grid container spacing={2}>
-                  {unit.amenities.map((amenity: any, index: number) => (
-                    <Grid key={index} size={{ xs: 6, sm: 4 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CheckCircleIcon sx={{ color: 'success.main', fontSize: 20 }} />
-                        <Typography variant="body2">
-                          {amenity.label}
-                        </Typography>
+                  {(unit.amenities as string[]).map((amenity) => (
+                    <Grid key={amenity} size={{ xs: 6, sm: 4 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, color: c.stone900 }}>
+                        <Box sx={{ display: 'flex', color: c.stone600 }}>{getAmenityIcon(amenity)}</Box>
+                        <Typography variant="body2">{amenity}</Typography>
                       </Box>
                     </Grid>
                   ))}
@@ -284,53 +353,68 @@ export default function PropertyDetails() {
 
                 <Divider sx={{ my: 3 }} />
 
-                {/* Your Search */}
-                {searchParams && (searchParams.checkIn || searchParams.checkOut) && (
-                  <>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
-                      Your Search
+                {/*
+                  Dates are chosen here, not merely echoed here. Reaching this page without
+                  them was possible (Search Results does not insist on them), and nothing
+                  downstream asked either — so a guest could fill in their details, browse
+                  extras, choose a payment method, and only discover at the final click that
+                  the booking had no dates, via a raw "Dates must be YYYY-MM-DD" from the API.
+                */}
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
+                  Your stay
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
+                  <TextField
+                    type="date"
+                    label="Check-in"
+                    size="small"
+                    fullWidth
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)}
+                    slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: today } }}
+                  />
+                  <TextField
+                    type="date"
+                    label="Check-out"
+                    size="small"
+                    fullWidth
+                    value={checkOut}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: checkIn || today } }}
+                  />
+                </Box>
+                <TextField
+                  select
+                  label="Guests"
+                  size="small"
+                  fullWidth
+                  value={guests}
+                  onChange={(e) => setGuests(e.target.value)}
+                  sx={{ mb: 2 }}
+                >
+                  {Array.from({ length: unit.maxGuests || 4 }, (_, i) => i + 1).map(n => (
+                    <MenuItem key={n} value={String(n)}>{n} guest{n === 1 ? '' : 's'}</MenuItem>
+                  ))}
+                </TextField>
+
+                {nights > 0 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      ${unit.price} × {nights} night{nights === 1 ? '' : 's'}
                     </Typography>
-                    {searchParams.checkIn && (
-                      <Box sx={{ mb: 1.5 }}>
-                        <Typography variant="caption" color="text.secondary" display="block">
-                          Check-in
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {new Date(searchParams.checkIn).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            year: 'numeric' 
-                          })}
-                        </Typography>
-                      </Box>
-                    )}
-                    {searchParams.checkOut && (
-                      <Box sx={{ mb: 1.5 }}>
-                        <Typography variant="caption" color="text.secondary" display="block">
-                          Check-out
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {new Date(searchParams.checkOut).toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            year: 'numeric' 
-                          })}
-                        </Typography>
-                      </Box>
-                    )}
-                    {searchParams.guests && (
-                      <Box sx={{ mb: 1.5 }}>
-                        <Typography variant="caption" color="text.secondary" display="block">
-                          Guests
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {searchParams.guests} {searchParams.guests === '1' ? 'Guest' : 'Guests'}
-                        </Typography>
-                      </Box>
-                    )}
-                    <Divider sx={{ my: 3 }} />
-                  </>
+                    <Typography variant="body2" className="tnum" sx={{ fontWeight: 700 }}>
+                      ${(unit.price * nights).toFixed(2)}
+                    </Typography>
+                  </Box>
                 )}
+
+                {dateError && (
+                  <Typography variant="caption" sx={{ display: 'block', mb: 1.5, color: c.red600 }}>
+                    {dateError}
+                  </Typography>
+                )}
+
+                <Divider sx={{ my: 3 }} />
 
                 {/* Book Button */}
                 <Button
@@ -339,6 +423,7 @@ export default function PropertyDetails() {
                   fullWidth
                   endIcon={<ArrowForwardIcon />}
                   onClick={handleBookNow}
+                  disabled={!!dateError || !checkIn || !checkOut}
                   sx={{
                     py: 1.5,
                     textTransform: 'none',
@@ -346,7 +431,7 @@ export default function PropertyDetails() {
                     fontWeight: 600,
                   }}
                 >
-                  Book Now
+                  {!checkIn || !checkOut ? 'Choose your dates' : 'Book now'}
                 </Button>
 
                 {/* Info */}
@@ -373,6 +458,13 @@ export default function PropertyDetails() {
           </Grid>
         </Grid>
       </Box>
+      <Snackbar
+        open={!!toast}
+        message={toast}
+        autoHideDuration={3000}
+        onClose={() => setToast('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Layout>
   );
 }

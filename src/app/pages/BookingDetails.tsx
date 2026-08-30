@@ -23,9 +23,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InfoIcon from '@mui/icons-material/Info';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import BedIcon from '@mui/icons-material/Bed';
-import WifiIcon from '@mui/icons-material/Wifi';
-import KitchenIcon from '@mui/icons-material/Kitchen';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import LockIcon from '@mui/icons-material/Lock';
 import ShieldIcon from '@mui/icons-material/Shield';
@@ -158,7 +155,9 @@ export default function BookingDetails() {
       text: `${bookingData.unit.name}, ${bookingData.checkIn.date} to ${bookingData.checkOut.date}`,
     });
     setToast(result === 'copied' ? 'Link copied to clipboard'
-      : result === 'failed' ? 'Could not share on this device' : '');
+      : result === 'failed' ? 'Could not share on this device'
+      : result === 'shared' ? 'Booking shared'
+      : '');
   };
 
   return (

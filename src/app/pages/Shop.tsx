@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import { useCart } from '../lib/cart';
 import { loadDraft } from '../lib/bookings';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
@@ -25,7 +26,6 @@ import InfoIcon from '@mui/icons-material/Info';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -203,20 +203,35 @@ export default function Shop() {
   return (
     <Layout>
       <Box>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 4 }}>
-          <Box>
-            <Typography variant="h1" gutterBottom>
-              Shop
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Browse and purchase items during your stay
-            </Typography>
-          </Box>
+        {/* Shop is two things: a stop inside the booking funnel and a standalone
+            destination in the nav. Only the first one gets the checkout chrome — otherwise
+            browsing the shop would claim to be a checkout the guest never started. */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-end' }, mb: 4 }}>
+          {draft ? (
+            <Box sx={{ flex: 1, minWidth: 260 }}>
+              <CheckoutHeader
+                step={1}
+                title="Add extras"
+                subtitle={`Anything you want waiting in ${draft.unitName}. Skip this step if you'd rather not.`}
+                backTo="/guest-details"
+                backLabel="Back to guest details"
+              />
+            </Box>
+          ) : (
+            <Box>
+              <Typography variant="h1" gutterBottom>
+                Shop
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Browse and purchase items during your stay
+              </Typography>
+            </Box>
+          )}
           <IconButton
             color="primary"
             onClick={() => navigate('/shopping-cart')}
             aria-label={`Shopping cart, ${totalCartItems} item${totalCartItems === 1 ? '' : 's'}`}
-            sx={{ bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }}
+            sx={{ bgcolor: 'primary.main', color: 'white', mb: draft ? 4 : 0, '&:hover': { bgcolor: 'primary.dark' } }}
           >
             <Badge badgeContent={totalCartItems} color="error">
               <ShoppingCartIcon />
@@ -252,7 +267,7 @@ export default function Shop() {
               onClick={() => setSelectedCategory(category)}
               sx={{
                 bgcolor: selectedCategory === category ? c.coral700 : 'white',
-                color: selectedCategory === category ? 'white' : c.stone500,
+                color: selectedCategory === category ? c.white : c.stone600,
                 borderColor: c.gray200,
                 border: selectedCategory === category ? 'none' : '1px solid',
                 fontWeight: selectedCategory === category ? 600 : 400,
@@ -395,6 +410,7 @@ export default function Shop() {
                       <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
                         <IconButton
                           size="small"
+                          aria-label={`Remove one ${product.name}`}
                           onClick={() => handleDecreaseQuantity(product.id)}
                           sx={{
                             bgcolor: c.stone100,
@@ -413,6 +429,7 @@ export default function Shop() {
                         </Button>
                         <IconButton
                           size="small"
+                          aria-label={`Add another ${product.name}`}
                           onClick={() => handleIncreaseQuantity(product.id)}
                           disabled={product.status === 'Out of Stock'}
                           sx={{
@@ -488,11 +505,10 @@ export default function Shop() {
               <Typography variant="body2" sx={{ color: c.stone600, flex: 1, minWidth: 200 }}>
                 Not shopping today? You can go straight to payment.
               </Typography>
-              <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={() => navigate('/guest-details')}>
-                Back to details
-              </Button>
+              {/* Back now lives in the checkout header, where it is in the same place on
+                  every step; a second one here was two controls for one job. */}
               <Button variant="outlined" onClick={handleSkipToPayment}>
-                Skip shopping
+                Skip to payment
               </Button>
             </CardContent>
           </Card>

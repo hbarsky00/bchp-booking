@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -35,16 +36,13 @@ export default function ProcessingPayment() {
 
   return (
     <Layout>
-      <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-        {/* Header */}
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h1" gutterBottom>
-            Processing Payment
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Please wait while we securely process your transaction
-          </Typography>
-        </Box>
+      <Box>
+        {/* No back affordance here on purpose: the payment is already in flight. */}
+        <CheckoutHeader
+          step={2}
+          title="Processing payment"
+          subtitle="Hold on while we settle the transaction. Don't close this tab."
+        />
 
         {/* Important Information Card */}
         <Card

@@ -27,6 +27,12 @@ Two files enforce everything here:
 5. **Every animation respects `prefers-reduced-motion`.**
 6. **No exit animation on route transitions.** See "Routing" below — this caused a real
    outage where two pages stayed mounted at once.
+7. **Never render an invented figure, date, name or photo.** Every price, night count,
+   reference and room name comes from the booking or the API. Placeholder content that
+   looks like data is worse than an empty state, because nobody can tell it is wrong —
+   the payment screen once showed a room, dates and a total that belonged to no booking
+   while charging correctly for the real one.
+8. **Every checkout screen wears `CheckoutHeader`.** See "Checkout" below.
 
 ---
 
@@ -132,6 +138,28 @@ cramped items.
 
 Every page ships a skip link, a `<main id="main">` landmark and `<nav>` regions. Without
 them a keyboard user tabs the whole header on every route (WCAG 2.4.1).
+
+## Checkout
+
+The booking funnel is **Guest details → Extras → Payment → Confirmed**, and the Extras
+stop is the Shop page, reached mid-flow with a saved draft.
+
+Every screen in it renders `<CheckoutHeader step={n} …/>` — the same progress rail, the
+same back affordance in the same place, the same title treatment, the same width. Before
+this each step invented its own chrome (a circular back button here, a back button buried
+at the bottom of a form there, a narrower centred container on another) and none of them
+said how many steps were left, so the run read as unrelated pages rather than one flow.
+
+Rules:
+
+- **Back lives in the header only.** A second back control lower down is two controls for
+  one job; both Shop and Payment had one and they are gone.
+- **Omit `backTo` where reversing is wrong** — Processing Payment has no back, because the
+  transaction is already in flight.
+- **Shop and the cart wear the chrome only when a draft exists.** Reached from the nav they
+  are ordinary pages; dressing them as checkout would claim a flow the visitor never began.
+- **The primary button names the outcome and the amount** — "Confirm and pay $210.50", not
+  "Continue". One filled button per screen, per the button tiers above.
 
 ## Accessibility floor
 

@@ -16,24 +16,13 @@ const previewUnits = [
 ];
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import ShieldIcon from '@mui/icons-material/Shield';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LockIcon from '@mui/icons-material/Lock';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import InputAdornment from '@mui/material/InputAdornment';
-import PeopleIcon from '@mui/icons-material/People';
-import HotelIcon from '@mui/icons-material/Hotel';
 import { c, r } from '../tokens';
 
 export default function BookStay() {

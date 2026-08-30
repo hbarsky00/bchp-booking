@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import CheckoutHeader from '../components/CheckoutHeader';
 import { formatDate, nightsBetween, saveDraft } from '../lib/bookings';
 import Photo from '../components/Photo';
 import Box from '@mui/material/Box';
@@ -19,20 +20,22 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import NotesIcon from '@mui/icons-material/Notes';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import StarIcon from '@mui/icons-material/Star';
 import BedIcon from '@mui/icons-material/Bed';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import NightsStayIcon from '@mui/icons-material/NightsStay';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import InfoIcon from '@mui/icons-material/Info';
 import ChatIcon from '@mui/icons-material/Chat';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ShieldIcon from '@mui/icons-material/Shield';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 export default function GuestDetails() {
   const navigate = useNavigate();
@@ -42,6 +45,7 @@ export default function GuestDetails() {
   const [email, setEmail] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -126,29 +130,13 @@ export default function GuestDetails() {
   return (
     <Layout>
       <Box>
-        {/* Header with Back Button */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-          <IconButton
-            onClick={() => navigate(-1)}
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              '&:hover': {
-                bgcolor: 'action.hover',
-              }
-            }}
-           aria-label="Go back">
-            <ArrowBackIcon />
-          </IconButton>
-          <Box>
-            <Typography variant="h1" gutterBottom>
-              Guest Details
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Please provide your contact information to complete your booking.
-            </Typography>
-          </Box>
-        </Box>
+        <CheckoutHeader
+          step={0}
+          title="Guest details"
+          subtitle="Who is staying? We use this to hold the room and send your confirmation."
+          backTo={-1}
+          backLabel="Back to stay"
+        />
 
         <Grid container spacing={3}>
           {/* Contact Information Form */}
@@ -281,18 +269,14 @@ export default function GuestDetails() {
                           <Typography variant="body2" component="span">
                             I agree to the{' '}
                           </Typography>
-                          <Typography 
-                            component="span" 
-                            color="primary" 
-                            sx={{ 
-                              cursor: 'pointer', 
-                              textDecoration: 'underline',
-                              fontSize: '0.875rem',
-                              mx: 0.5
-                            }}
+                          <Link
+                            component="button"
+                            type="button"
+                            onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}
+                            sx={{ fontSize: '0.875rem', mx: 0.5, verticalAlign: 'baseline' }}
                           >
                             terms and conditions
-                          </Typography>
+                          </Link>
                           <Typography component="span" color="error" sx={{ fontSize: '0.875rem' }}>
                             *
                           </Typography>
@@ -508,6 +492,43 @@ export default function GuestDetails() {
           </Typography>
         </Box>
       </Box>
+
+      {/* The terms the app genuinely enforces — nothing here is aspirational text. */}
+      <Dialog open={termsOpen} onClose={() => setTermsOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Booking terms</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" component="div">
+            <Box component="ul" sx={{ pl: 2.5, m: 0, display: 'grid', gap: 1.5 }}>
+              <li>Stays run for a minimum of three nights.</li>
+              <li>
+                Check-in is from 3:00 PM and check-out is by 11:00 AM. Your room is held from
+                your check-in date up to, but not including, your check-out date.
+              </li>
+              <li>
+                Cancel from your Trips page at any time before check-in and the dates are
+                released immediately.
+              </li>
+              <li>
+                Settlement is recorded against your booking reference. Shop extras are charged
+                as a separate order against the same stay.
+              </li>
+              <li>
+                The name, email and phone number you give here are used to hold the room and to
+                reach you about this booking only.
+              </li>
+            </Box>
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTermsOpen(false)}>Close</Button>
+          <Button
+            variant="contained"
+            onClick={() => { setTermsAccepted(true); setTermsOpen(false); }}
+          >
+            Accept and continue
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 }
