@@ -1,6 +1,6 @@
 import { bad, guard, json } from '../lib/db.mts'
 import { query, transaction } from '../lib/tx.mts'
-import { quote, type Season } from '../lib/pricing.mts'
+import { paymentFee, quote, type Season } from '../lib/pricing.mts'
 
 const KEY = /^[A-Za-z0-9_-]{8,64}$/
 const DATE = /^\d{4}-\d{2}-\d{2}$/
@@ -11,6 +11,7 @@ const SELECT = `
          b.guests, b.guest_name as "guestName", b.guest_email as "guestEmail",
          b.guest_phone as "guestPhone", b.notes, b.payment_method as "paymentMethod",
          b.nightly_rate::float8 as "nightlyRate", b.total::float8 as total,
+         b.payment_fee::float8 as "paymentFee",
          b.created_at as "createdAt",
          (b.check_out - b.check_in) as nights,
          u.id as "unitId", u.name as "unitName", u.image as "unitImage",
@@ -81,13 +82,16 @@ async function handler(req: Request) {
           [checkIn, checkOut],
         )
         const priced = quote(Number(u.price), checkIn, checkOut, seasons.rows as Season[])
-        const total = priced.subtotal.toFixed(2)
+        // The fee the payment screen quoted, applied rather than merely displayed.
+        const method = String(b.paymentMethod ?? 'bsv')
+        const fee = paymentFee(priced.subtotal, method)
+        const total = (priced.subtotal + fee.amount).toFixed(2)
 
         const inserted = await q(
           `insert into bookings
              (reference, unit_id, guest_key, guest_name, guest_email, guest_phone, notes,
-              check_in, check_out, guests, status, payment_method, nightly_rate, total)
-           values ($1,$2,$3,$4,$5,$6,$7,$8::date,$9::date,$10,$11,$12,$13,$14)
+              check_in, check_out, guests, status, payment_method, nightly_rate, total, payment_fee)
+           values ($1,$2,$3,$4,$5,$6,$7,$8::date,$9::date,$10,$11,$12,$13,$14,$15)
            returning id, reference`,
           [
             makeReference(), unitId, guestKey,
@@ -95,9 +99,9 @@ async function handler(req: Request) {
             String(b.notes ?? '').slice(0, 500),
             checkIn, checkOut, guests,
             b.status === 'paid' ? 'paid' : 'reserved',
-            String(b.paymentMethod ?? 'bsv'),
+            method,
             // The average, not the base rate: with seasons there is no single nightly price.
-            priced.averageRate, total,
+            priced.averageRate, total, fee.amount,
           ],
         )
         const bookingId = inserted.rows[0].id as number

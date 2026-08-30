@@ -145,6 +145,10 @@ node --experimental-strip-types netlify/lib/pricing.mts
   the search carried dates — with no dates there is no honest per-night figure to give.
 - `/api/availability?unitId=&from=&to=` returns every night with `booked`, `past`, `rate`
   and `season`; add `&checkIn=&checkOut=` for a priced quote or a refusal.
+- **Processing fees are charged, not just advertised.** `PAYMENT_FEES` in `pricing.mts` is
+  the single source; the payment screen mirrors it for a live figure and the server
+  recomputes it as the authority. Card surcharging is restricted in some jurisdictions and
+  by some card network rules — set `card` to zero to absorb it.
 - `/api/seasons` is full CRUD behind the admin session, surfaced as **Seasonal rates** on
   the dashboard. The migration only seeds a starting set — rates are the owner's to change,
   and changing one must never need a deploy.

@@ -96,6 +96,29 @@ export function quote(basePrice: number, checkIn: string, checkOut: string, seas
   }
 }
 
+/* ------------------------------------------------------------------- fees --- */
+
+/**
+ * Processing fees by payment method.
+ *
+ * These were printed on the payment cards as a selling point — crypto costs less — while
+ * the total ignored them entirely, so the screen advertised three different prices and
+ * charged one. Either the claim goes or the money does; this is the money.
+ *
+ * Card surcharging is restricted or banned in some jurisdictions and by some card network
+ * rules. Set `card` to zero to absorb it instead.
+ */
+export const PAYMENT_FEES: Record<string, { percent: number; fixed: number; label: string }> = {
+  bsv:        { percent: 0.5, fixed: 0,    label: 'BSV network fee' },
+  stablecoin: { percent: 1,   fixed: 0,    label: 'Stablecoin processing fee' },
+  card:       { percent: 2.9, fixed: 0.30, label: 'Card processing fee' },
+}
+
+export function paymentFee(subtotal: number, method: string) {
+  const f = PAYMENT_FEES[method] ?? { percent: 0, fixed: 0, label: 'Processing fee' }
+  return { ...f, amount: money(subtotal * (f.percent / 100) + f.fixed) }
+}
+
 /* --------------------------------------------------------------------------
  * Self-check. `node --experimental-strip-types netlify/lib/pricing.mts`
  * ------------------------------------------------------------------------ */
@@ -139,6 +162,13 @@ if (process.argv[1]?.endsWith('pricing.mts')) {
   assert('Date objects from Postgres price the same as ISO strings',
     quote(100, '2026-07-01', '2026-07-04', asDates).subtotal === 600)
   assert('an empty stay costs nothing', quote(100, '2026-06-01', '2026-06-01', seasons).subtotal === 0)
+
+  // The fees the payment screen advertises have to be the fees actually charged.
+  assert('BSV fee is 0.5%', paymentFee(200, 'bsv').amount === 1)
+  assert('stablecoin fee is 1%', paymentFee(200, 'stablecoin').amount === 2)
+  assert('card fee is 2.9% + 30c', paymentFee(200, 'card').amount === 6.1)
+  assert('an unknown method is charged nothing rather than guessed at',
+    paymentFee(200, 'carrier-pigeon').amount === 0)
 
   console.log(process.exitCode ? '\nself-check FAILED' : '\nself-check passed')
 }

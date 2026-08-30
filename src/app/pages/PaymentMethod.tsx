@@ -42,9 +42,19 @@ export default function PaymentMethod() {
   // markup, so the summary described a different room, different dates and a different
   // price from the booking the Confirm button went on to create.
   const nights = draft ? nightsBetween(draft.checkIn, draft.checkOut) || 1 : 0;
+  // Mirrors netlify/lib/pricing.mts. The server recomputes it and is the authority; this
+  // exists so the figure moves the moment the guest changes method, not after they pay.
+  const FEES: Record<string, { percent: number; fixed: number; label: string }> = {
+    bsv: { percent: 0.5, fixed: 0, label: 'BSV network fee' },
+    stablecoin: { percent: 1, fixed: 0, label: 'Stablecoin processing fee' },
+    card: { percent: 2.9, fixed: 0.30, label: 'Card processing fee' },
+  };
   // The quote the guest agreed to, not a fresh multiplication that ignores seasons.
   const stayTotal = draft ? (draft.stayTotal ?? draft.price * nights) : 0;
-  const total = stayTotal + cart.subtotal;
+  const goods = stayTotal + cart.subtotal;
+  const feeSpec = FEES[paymentMethod] ?? { percent: 0, fixed: 0, label: 'Processing fee' };
+  const fee = Math.round((goods * (feeSpec.percent / 100) + feeSpec.fixed) * 100) / 100;
+  const total = Math.round((goods + fee) * 100) / 100;
 
   // Nothing to pay for without a draft — that means the flow was entered sideways.
   useEffect(() => {
@@ -122,7 +132,7 @@ export default function PaymentMethod() {
                       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <FormControlLabel
                           value="bsv"
-                          control={<Radio />}
+                          control={<Radio inputProps={{ 'aria-label': 'Pay with BSV' }} />}
                           label=""
                           sx={{ m: 0 }}
                         />
@@ -179,7 +189,7 @@ export default function PaymentMethod() {
                       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <FormControlLabel
                           value="stablecoin"
-                          control={<Radio />}
+                          control={<Radio inputProps={{ 'aria-label': 'Pay with a stablecoin' }} />}
                           label=""
                           sx={{ m: 0 }}
                         />
@@ -233,7 +243,7 @@ export default function PaymentMethod() {
                       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <FormControlLabel
                           value="card"
-                          control={<Radio />}
+                          control={<Radio inputProps={{ 'aria-label': 'Pay by credit or debit card' }} />}
                           label=""
                           sx={{ m: 0 }}
                         />
@@ -436,9 +446,14 @@ export default function PaymentMethod() {
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Service fee
+                    {feeSpec.label}
+                    <Box component="span" sx={{ display: 'block', fontSize: 11, color: c.stone600 }}>
+                      {feeSpec.percent}%{feeSpec.fixed ? ` + $${feeSpec.fixed.toFixed(2)}` : ''}
+                    </Box>
                   </Typography>
-                  <Typography variant="body2">None</Typography>
+                  <Typography variant="body2" className="tnum">
+                    {fee > 0 ? `$${fee.toFixed(2)}` : 'None'}
+                  </Typography>
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
