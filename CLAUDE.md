@@ -122,6 +122,36 @@ and compared against another parameter. Every placeholder in the auth queries is
 explicitly (`$1::int`); without that, `recordFailure` threw on every wrong password, which
 turned a 401 into a 500 and meant the lockout never engaged.
 
+## Pricing and availability
+
+A stay is priced **night by night**, never `rate × nights`. `netlify/lib/pricing.mts` is
+the only thing that prices anything; it is pure and carries a self-check:
+
+```bash
+node --experimental-strip-types netlify/lib/pricing.mts
+```
+
+- **Seasons** are rows in `rate_seasons` — explicit dated ranges with a multiplier on the
+  unit's base price. Highest `priority` wins where ranges overlap, so a festive week can
+  sit inside a broader high season. Explicit dates rather than recurring month/day pairs:
+  recurring ranges need modular arithmetic for the ones crossing New Year, and cannot
+  express a festival that moves.
+- **The server prices every booking.** The client never sends a total. `bookings.mts`
+  re-quotes from the database inside the booking transaction.
+- **Each night's rate is snapshotted** into `booking_nights`, so editing a season later
+  never rewrites what someone already paid.
+- **`unit.price` is a base rate, not a price.** Show `averageRate` from a quote, or "from
+  $base" when no dates are chosen. `/api/units` only adds `nightlyRate`/`stayTotal` when
+  the search carried dates — with no dates there is no honest per-night figure to give.
+- `/api/availability?unitId=&from=&to=` returns every night with `booked`, `past`, `rate`
+  and `season`; add `&checkIn=&checkOut=` for a priced quote or a refusal.
+
+**A `date` column comes back from node-postgres as a JS `Date`, not a string.** This bit
+twice in one sitting: `seasonFor` did `.slice()` on it and threw, and
+`String(aDate).slice(0,10)` produced `"Sat Dec 2"`, which matched no ISO date — so every
+booked night read as free while the write path correctly refused the clash. Format dates
+in SQL (`to_char(..., 'YYYY-MM-DD')`) and pass them through `asDate()`.
+
 ## Database
 
 Netlify managed Postgres. `NETLIFY_DATABASE_URL` is injected by Netlify in builds,

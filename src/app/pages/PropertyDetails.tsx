@@ -32,7 +32,9 @@ import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { c, r } from '../tokens';
-import { useUnits, nightsBetween } from '../lib/bookings';
+import { useUnits, nightsBetween, formatDate } from '../lib/bookings';
+import { useAvailability, lineLabel } from '../lib/availability';
+import AvailabilityCalendar from '../components/AvailabilityCalendar';
 import { shareOrCopy } from '../lib/actions';
 
 export default function PropertyDetails() {
@@ -86,9 +88,15 @@ export default function PropertyDetails() {
   const [checkOut, setCheckOut] = useState<string>(searchParams?.checkOut ?? '');
   const [guests, setGuests] = useState<string>(String(searchParams?.guests || 1));
   const nights = nightsBetween(checkIn, checkOut);
+  const { availability, loading: availLoading } = useAvailability(unit?.id, checkIn, checkOut);
+  const minNights = availability?.minNights ?? 3;
+  const quote = availability?.selection?.ok ? availability.selection : null;
+  const clash = availability?.selection && !availability.selection.ok ? availability.selection.reason : '';
+
   const dateError =
     checkIn && checkOut && nights <= 0 ? 'Check-out must be after check-in'
-    : checkIn && checkOut && nights < 3 ? 'This stay has a three-night minimum'
+    : checkIn && checkOut && nights < minNights ? `This stay has a ${minNights}-night minimum`
+    : clash ? 'Those dates are no longer free — pick again on the calendar'
     : '';
 
   const handleShare = async () => {
@@ -153,9 +161,17 @@ export default function PropertyDetails() {
   };
 
   const handleBookNow = () => {
-    if (dateError || !checkIn || !checkOut) return;
+    if (dateError || !checkIn || !checkOut || !quote) return;
     navigate('/guest-details', {
-      state: { unit, searchParams: { checkIn, checkOut, guests } },
+      state: {
+        unit,
+        searchParams: {
+          checkIn, checkOut, guests,
+          stayTotal: quote?.subtotal,
+          averageRate: quote?.averageRate,
+          rateLines: quote?.breakdown ?? [],
+        },
+      },
     });
   };
 
@@ -339,16 +355,21 @@ export default function PropertyDetails() {
                 {/* Price */}
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="caption" color="text.secondary" display="block">
-                    Price per night
+                    {quote ? 'Average for your dates' : 'Rates from'}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                    <Typography variant="h4" component="p" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                      ${unit.price}
+                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, flexWrap: 'wrap' }}>
+                    <Typography variant="h4" component="p" className="tnum" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                      ${(quote?.averageRate ?? unit.price).toFixed(2).replace(/\.00$/, '')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       / night
                     </Typography>
                   </Box>
+                  {!quote && (
+                    <Typography variant="caption" sx={{ color: c.stone600 }}>
+                      Rates change by season — pick your dates to see the exact price.
+                    </Typography>
+                  )}
                 </Box>
 
                 <Divider sx={{ my: 3 }} />
@@ -363,26 +384,38 @@ export default function PropertyDetails() {
                 <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
                   Your stay
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
-                  <TextField
-                    type="date"
-                    label="Check-in"
-                    size="small"
-                    fullWidth
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: today } }}
-                  />
-                  <TextField
-                    type="date"
-                    label="Check-out"
-                    size="small"
-                    fullWidth
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: checkIn || today } }}
-                  />
+
+                <AvailabilityCalendar
+                  days={availability?.days ?? []}
+                  loading={availLoading}
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  minNights={minNights}
+                  onChange={({ checkIn: ci, checkOut: co }) => { setCheckIn(ci); setCheckOut(co); }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 1.5, mt: 2, mb: 2 }}>
+                  {[
+                    { label: 'Check-in', value: checkIn },
+                    { label: 'Check-out', value: checkOut },
+                  ].map(fld => (
+                    <Box
+                      key={fld.label}
+                      sx={{
+                        flex: 1, minWidth: 0, px: 1.25, py: 0.75,
+                        border: `1px solid ${c.stone200}`, borderRadius: `${r.md}px`,
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ color: c.stone600, display: 'block' }}>
+                        {fld.label}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
+                        {fld.value ? formatDate(fld.value) : 'Pick a date'}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
+
                 <TextField
                   select
                   label="Guests"
@@ -397,14 +430,32 @@ export default function PropertyDetails() {
                   ))}
                 </TextField>
 
-                {nights > 0 && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      ${unit.price} × {nights} night{nights === 1 ? '' : 's'}
-                    </Typography>
-                    <Typography variant="body2" className="tnum" sx={{ fontWeight: 700 }}>
-                      ${(unit.price * nights).toFixed(2)}
-                    </Typography>
+                {/* The price comes from the server, per night, so what is shown here is what
+                    the booking will actually charge — including a stay that crosses seasons. */}
+                {quote?.ok && (
+                  <Box sx={{ mb: 2 }}>
+                    {quote.breakdown.map((line) => (
+                      <Box key={`${line.season}-${line.rate}`} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {lineLabel(line)}
+                          {quote.breakdown.length > 1 && (
+                            <Box component="span" sx={{ display: 'block', fontSize: 11, color: c.stone600 }}>
+                              {line.season}
+                            </Box>
+                          )}
+                        </Typography>
+                        <Typography variant="body2" className="tnum">${line.subtotal.toFixed(2)}</Typography>
+                      </Box>
+                    ))}
+                    <Divider sx={{ my: 1.25 }} />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                        Total for {quote.nightCount} night{quote.nightCount === 1 ? '' : 's'}
+                      </Typography>
+                      <Typography variant="body2" className="tnum" sx={{ fontWeight: 700 }}>
+                        ${quote.subtotal.toFixed(2)}
+                      </Typography>
+                    </Box>
                   </Box>
                 )}
 

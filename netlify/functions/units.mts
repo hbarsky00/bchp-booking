@@ -1,4 +1,6 @@
 import { bad, guard, json, sqlClient } from '../lib/db.mts'
+import { query } from '../lib/tx.mts'
+import { quote, type Season } from '../lib/pricing.mts'
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
 
@@ -43,7 +45,20 @@ async function handler(req: Request) {
         where (${guests})::int = 0 or u.max_guests >= ${guests}::int
         order by u.id`
 
-  return json(rows)
+  // Search advertised the base rate whatever dates were asked for, so a festive-week
+  // search quoted low-season prices and the property page then disagreed with it.
+  if (!ranged) return json(rows)
+
+  const seasons = await query<Season>(
+    `select name, starts_on, ends_on, multiplier, priority from rate_seasons
+      where starts_on <= $2::date and ends_on >= $1::date`,
+    [checkIn, checkOut],
+  )
+  return json(rows.map((u: any) => {
+    const q = quote(Number(u.price), checkIn, checkOut, seasons)
+    return { ...u, nightlyRate: q.averageRate, stayTotal: q.subtotal, nights: q.nightCount,
+             seasonal: q.breakdown.length > 1 || q.averageRate !== Number(u.price) }
+  }))
 }
 
 export default guard(handler)

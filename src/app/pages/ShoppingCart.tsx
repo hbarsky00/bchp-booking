@@ -54,7 +54,7 @@ export default function ShoppingCart() {
   // the snacks made people think they had lost the room they had just chosen.
   const draft = loadDraft();
   const stayNights = draft ? nightsBetween(draft.checkIn, draft.checkOut) : 0;
-  const stayTotal = draft ? draft.price * stayNights : 0;
+  const stayTotal = draft ? (draft.stayTotal ?? draft.price * stayNights) : 0;
 
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
@@ -178,7 +178,7 @@ export default function ShoppingCart() {
                   <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="h5" component="p" className="tnum">${stayTotal.toFixed(2)}</Typography>
                     <Typography variant="caption" sx={{ color: c.stone600 }}>
-                      ${draft.price.toFixed(2)} × {stayNights}
+                      ${(draft.averageRate ?? draft.price).toFixed(2)} × {stayNights}
                     </Typography>
                   </Box>
                 </CardContent>

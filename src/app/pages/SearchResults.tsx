@@ -232,7 +232,7 @@ export default function SearchResults() {
               <Box
                 role="button"
                 tabIndex={unit.available ? 0 : -1}
-                aria-label={`${unit.name}, $${unit.price} per night`}
+                aria-label={`${unit.name}, $${unit.nightlyRate ?? unit.price} per night`}
                 onClick={() => unit.available && handleSelectUnit(unit)}
                 onKeyDown={(e) => {
                   if (unit.available && (e.key === 'Enter' || e.key === ' ')) {
@@ -319,9 +319,21 @@ export default function SearchResults() {
                 </Typography>
 
                 <Typography className="tnum" sx={{ mt: 0.75, fontSize: 15, color: c.stone900 }}>
-                  <Box component="span" sx={{ fontWeight: 700 }}>${unit.price}</Box>
+                  <Box component="span" sx={{ fontWeight: 700 }}>
+                    ${(unit.nightlyRate ?? unit.price).toFixed(2).replace(/\.00$/, '')}
+                  </Box>
                   <Box component="span" sx={{ color: c.stone600 }}> night</Box>
+                  {unit.stayTotal != null && (
+                    <Box component="span" sx={{ color: c.stone600 }}>
+                      {' · '}${unit.stayTotal.toFixed(2).replace(/\.00$/, '')} total
+                    </Box>
+                  )}
                 </Typography>
+                {unit.seasonal && (
+                  <Typography variant="caption" sx={{ color: c.stone600 }}>
+                    Seasonal rate for your dates
+                  </Typography>
+                )}
               </Box>
             </Grid>
           ))}

@@ -1,5 +1,6 @@
 import { bad, guard, json } from '../lib/db.mts'
 import { query, transaction } from '../lib/tx.mts'
+import { quote, type Season } from '../lib/pricing.mts'
 
 const KEY = /^[A-Za-z0-9_-]{8,64}$/
 const DATE = /^\d{4}-\d{2}-\d{2}$/
@@ -74,17 +75,20 @@ async function handler(req: Request) {
           throw Object.assign(new Error('Those dates are no longer available'), { status: 409 })
         }
 
-        const nights = Math.round(
-          (Date.parse(checkOut + 'T00:00:00Z') - Date.parse(checkIn + 'T00:00:00Z')) / 86_400_000,
+        const seasons = await q(
+          `select name, starts_on, ends_on, multiplier, priority from rate_seasons
+            where starts_on <= $2::date and ends_on >= $1::date`,
+          [checkIn, checkOut],
         )
-        const total = (Number(u.price) * nights).toFixed(2)
+        const priced = quote(Number(u.price), checkIn, checkOut, seasons.rows as Season[])
+        const total = priced.subtotal.toFixed(2)
 
         const inserted = await q(
           `insert into bookings
              (reference, unit_id, guest_key, guest_name, guest_email, guest_phone, notes,
               check_in, check_out, guests, status, payment_method, nightly_rate, total)
            values ($1,$2,$3,$4,$5,$6,$7,$8::date,$9::date,$10,$11,$12,$13,$14)
-           returning reference`,
+           returning id, reference`,
           [
             makeReference(), unitId, guestKey,
             String(b.guestName).trim(), String(b.guestEmail).trim(), String(b.guestPhone ?? '').trim(),
@@ -92,9 +96,21 @@ async function handler(req: Request) {
             checkIn, checkOut, guests,
             b.status === 'paid' ? 'paid' : 'reserved',
             String(b.paymentMethod ?? 'bsv'),
-            u.price, total,
+            // The average, not the base rate: with seasons there is no single nightly price.
+            priced.averageRate, total,
           ],
         )
+        const bookingId = inserted.rows[0].id as number
+
+        // Snapshot each night's rate. Editing a season later must not rewrite the price of
+        // a stay someone already agreed to.
+        for (const n of priced.nights) {
+          await q(
+            'insert into booking_nights (booking_id, night, rate, season) values ($1,$2::date,$3,$4)',
+            [bookingId, n.date, n.rate, n.season],
+          )
+        }
+
         return inserted.rows[0].reference as string
       })
 

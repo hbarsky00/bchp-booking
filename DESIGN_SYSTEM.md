@@ -161,6 +161,18 @@ Rules:
 - **The primary button names the outcome and the amount** — "Confirm and pay $210.50", not
   "Continue". One filled button per screen, per the button tiers above.
 
+## Dates and prices
+
+- **A date picker must show what is already taken.** Native `<input type="date">` cannot,
+  which is why `AvailabilityCalendar` exists. Booked nights are struck through *and*
+  greyed — colour alone must not carry it.
+- **Every night shows its own price** in the grid, because rates move with the season and
+  a calendar that hides that makes the total look arbitrary.
+- **Never print a bare nightly rate next to dates.** With seasons in play the honest
+  figures are "from $base" with no dates, and the quoted average once dates are chosen.
+- Seven 44px columns need every pixel of a 375px card, so the month grid has **no gutters**
+  and each cell fills its column.
+
 ## Mobile
 
 Everything is checked at **375px**, not just at desktop. Rules that came out of a real

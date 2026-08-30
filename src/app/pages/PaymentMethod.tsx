@@ -42,7 +42,8 @@ export default function PaymentMethod() {
   // markup, so the summary described a different room, different dates and a different
   // price from the booking the Confirm button went on to create.
   const nights = draft ? nightsBetween(draft.checkIn, draft.checkOut) || 1 : 0;
-  const stayTotal = draft ? draft.price * nights : 0;
+  // The quote the guest agreed to, not a fresh multiplication that ignores seasons.
+  const stayTotal = draft ? (draft.stayTotal ?? draft.price * nights) : 0;
   const total = stayTotal + cart.subtotal;
 
   // Nothing to pay for without a draft — that means the flow was entered sideways.
@@ -404,10 +405,25 @@ export default function PaymentMethod() {
 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    ${draft.price.toFixed(2)} × {nights} night{nights === 1 ? '' : 's'}
+                    {draft.rateLines?.length > 1
+                      ? `${nights} nights across ${draft.rateLines.length} seasons`
+                      : `$${(draft.averageRate ?? draft.price).toFixed(2)} × ${nights} night${nights === 1 ? '' : 's'}`}
                   </Typography>
                   <Typography variant="body2" className="tnum">${stayTotal.toFixed(2)}</Typography>
                 </Box>
+
+                {/* Spell the seasons out when a stay spans more than one, so the total is
+                    explainable rather than just asserted. */}
+                {draft.rateLines?.length > 1 && draft.rateLines.map((l) => (
+                  <Box key={`${l.season}-${l.rate}`} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5, pl: 1.5 }}>
+                    <Typography variant="caption" sx={{ color: c.stone600 }}>
+                      {l.season} · ${l.rate.toFixed(2)} × {l.nights}
+                    </Typography>
+                    <Typography variant="caption" className="tnum" sx={{ color: c.stone600 }}>
+                      ${l.subtotal.toFixed(2)}
+                    </Typography>
+                  </Box>
+                ))}
 
                 {cart.itemCount > 0 && (
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>

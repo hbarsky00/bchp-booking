@@ -12,6 +12,11 @@ export interface Unit {
   price: number
   amenities: string[]
   available: boolean
+  /** Present only when the search carried dates: the real rate for those nights. */
+  nightlyRate?: number
+  stayTotal?: number
+  nights?: number
+  seasonal?: boolean
 }
 
 export interface Booking {
@@ -162,7 +167,16 @@ export interface Draft {
   unitName: string
   unitImage: string
   unitFloor: string
+  /** The unit's base rate. Kept for display only — never multiply by nights with it. */
   price: number
+  /**
+   * The server's price for these exact dates, and the per-season lines behind it. Seasonal
+   * rates mean `price × nights` is wrong for any stay that crosses a season boundary, so
+   * the quote is carried through checkout rather than recomputed at each step.
+   */
+  stayTotal: number
+  averageRate: number
+  rateLines: { season: string; nights: number; rate: number; subtotal: number }[]
   checkIn: string
   checkOut: string
   guests: number

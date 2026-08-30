@@ -80,6 +80,11 @@ export default function GuestDetails() {
         unitImage: unit.image,
         unitFloor: unit.floor,
         price: Number(unit.price),
+        // Straight from the property page's server quote, so no step downstream has to
+        // re-derive a seasonal total and risk disagreeing with it.
+        stayTotal: Number(bookingData.searchParams?.stayTotal) || Number(unit.price) * nights,
+        averageRate: Number(bookingData.searchParams?.averageRate) || Number(unit.price),
+        rateLines: bookingData.searchParams?.rateLines ?? [],
         checkIn: bookingData.searchParams?.checkIn ?? '',
         checkOut: bookingData.searchParams?.checkOut ?? '',
         guests: Number(bookingData.searchParams?.guests) || 1,
