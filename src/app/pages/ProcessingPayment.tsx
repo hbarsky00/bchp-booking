@@ -54,7 +54,7 @@ export default function ProcessingPayment() {
             borderColor: c.amber200,
           }}
         >
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
               <WarningIcon sx={{ color: c.amber500, mt: 0.25 }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
@@ -156,7 +156,7 @@ export default function ProcessingPayment() {
                     mx: 'auto',
                   }}
                 >
-                  <CardContent sx={{ p: 3 }}>
+                  <CardContent>
                     {/* Transaction Status */}
                     <Box
                       sx={{

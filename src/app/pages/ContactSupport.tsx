@@ -119,7 +119,7 @@ export default function ContactSupport() {
           {/* Contact Form */}
           <Grid size={{ xs: 12, lg: 8 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <ChatIcon color="primary" />
                   <Typography variant="h6" component="h2">Send Us a Message</Typography>
@@ -268,7 +268,7 @@ export default function ContactSupport() {
           {/* Contact Information Sidebar */}
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <SupportAgentIcon color="primary" />
                   <Typography variant="h6" component="h2">Contact Information</Typography>
@@ -285,9 +285,13 @@ export default function ContactSupport() {
                         <Typography 
                           variant="body2" 
                           color="primary" 
-                          sx={{ 
-                            cursor: 'pointer', 
+                          sx={{
+                            cursor: 'pointer',
                             textDecoration: 'underline',
+                            // Was an 18px-tall tap target on the one control that reaches a human.
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            minHeight: 44,
                             '&:hover': { opacity: 0.8 }
                           }}
                           component="a"
@@ -314,9 +318,13 @@ export default function ContactSupport() {
                         <Typography 
                           variant="body2" 
                           color="primary"
-                          sx={{ 
-                            cursor: 'pointer', 
+                          sx={{
+                            cursor: 'pointer',
                             textDecoration: 'underline',
+                            // Was an 18px-tall tap target on the one control that reaches a human.
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            minHeight: 44,
                             '&:hover': { opacity: 0.8 }
                           }}
                           component="a"
@@ -379,7 +387,7 @@ export default function ContactSupport() {
             </Card>
 
             <Card elevation={1} sx={{ mt: 3, bgcolor: 'primary.main', color: 'white' }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" gutterBottom sx={{ color: 'white' }}>
                   Need Immediate Help?
                 </Typography>

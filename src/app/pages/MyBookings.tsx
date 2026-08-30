@@ -131,7 +131,15 @@ export default function MyBookings() {
           {/* Bookings List */}
           <Grid size={{ xs: 12, lg: 8 }}>
             <Card elevation={1}>
-              <Tabs value={currentTab} onChange={handleTabChange} sx={{ px: 3, pt: 2 }}>
+              <Tabs
+                value={currentTab}
+                onChange={handleTabChange}
+                variant="scrollable"
+                scrollButtons="auto"
+                allowScrollButtonsMobile
+                aria-label="Filter bookings by status"
+                sx={{ px: { xs: 1.5, md: 3 }, pt: 2 }}
+              >
                 <Tab label="All bookings" />
                 <Tab label="Active" />
                 <Tab label="Past" />
@@ -298,7 +306,7 @@ export default function MyBookings() {
           <Grid size={{ xs: 12, lg: 4 }}>
             {/* Tokens Card */}
             <Card elevation={1} sx={{ mb: 2 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <TokenIcon color="secondary" />
@@ -352,7 +360,7 @@ export default function MyBookings() {
 
             {/* Statistics Card */}
             <Card elevation={1} sx={{ mb: 2 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <TrendingUpIcon color="primary" />
                   <Typography variant="h6" component="h2">Booking Statistics</Typography>
@@ -404,7 +412,7 @@ export default function MyBookings() {
 
             {/* Need Help Card */}
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" sx={{ mb: 1 }}>
                   Need Help?
                 </Typography>
@@ -444,7 +452,7 @@ export default function MyBookings() {
       </Box>
         {orders.length > 0 && (
           <Card sx={{ mt: 3 }}>
-            <CardContent sx={{ p: 3 }}>
+            <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>Room service orders</Typography>
               {orders.map(o => (
                 <Box

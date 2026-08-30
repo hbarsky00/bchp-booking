@@ -173,7 +173,7 @@ export default function CommercialRental() {
           {/* Contact & Inquiry Card */}
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
                   Rental Inquiry
                 </Typography>
@@ -237,7 +237,7 @@ export default function CommercialRental() {
 
             {/* Additional Info */}
             <Card elevation={1} sx={{ mt: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 2 }}>
                   Quick Facts
                 </Typography>

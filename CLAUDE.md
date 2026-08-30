@@ -20,6 +20,11 @@ The traps that have already cost real time:
   Already remapped in the theme — don't undo it.
 - `AnimatePresence` with an exit animation on the router deadlocks: two pages stay
   mounted and the browser shows the stale one. The transition is enter-only on purpose.
+- **The route transition animates opacity and nothing else.** It used to add a 10px `y`,
+  which put a `transform` on a wrapper around every page — and a transformed ancestor is
+  the containing block for every `position: fixed` descendant, so nothing inside any page
+  could dock to the viewport. The wrapper was also caught holding `translateY(10px)`
+  permanently, pushing every page down by 10px. Do not reintroduce a transform there.
 - Never signal state with `opacity` on a container; it drags contained text below AA.
 - Images go through `<Photo>`, never a bare `<img>` or `CardMedia` — it owns the
   skeleton, the fade-in and the error fallback. A cached image never fires `onLoad`,

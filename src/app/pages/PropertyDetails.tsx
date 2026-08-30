@@ -227,7 +227,7 @@ export default function PropertyDetails() {
           <Grid size={{ xs: 12, lg: 8 }}>
             {/* Property Info */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -331,7 +331,7 @@ export default function PropertyDetails() {
           {/* Booking Summary Sidebar */}
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
                   Booking Summary
                 </Typography>

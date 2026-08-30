@@ -101,7 +101,7 @@ export default function SearchResults() {
           }}
         >
           <Card elevation={1} sx={{ borderRadius: 0 }}>
-            <CardContent sx={{ p: 3 }}>
+            <CardContent>
               <Grid container spacing={2} alignItems="center">
                 <Grid size={{ xs: 12, sm: 3 }}>
                   <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
@@ -267,6 +267,8 @@ export default function SearchResults() {
                         bgcolor: c.stone900, color: c.white, fontWeight: 700,
                         letterSpacing: '0.06em', fontSize: 12,
                         px: 1.75, py: 0.75, borderRadius: `${r.pill}px`,
+                        // A six-letter badge broke across two lines inside its own pill.
+                        whiteSpace: 'nowrap',
                       }}>
                         BOOKED
                       </Typography>

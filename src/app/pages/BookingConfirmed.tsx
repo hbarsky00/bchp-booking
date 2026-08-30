@@ -151,7 +151,7 @@ export default function BookingConfirmed() {
           <Grid size={{ xs: 12, lg: 7 }}>
             {/* Booking Summary */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
                     Booking Summary
@@ -375,7 +375,7 @@ export default function BookingConfirmed() {
 
             {/* What Happens Next */}
             <Card elevation={1} sx={{ mb: 2 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <InfoIcon fontSize="small" sx={{ color: 'primary.main' }} />
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>

@@ -181,7 +181,7 @@ export default function BookingDetails() {
           <Grid size={{ xs: 12, md: 8 }}>
             {/* Booking Status Card */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Typography variant="h6" component="h2">Booking Status</Typography>
                   <Chip
@@ -269,7 +269,7 @@ export default function BookingDetails() {
 
               <Divider />
 
-              <CardContent sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   Need to make changes?
                 </Typography>
@@ -281,7 +281,7 @@ export default function BookingDetails() {
 
             {/* Unit Information Card */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
                   <Box
                     sx={{
@@ -377,7 +377,7 @@ export default function BookingDetails() {
 
             {/* Guest Information Card */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="h6" component="h2" gutterBottom>
                   Guest Information
                 </Typography>
@@ -412,7 +412,7 @@ export default function BookingDetails() {
 
             {/* Payment Information Card */}
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Typography variant="h6" component="h2">Payment Information</Typography>
                   <Chip icon={<VerifiedIcon />} label="Verified" color="success" size="small" />
@@ -501,7 +501,7 @@ export default function BookingDetails() {
           <Grid size={{ xs: 12, md: 4 }}>
             {/* Tokens Card */}
             <Card elevation={1} sx={{ mb: 3, bgcolor: 'secondary.lighter', border: 1, borderColor: 'secondary.light' }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
                   <LockIcon fontSize="small" color="secondary" />
                   <Typography variant="subtitle1" fontWeight={600}>
@@ -535,7 +535,7 @@ export default function BookingDetails() {
 
             {/* Property Details Card */}
             <Card elevation={1} sx={{ mb: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
                   <BedIcon fontSize="small" color="primary" />
                   <Typography variant="subtitle1" fontWeight={600}>
@@ -595,7 +595,7 @@ export default function BookingDetails() {
 
             {/* Need Help Card */}
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
                   <HelpOutlineIcon fontSize="small" color="primary" />
                   <Typography variant="subtitle1" fontWeight={600}>
@@ -631,7 +631,7 @@ export default function BookingDetails() {
 
             {/* Quick Actions */}
             <Card elevation={1} sx={{ mt: 3 }}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                   Quick Actions
                 </Typography>

@@ -142,7 +142,7 @@ export default function GuestDetails() {
           {/* Contact Information Form */}
           <Grid size={{ xs: 12, lg: 7 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <PersonIcon color="primary" />
                   <Typography variant="h6" component="h2">Contact Information</Typography>
@@ -273,7 +273,12 @@ export default function GuestDetails() {
                             component="button"
                             type="button"
                             onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}
-                            sx={{ fontSize: '0.875rem', mx: 0.5, verticalAlign: 'baseline' }}
+                            sx={{
+                              fontSize: '0.875rem', mx: 0.5, verticalAlign: 'baseline',
+                              // Inside a checkbox label, so a small target here is not just
+                              // hard to hit — a miss silently toggles the checkbox instead.
+                              display: 'inline-flex', alignItems: 'center', minHeight: 44, px: 0.5,
+                            }}
                           >
                             terms and conditions
                           </Link>
@@ -306,7 +311,7 @@ export default function GuestDetails() {
           {/* Booking Summary Sidebar */}
           <Grid size={{ xs: 12, lg: 5 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <ReceiptIcon color="primary" />
                   <Typography variant="h6" component="h2">Booking Summary</Typography>
@@ -448,7 +453,7 @@ export default function GuestDetails() {
 
         {/* Need Help Card - Full Width */}
         <Card elevation={1} sx={{ mt: 3 }}>
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
               <Box
                 sx={{

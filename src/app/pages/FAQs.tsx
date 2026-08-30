@@ -173,7 +173,7 @@ export default function FAQs() {
 
         {/* Search and Filter */}
         <Card elevation={1} sx={{ mb: 4 }}>
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Grid container spacing={2} alignItems="center">
               <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
@@ -218,7 +218,7 @@ export default function FAQs() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {filteredCategories.map(category => (
               <Card key={category.id} elevation={1}>
-                <CardContent sx={{ p: 3 }}>
+                <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                     <Box sx={{ color: `${category.color}.main` }}>{category.icon}</Box>
                     <Typography variant="h6" component="h2">{category.name}</Typography>
@@ -279,7 +279,7 @@ export default function FAQs() {
 
         {/* Still Need Help Card */}
         <Card elevation={1} sx={{ mt: 4, bgcolor: 'primary.lighter', border: 1, borderColor: 'primary.light' }}>
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
               <Box>
                 <Typography variant="h6" component="h2" gutterBottom>

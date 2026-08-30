@@ -165,7 +165,7 @@ export default function Login() {
                   component="button"
                   type="button"
                   onClick={() => { setMode('forgot'); setError(''); setNotice(''); }}
-                  sx={{ justifySelf: 'center', fontSize: 14, py: 1, px: 1 }}
+                  sx={{ justifySelf: 'center', fontSize: 14, px: 1.5, minHeight: 44 }}
                 >
                   Forgot your password?
                 </Link>
@@ -190,7 +190,7 @@ export default function Login() {
                   component="button"
                   type="button"
                   onClick={() => { setMode('signin'); setError(''); setNotice(''); }}
-                  sx={{ justifySelf: 'center', fontSize: 14, py: 1, px: 1 }}
+                  sx={{ justifySelf: 'center', fontSize: 14, px: 1.5, minHeight: 44 }}
                 >
                   Back to sign-in
                 </Link>

@@ -190,7 +190,7 @@ export default function ShoppingCart() {
           {/* Cart Items - Left Column */}
           <Grid size={{ xs: 12, lg: 8 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 {/* Header */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -398,7 +398,7 @@ export default function ShoppingCart() {
                   borderColor: c.blue200,
                 }}
               >
-                <CardContent sx={{ p: 3 }}>
+                <CardContent>
                   <Box sx={{ display: 'flex', gap: 2 }}>
                     <Box
                       sx={{
@@ -431,7 +431,7 @@ export default function ShoppingCart() {
           {/* Order Summary - Right Column */}
           <Grid size={{ xs: 12, lg: 4 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <ReceiptIcon sx={{ color: 'primary.main' }} />
                   <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>

@@ -94,7 +94,7 @@ export default function PaymentMethod() {
           {/* Payment Options */}
           <Grid size={{ xs: 12, lg: 7 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <PaymentIcon color="primary" />
                   <Box>
@@ -342,7 +342,7 @@ export default function PaymentMethod() {
           {/* Booking Summary Sidebar */}
           <Grid size={{ xs: 12, lg: 5 }}>
             <Card elevation={1}>
-              <CardContent sx={{ p: 3 }}>
+              <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                   <BedIcon color="primary" />
                   <Typography variant="h6" component="h2">Booking Summary</Typography>

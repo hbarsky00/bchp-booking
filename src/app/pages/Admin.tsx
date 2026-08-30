@@ -506,7 +506,7 @@ export default function Admin() {
               {/* Availability Calendar */}
               <Grid size={{ xs: 12, lg: 7 }}>
                 <Card elevation={1}>
-                  <CardContent sx={{ p: 3 }}>
+                  <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                       <CalendarMonthIcon color="primary" />
                       <Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>
@@ -652,7 +652,7 @@ export default function Admin() {
               {/* Pending Approvals */}
               <Grid size={{ xs: 12, lg: 5 }}>
                 <Card elevation={1}>
-                  <CardContent sx={{ p: 3 }}>
+                  <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <PendingActionsIcon sx={{ color: c.amber500 }} />
@@ -753,7 +753,7 @@ export default function Admin() {
 
         {/* Current Bookings Table - Full Width */}
         <Card elevation={1} sx={{ mt: 3 }}>
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <BookOnlineIcon color="primary" />

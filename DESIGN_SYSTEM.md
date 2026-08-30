@@ -161,6 +161,30 @@ Rules:
 - **The primary button names the outcome and the amount** — "Confirm and pay $210.50", not
   "Continue". One filled button per screen, per the button tiers above.
 
+## Mobile
+
+Everything is checked at **375px**, not just at desktop. Rules that came out of a real
+audit there:
+
+- **Never put a transform on an ancestor of the whole page.** A transformed element becomes
+  the containing block for every `position: fixed` descendant, so a bottom-docked bar
+  anchors to it instead of the viewport and scrolls away. The route transition is
+  **opacity-only** for this reason — see "Routing" below.
+- **Card padding comes from the theme**, not from `p: 3` written on each `CardContent`.
+  It is 16px below `sm` and 24px above. A 24px inset inside the page's own 16px gutter left
+  295px of a 375px screen for content.
+- **A primary action docks to the bottom on a phone**, above the bottom nav, and needs
+  `zIndex` above the nav's 1200 sibling plus page padding so the last card clears it. As a
+  top bar it wrapped to two rows and stood 130px tall — a quarter of the screen was chrome.
+- **Tab strips are `variant="scrollable"`.** Four tabs did not fit; the fourth sat 61px off
+  the right edge and could not be reached at all.
+- **Badges and pills get `whiteSpace: 'nowrap'`.** A six-letter BOOKED badge broke across
+  two lines inside its own pill.
+- **Touch targets: 44px.** Set in the theme on `MuiIconButton` and on clickable chips
+  (which relax to 36px under `@media (pointer: fine)`), so pages do not each re-solve it.
+  Text links that sit inside a label need it too — a small link inside a checkbox label
+  toggles the checkbox when you miss.
+
 ## Accessibility floor
 
 Non-negotiable, all verified per route in the browser:

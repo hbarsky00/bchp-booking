@@ -114,8 +114,41 @@ export const theme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        root: { borderRadius: r.pill, height: 'auto', minHeight: 28, paddingTop: 4, paddingBottom: 4, fontWeight: 600 },
+        root: {
+          borderRadius: r.pill, height: 'auto', minHeight: 28,
+          paddingTop: 4, paddingBottom: 4, fontWeight: 600,
+        },
+        // A chip you can click is a control and needs a thumb-sized target; a chip that
+        // only labels something does not, and inflating those would wreck the density.
+        clickable: { minHeight: 44, paddingTop: 11, paddingBottom: 11,
+          '@media (pointer: fine)': { minHeight: 36, paddingTop: 7, paddingBottom: 7 } },
         label: { lineHeight: 1.4 },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        /*
+         * Card padding belongs to the system, not to 40 hand-written `p: 3`s.
+         *
+         * At 375px a 24px card inset sat inside the page's own 16px gutter, leaving 295px
+         * of the screen for content — cards read as cramped because their contents were.
+         * 16px on a phone, the original 24px from `sm` up.
+         */
+        root: {
+          padding: 16,
+          '&:last-child': { paddingBottom: 16 },
+          '@media (min-width:600px)': {
+            padding: 24,
+            '&:last-child': { paddingBottom: 24 },
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        // WCAG 2.2 target-size floor. `small` stays visually small — only the hit area grows.
+        root: { minWidth: 44, minHeight: 44 },
+        sizeSmall: { minWidth: 44, minHeight: 44, padding: 8 },
       },
     },
     MuiTextField: {

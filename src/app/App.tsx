@@ -28,10 +28,9 @@ const Login = lazy(() => import('./pages/Login'));
 function AnimatedRoutes() {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
-  const y = reduceMotion ? 0 : 10;
   const enter = {
-    initial: { opacity: 0, y },
-    animate: { opacity: 1, y: 0 },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
     transition: { duration: reduceMotion ? 0.12 : 0.26, ease: [0.22, 1, 0.36, 1] as const },
   };
 
@@ -39,6 +38,13 @@ function AnimatedRoutes() {
   // animation the outgoing route never unmounted, so two pages stayed stacked in the
   // DOM and the browser showed the old one. Keying a plain motion element on the path
   // gives the same felt polish and cannot deadlock.
+  //
+  // Fade only — no y offset. **A transform on this wrapper makes it the containing block
+  // for every `position: fixed` descendant**, so a bottom-docked bar inside any page
+  // anchored to this div instead of the viewport and scrolled away with the content. The
+  // wrapper was also observed holding translateY(10px) permanently, quietly pushing every
+  // page down. Opacity creates no containing block, so it is safe here; a slide is not
+  // worth breaking fixed positioning app-wide.
   return (
     <motion.div key={location.pathname} initial={enter.initial} animate={enter.animate} transition={enter.transition}>
       <Routes location={location}>

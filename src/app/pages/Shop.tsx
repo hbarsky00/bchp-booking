@@ -202,7 +202,8 @@ export default function Shop() {
 
   return (
     <Layout>
-      <Box>
+      {/* Room for the docked checkout bar on top of the bottom nav Layout already clears. */}
+      <Box sx={{ pb: { xs: 9, md: 0 } }}>
         {/* Shop is two things: a stop inside the booking funnel and a standalone
             destination in the nav. Only the first one gets the checkout chrome — otherwise
             browsing the shop would claim to be a checkout the guest never started. */}
@@ -282,37 +283,57 @@ export default function Shop() {
         {/* Products Grid */}
         <Box
           sx={{
-            position: 'sticky',
-            top: { xs: 64, md: 76 },
-            zIndex: 2,
-            mx: { xs: -2, md: -3 },
+            /*
+             * Docked to the bottom on a phone, sticky under the header on a desktop.
+             * As a top bar at 375px it wrapped onto two rows and stood 130px tall, which
+             * on top of the 65px header meant a quarter of the screen was chrome before a
+             * single product appeared — and its z-index of 2 put it under the bottom nav.
+             */
+            // Two distinct layouts, kept apart rather than blended: viewport-docked on a
+            // phone, sticky in the content column on a desktop. `left`/`right` belong only
+            // to the fixed case — left on a sticky element they fight its own offsets.
+            position: { xs: 'fixed', md: 'sticky' },
+            left: { xs: 0, md: 'auto' },
+            right: { xs: 0, md: 'auto' },
+            bottom: { xs: 'calc(env(safe-area-inset-bottom, 0px) + 64px)', md: 'auto' },
+            top: { xs: 'auto', md: 76 },
+            zIndex: 1150,
+            mx: { xs: 0, md: -3 },
             px: { xs: 2, md: 3 },
-            py: 1.5,
-            mb: 3,
+            py: { xs: 1.25, md: 1.5 },
+            mb: { xs: 0, md: 3 },
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
-            flexWrap: 'wrap',
+            gap: { xs: 1.5, md: 2 },
+            flexWrap: 'nowrap',
             bgcolor: c.white,
-            borderBottom: `1px solid ${c.stone200}`,
+            borderTop: { xs: `1px solid ${c.stone200}`, md: 'none' },
+            borderBottom: { xs: 'none', md: `1px solid ${c.stone200}` },
+            boxShadow: { xs: '0 -6px 20px rgba(28,25,23,.10)', md: 'none' },
           }}
         >
-          <Box sx={{ flex: 1, minWidth: 180 }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             {draft ? (
               <>
-                <Typography variant="subtitle2">Adding extras to {draft.unitName}</Typography>
-                <Typography variant="caption" sx={{ color: c.stone600 }}>
+                <Typography variant="subtitle2" noWrap>Adding extras to {draft.unitName}</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: c.stone600, display: { xs: 'none', md: 'block' } }}
+                >
                   You'll pay for the stay and any extras together.
                 </Typography>
               </>
             ) : (
               <>
-                <Typography variant="subtitle2">
+                <Typography variant="subtitle2" noWrap>
                   {totalCartItems > 0
                     ? `${totalCartItems} item${totalCartItems === 1 ? '' : 's'} in your cart`
                     : 'Room service'}
                 </Typography>
-                <Typography variant="caption" sx={{ color: c.stone600 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: c.stone600, display: { xs: 'none', md: 'block' } }}
+                >
                   {totalCartItems > 0 ? 'Delivered to your room in about 30 minutes.' : 'Add items and we bring them to you.'}
                 </Typography>
               </>
@@ -323,6 +344,7 @@ export default function Shop() {
             endIcon={<ArrowForwardIcon />}
             disabled={!draft && totalCartItems === 0}
             onClick={() => navigate(draft ? '/payment-method' : '/shopping-cart')}
+            sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
           >
             {draft ? 'Continue to payment' : totalCartItems > 0 ? `Review cart (${totalCartItems})` : 'Cart empty'}
           </Button>
@@ -460,7 +482,7 @@ export default function Shop() {
 
         {/* Shopping Information */}
         <Card elevation={1} sx={{ bgcolor: c.blue50, mb: 3 }}>
-          <CardContent sx={{ p: 3 }}>
+          <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
               <InfoIcon sx={{ color: c.coral700 }} />
               <Typography variant="h6" component="h2" sx={{ color: c.stone900 }}>Shopping Information</Typography>
