@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -43,6 +43,23 @@ export default function AvailabilityCalendar({
     return { y: Number(anchor.slice(0, 4)), m: Number(anchor.slice(5, 7)) - 1 };
   });
   const [hover, setHover] = useState('');
+
+  /**
+   * Follow the check-in date when it changes from outside — arriving with dates in the URL,
+   * or the browser going back to a search that had them. The cursor is `useState`, so its
+   * initialiser does not re-run on a same-path navigation and the grid was last seen
+   * sitting on today's month while the guest's own selection lay eleven months away.
+   *
+   * Tracks the last check-in it reacted to rather than the current month, so paging around
+   * manually is never yanked back.
+   */
+  const followed = useRef(checkIn);
+  useEffect(() => {
+    if (checkIn === followed.current) return;
+    followed.current = checkIn;
+    if (!checkIn) return;
+    setCursor({ y: Number(checkIn.slice(0, 4)), m: Number(checkIn.slice(5, 7)) - 1 });
+  }, [checkIn]);
 
   const shift = (by: number) => setCursor(({ y, m }) => {
     const t = new Date(Date.UTC(y, m + by, 1));

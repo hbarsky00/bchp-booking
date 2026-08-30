@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import Layout from '../components/Layout';
 import Photo from '../components/Photo';
@@ -87,6 +87,28 @@ export default function PropertyDetails() {
   const [checkIn, setCheckIn] = useState<string>(searchParams?.checkIn ?? '');
   const [checkOut, setCheckOut] = useState<string>(searchParams?.checkOut ?? '');
   const [guests, setGuests] = useState<string>(String(searchParams?.guests || 1));
+
+  /**
+   * Adopt dates that arrive in the URL after this page is already mounted.
+   *
+   * Router navigation between two `/property-details` URLs keeps the same component
+   * instance, so `useState` initialisers do not re-run and the incoming dates were
+   * ignored — reachable today with browser back/forward, and the first thing that would
+   * break if a "similar rooms" link were ever added.
+   *
+   * Keyed on what was last adopted rather than on the current picker values: comparing
+   * against the picker would undo the guest's own selection on the next render, because
+   * the URL still holds the dates they arrived with.
+   */
+  const adopted = useRef(`${searchParams?.checkIn ?? ''}|${searchParams?.checkOut ?? ''}|${idParam}`);
+  useEffect(() => {
+    const incoming = `${searchParams?.checkIn ?? ''}|${searchParams?.checkOut ?? ''}|${idParam}`;
+    if (incoming === adopted.current) return;
+    adopted.current = incoming;
+    setCheckIn(searchParams?.checkIn ?? '');
+    setCheckOut(searchParams?.checkOut ?? '');
+    setGuests(String(searchParams?.guests || 1));
+  }, [searchParams?.checkIn, searchParams?.checkOut, searchParams?.guests, idParam]);
   const nights = nightsBetween(checkIn, checkOut);
   const { availability, loading: availLoading } = useAvailability(unit?.id, checkIn, checkOut);
   const minNights = availability?.minNights ?? 3;

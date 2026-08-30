@@ -18,6 +18,11 @@ The traps that have already cost real time:
   sets in `sx`, silently recolouring every custom button.
 - MUI maps `subtitle1/2` and `body1/2` onto `<h6>`, corrupting the heading outline.
   Already remapped in the theme — don't undo it.
+- **Router navigation between two URLs sharing a pathname does not remount the page**, so
+  `useState` initialisers do not re-run and anything seeded from the URL goes stale. Both
+  `PropertyDetails` (dates) and `AvailabilityCalendar` (which month is shown) sync via an
+  effect keyed on the last value they adopted — never on the current state, which would
+  undo the guest's own selection on the next render.
 - `AnimatePresence` with an exit animation on the router deadlocks: two pages stay
   mounted and the browser shows the stale one. The transition is enter-only on purpose.
 - **The route transition animates opacity and nothing else.** It used to add a 10px `y`,
