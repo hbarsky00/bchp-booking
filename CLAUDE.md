@@ -25,6 +25,28 @@ The traps that have already cost real time:
   skeleton, the fade-in and the error fallback. A cached image never fires `onLoad`,
   so `Photo` settles from the element on mount; don't remove that.
 
+## Editing this codebase
+
+**Never hand-roll a string replacement in a throwaway script.** Every silent no-op here
+came from the same mistake: an `old` string copied from truncated terminal output, so the
+replace matched nothing, rewrote the file unchanged, and the build still passed — making
+the change look done when it was not. It happened three times in one session.
+
+Use `scripts/patch.py`, which raises unless the edit actually applies:
+
+    PYTHONPATH=scripts python3 -c "
+    from patch import replace, must_contain
+    replace('src/app/pages/Shop.tsx', 'variant=\\"contained\\"', 'variant=\\"soft\\"', count=2)
+    must_contain('src/app/pages/Shop.tsx', 'variant=\\"soft\\"')
+    "
+
+`replace` / `sub` demand an exact occurrence count. `replace_lines` takes `expect_first`
+and `expect_last` guards, because line numbers drift and an unguarded range edit will
+happily overwrite the wrong region. Finish with `must_contain` / `must_not_contain`.
+
+**A passing build is not proof an edit landed.** Confirm it is in the file, then confirm
+it in the browser.
+
 ## Commands
 
 ```bash

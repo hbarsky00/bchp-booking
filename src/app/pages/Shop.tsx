@@ -404,7 +404,7 @@ export default function Shop() {
                           <RemoveIcon fontSize="small" />
                         </IconButton>
                         <Button
-                          variant="contained"
+                          variant="soft"
                           fullWidth
                           onClick={() => navigate('/shopping-cart')}
                           sx={{ fontWeight: 600 }}
@@ -425,7 +425,7 @@ export default function Shop() {
                       </Box>
                     ) : (
                       <Button
-                        variant="contained"
+                        variant="soft"
                         fullWidth
                         startIcon={<ShoppingCartIcon />}
                         disabled={product.status === 'Out of Stock'}

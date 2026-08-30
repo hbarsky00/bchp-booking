@@ -86,6 +86,21 @@ export const theme = createTheme({
         },
         outlined: { borderColor: c.stone300, color: c.stone900, '&:hover': { borderColor: c.stone900, backgroundColor: c.stone50 } },
       },
+      variants: [
+        {
+          // `soft`: an action repeated many times in a list. Twelve filled buttons on a
+          // product grid leave the page's real primary action with nothing to stand out
+          // against, so repeated actions get a tinted treatment instead.
+          props: { variant: 'soft' },
+          style: {
+            backgroundColor: c.coral50,
+            color: c.coral700,
+            border: `1px solid ${c.coral100}`,
+            '&:hover': { backgroundColor: c.coral100, borderColor: c.coral500 },
+            '&.Mui-disabled': { backgroundColor: c.stone100, color: c.stone500, borderColor: c.stone200 },
+          },
+        },
+      ],
     },
     MuiCard: {
       defaultProps: { elevation: 0 },
@@ -141,4 +156,8 @@ export const theme = createTheme({
 declare module '@mui/material/styles' {
   interface Palette { tertiary: Palette['primary']; }
   interface PaletteOptions { tertiary?: PaletteOptions['primary']; }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides { soft: true; }
 }

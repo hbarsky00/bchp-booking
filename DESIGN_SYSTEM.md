@@ -156,8 +156,20 @@ collides with a wrapping `h1`.
 
 ## Components
 
-**Buttons** — `r.md`, no elevation, `minHeight: 44` (thumb target), sentence case.
-Primary is flat `coral600`. Never add a gradient in the theme.
+**Buttons — three tiers, and the tiers are the point.**
+
+| Tier | Use | Looks like |
+| --- | --- | --- |
+| `variant="contained"` | **One per screen.** The single action the page exists for. | Filled coral |
+| `variant="soft"` | An action repeated in a list — add to cart, per-row view. | Coral-tinted fill, coral text |
+| `variant="outlined"` | Secondary or escape — back, skip, cancel. | Hairline border, ink text |
+
+A product grid rendering twelve filled "Add to cart" buttons leaves the page's real
+primary with nothing to stand out against; that is what `soft` exists to prevent. If a
+screen shows more than one filled button, one of them is wrong.
+
+All tiers: `r.md`, no elevation, `minHeight: 44` (thumb target), sentence case. Never add
+a gradient in the theme — it paints over any `bgcolor` a page sets.
 
 **Cards** — `elevation={0}`, `1px solid stone200`, `r.lg`. Depth comes from the border,
 not shadow. A 1px border under a wide shadow blur is a recognised generated-UI tell.

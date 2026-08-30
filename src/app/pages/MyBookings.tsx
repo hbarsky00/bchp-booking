@@ -279,7 +279,7 @@ export default function MyBookings() {
                           </Grid>
 
                           <Button
-                            variant="contained"
+                            variant="soft"
                             fullWidth
                             size="small"
                             startIcon={<DownloadIcon />}
