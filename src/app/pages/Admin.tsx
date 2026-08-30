@@ -7,6 +7,7 @@ import { formatDate } from '../lib/bookings';
 import { useAdmin } from '../lib/admin';
 import { changePassword, passwordProblem, useSession } from '../lib/auth';
 import ChangePasswordDialog from '../components/ChangePasswordDialog';
+import SeasonManager from '../components/SeasonManager';
 import Snackbar from '@mui/material/Snackbar';
 import { downloadCsv } from '../lib/actions';
 import Box from '@mui/material/Box';
@@ -273,6 +274,10 @@ export default function Admin() {
             </Button>
           </Box>
         </Box>
+
+        {/* Pricing is business data, so it lives above the day-to-day booking list rather
+            than behind a migration. */}
+        <SeasonManager />
 
         <Grid container spacing={3}>
           {/* Filters Sidebar */}

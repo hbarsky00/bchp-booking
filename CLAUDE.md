@@ -145,6 +145,9 @@ node --experimental-strip-types netlify/lib/pricing.mts
   the search carried dates — with no dates there is no honest per-night figure to give.
 - `/api/availability?unitId=&from=&to=` returns every night with `booked`, `past`, `rate`
   and `season`; add `&checkIn=&checkOut=` for a priced quote or a refusal.
+- `/api/seasons` is full CRUD behind the admin session, surfaced as **Seasonal rates** on
+  the dashboard. The migration only seeds a starting set — rates are the owner's to change,
+  and changing one must never need a deploy.
 
 **A `date` column comes back from node-postgres as a JS `Date`, not a string.** This bit
 twice in one sitting: `seasonFor` did `.slice()` on it and threw, and
